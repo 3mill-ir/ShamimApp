@@ -1,261 +1,297 @@
 package ir.hezareh.park;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.Rect;
-import android.support.v7.app.AppCompatActivity;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
+import com.daimajia.slider.library.Indicators.PagerIndicator;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 public class HomeScreen extends AppCompatActivity {
+    int width;
+
+    public static String URL_encode(String URL) {
+        final String ALLOWED_URI_CHARS = "@#&=*+-_.,:!?()/~'%";
+        return Uri.encode(URL, ALLOWED_URI_CHARS);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
-        int width=Utils.getDisplayMetrics(getApplicationContext()).widthPixels;
-
+        width = Utils.getDisplayMetrics(getApplicationContext()).widthPixels;
 
         LinearLayout Root_Layout=(LinearLayout) findViewById(R.id.main_layout);
 
 
-
-        RelativeLayout Row_Layout=new RelativeLayout(this);
-        RelativeLayout.LayoutParams row_params = new RelativeLayout.LayoutParams(width, 2*width/3);
-        Row_Layout.setLayoutParams(row_params);
-        Row_Layout.setId(View.generateViewId());
-
-
-        LinearLayout Gallery=new LinearLayout(this);
-        LinearLayout.LayoutParams gallery_params = new LinearLayout.LayoutParams(2*width/3, 2*width/3);
-        Gallery.setLayoutParams(gallery_params);
-        Gallery.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-        Gallery.setId(View.generateViewId());
-
-
-
-        LinearLayout btn_gallery1=new LinearLayout(this);
-        RelativeLayout.LayoutParams btn1_row_layout = new RelativeLayout.LayoutParams(width/3, width/3);
-        btn1_row_layout.addRule(RelativeLayout.RIGHT_OF,Gallery.getId());
-        btn_gallery1.setLayoutParams(btn1_row_layout);
-        btn_gallery1.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        btn_gallery1.setId(View.generateViewId());
-
-
-        LinearLayout btn_gallery2=new LinearLayout(this);
-        RelativeLayout.LayoutParams btn2_row_layout = new RelativeLayout.LayoutParams(width/3, width/3);
-        btn2_row_layout.addRule(RelativeLayout.BELOW,btn_gallery1.getId());
-        btn2_row_layout.addRule(RelativeLayout.ALIGN_PARENT_END);
-        btn_gallery2.setLayoutParams(btn2_row_layout);
-        btn_gallery2.setBackgroundColor(Color.CYAN);
-        btn_gallery2.setId(View.generateViewId());
-
-
-        Row_Layout.addView(Gallery);
-        Row_Layout.addView(btn_gallery1);
-        Row_Layout.addView(btn_gallery2);
-
-
-        RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        ImageView imageView=new ImageView(this);
-        imageView.setLayoutParams(params2);
-        imageView.setImageDrawable(getResources().getDrawable(R.mipmap.ic_launcher));
-
         ArrayList<String> my=new ArrayList<>();
-        my.add("https://images.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg?w=940&h=650&auto=compress&cs=tinysrgb");
-        my.add("https://images.pexels.com/photos/68510/blue-red-painted-brick-68510.jpeg?w=940&h=650&auto=compress&cs=tinysrgb");
-        my.add("https://images.pexels.com/photos/425202/pexels-photo-425202.jpeg?w=940&h=650&auto=compress&cs=tinysrgb");
-        my.add("https://images.pexels.com/photos/240572/pexels-photo-240572.jpeg?w=940&h=650&auto=compress&cs=tinysrgb");
+        my.add(URL_encode("https://i.ytimg.com/vi/IwxBAwobISo/maxresdefault.jpg"));
+        my.add(URL_encode("https://ak9.picdn.net/shutterstock/videos/12871889/thumb/1.jpg"));
+        my.add(URL_encode("https://i.pinimg.com/736x/2c/d6/85/2cd6857b8ae17c36e9e6dab2c11bf02c--earth-hd-florida-georgia.jpg"));
 
 
-
-        com.daimajia.slider.library.SliderLayout ImageSlider = new SliderLayout(this);
+        RelativeLayout Slider = new RelativeLayout(this);
         RelativeLayout.LayoutParams Slider_Layout = new RelativeLayout.LayoutParams(width, width/2);
-        ImageSlider.setLayoutParams(Slider_Layout);
+        Slider.setLayoutParams(Slider_Layout);
+        View child = getLayoutInflater().inflate(R.layout.custom_slider_layout, null);
 
+
+        com.daimajia.slider.library.SliderLayout ImageSlider = child.findViewById(R.id.slider);
         for (int i = 0; i < my.size(); i++) {
-            //Log.e(TAG, "init: " + slider_list.get(i).get("slider_title"));
             DefaultSliderView demoSlider = new DefaultSliderView(this);
-            demoSlider//.description(slider_list.get(i).get("slider_title"))
+            demoSlider//.description()
                     .image(my.get(i))
                     .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                         @Override
                         public void onSliderClick(BaseSliderView slider) {
-                            //Intent k = new Intent(HomeScreen.this, Kanded_list_News.class);
-                            //k.putExtra("website", website);
-                            //k.putExtra("value_theme", value_theme);
-                            //startActivity(k);
-                            //overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                            /*Intent k = new Intent(HomeScreen.this, Kanded_list_News.class);
+                            k.putExtra("value_theme", value_theme);
+                            startActivity(k);
+                            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);*/
                         }
                     });
             ImageSlider.addSlider(demoSlider);
+            //ImageSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
+            ImageSlider.setCustomIndicator((PagerIndicator) child.findViewById(R.id.custom_indicator));
             ImageSlider.setPresetTransformer(SliderLayout.Transformer.Background2Foreground);
-            ImageSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
             ImageSlider.setCustomAnimation(new DescriptionAnimation());
         }
+        Slider.addView(child);
 
 
-        //SliderLayout Slider=new SliderLayout(this);
-
-        LinearLayout News=new LinearLayout(this);
+        //RecyclerView for News
         RecyclerView NewsRecycler=new RecyclerView(this);
-        LinearLayout.LayoutParams News_Layout = new LinearLayout.LayoutParams(width, width);
-        News.setGravity(Gravity.CENTER_VERTICAL);
-
-        //News_Layout.gravity= Gravity.CENTER_VERTICAL;
-        News.setLayoutParams(News_Layout);
-        News.setBackgroundColor(Color.GREEN);
-
-
-        //LinearLayout my1=new LinearLayout(this);
-        /*RelativeLayout.LayoutParams params90 = new RelativeLayout.LayoutParams(100, 100);
-
-        //NewsRecycler.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,true));
-        my1.setLayoutParams(params90);
-        my1.setBackgroundColor(Color.BLUE);
-        my1.setGravity(Gravity.CENTER_VERTICAL);*/
-
-
-
-
-
-        MyRecyclerAdapter myRecyclerAdapter=new MyRecyclerAdapter(getApplicationContext(),null);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        RelativeLayout.LayoutParams r=new RelativeLayout.LayoutParams(width, 2*width/3);
-
-        //r.addRule(Gravity.CENTER_VERTICAL);
-        //NewsRecycler.setLayoutParams(r);
-
-        NewsRecycler.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,true));
-        NewsRecycler.addItemDecoration(new EqualSpacingItemDecoration(20, EqualSpacingItemDecoration.HORIZONTAL)); // 16px. In practice, you'll want to use getDimensionPixelSize
+        MyRecyclerAdapter myRecyclerAdapter = new MyRecyclerAdapter(getApplicationContext(), null);
+        LinearLayout.LayoutParams NewsRecyclerLayoutParams = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT);
+        NewsRecyclerLayoutParams.gravity = Gravity.CENTER_VERTICAL;
+        NewsRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
+        NewsRecycler.addItemDecoration(new EqualSpacingItemDecoration(10, EqualSpacingItemDecoration.HORIZONTAL));
         NewsRecycler.setItemAnimator(new DefaultItemAnimator());
+        NewsRecycler.setLayoutParams(NewsRecyclerLayoutParams);
         NewsRecycler.setAdapter(myRecyclerAdapter);
-        News.addView(NewsRecycler);
 
 
+        ArrayList<String> text = new ArrayList<>();
+        text.add("about");
+        text.add("contact");
+        text.add("Park");
 
 
-
-
-        LinearLayout Button_Group=new LinearLayout(this);
-        RelativeLayout.LayoutParams Button_Group_Layout = new RelativeLayout.LayoutParams(width, width/3);
-        Button_Group.setLayoutParams(Button_Group_Layout);
-        Button_Group.setBackgroundColor(Color.DKGRAY);
-
-
-        RelativeLayout.LayoutParams params4 = new RelativeLayout.LayoutParams(300, 400);
-        ImageButton imageButton=new ImageButton(this);
-        imageButton.setLayoutParams(params4);
-        imageButton.setImageDrawable((getResources().getDrawable(R.mipmap.ic_launcher)));
-
-        //Root_Layout.addView(Row_Layout);
-
-
-
-        //Root_Layout.addView(imageButton);
-        //Root_Layout.addView(imageView);
-
-
-        ArrayList<String>  Orders= new ArrayList<>();
-        Orders.add("News");
-        Orders.add("Button_Group");
-        Orders.add("Row_Layout");
+        ArrayList<String> Orders = new ArrayList<>();
         Orders.add("Slider");
+        Orders.add("NewsRecycler");
 
+        Orders.add("Button_Group");
 
+        Orders.add("Gallery");
+        Orders.add("Button_Group");
+        Orders.add("ROW");
 
-
-
-
-        for (String item:Orders
-                ) {
-            switch (item)
-            {
+        for (String item : Orders) {
+            switch (item) {
                 case "Slider":
-                    Root_Layout.addView(ImageSlider);
+                    Root_Layout.addView(Slider);
                     break;
-                case "Row_Layout":
-                    Root_Layout.addView(Row_Layout);
+                case "Gallery":
+                    Root_Layout.addView(GalleryButton(my, "GalleryButtons", text, my));
                     break;
-                case "News":
-                    Root_Layout.addView(News);
+                case "NewsRecycler":
+                    Root_Layout.addView(NewsRecycler);
                     break;
                 case "Button_Group":
-                    Root_Layout.addView(Button_Group);
+                    Root_Layout.addView(ButtonsRow(text, my));
+                    break;
+                case "ROW":
+                    Root_Layout.addView(GalleryButton(my, "ButtonsGallery", text, my));
                     break;
             }
         }
     }
 
-    private int dpToPx(int dp) {
-        Resources r = getResources();
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
-    }
+    public RelativeLayout GalleryButton(ArrayList<String> data, String Order, ArrayList<String> ButtonsText, ArrayList<String> ButtonsURLs) {
+        RelativeLayout GalleryButtonRowLayout = new RelativeLayout(this);
+        RelativeLayout.LayoutParams GalleryButtonRowLayoutParams = new RelativeLayout.LayoutParams(width, 2 * width / 3);
+        GalleryButtonRowLayout.setLayoutParams(GalleryButtonRowLayoutParams);
+        GalleryButtonRowLayout.setId(View.generateViewId());
 
 
-    private class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
+        View upperChild = getLayoutInflater().inflate(R.layout.item_button_row, null);
+        LinearLayout.LayoutParams ButtonParams = new LinearLayout.LayoutParams(width / 3, width / 3);
+        upperChild.setLayoutParams(ButtonParams);
+        ((TextView) upperChild.findViewById(R.id.TextButton)).setText(ButtonsText.get(0));
+        Picasso.with(getApplicationContext()).load(ButtonsURLs.get(0)).fit()
+                .into((ImageView) upperChild.findViewById(R.id.ButtonImage));
 
-        private int spanCount;
-        private int spacing;
-        private boolean includeEdge;
 
-        GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
-            this.spanCount = spanCount;
-            this.spacing = spacing;
-            this.includeEdge = includeEdge;
+        LinearLayout UpperButtonLayout = new LinearLayout(this);
+        RelativeLayout.LayoutParams UpperButtonLayoutParams = new RelativeLayout.LayoutParams(width / 3, width / 3);
+        if (Order.equals("ButtonsGallery")) {
+            UpperButtonLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
+        } else if (Order.equals("GalleryButtons")) {
+            UpperButtonLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+        }
+        UpperButtonLayout.setLayoutParams(UpperButtonLayoutParams);
+        //UpperButtonLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        UpperButtonLayout.setId(View.generateViewId());
+        UpperButtonLayout.setGravity(Gravity.CENTER);
+        UpperButtonLayout.addView(upperChild);
+
+        View lowerChild = getLayoutInflater().inflate(R.layout.item_button_row, null);
+        lowerChild.setLayoutParams(ButtonParams);
+        ((TextView) lowerChild.findViewById(R.id.TextButton)).setText(ButtonsText.get(1));
+        Picasso.with(getApplicationContext()).load(ButtonsURLs.get(1)).fit()
+                .into((ImageView) lowerChild.findViewById(R.id.ButtonImage));
+
+        LinearLayout LowerButtonLayout = new LinearLayout(this);
+        RelativeLayout.LayoutParams LowerButtonLayoutParams = new RelativeLayout.LayoutParams(width / 3, width / 3);
+        LowerButtonLayoutParams.addRule(RelativeLayout.BELOW, UpperButtonLayout.getId());
+
+
+        if (Order.equals("ButtonsGallery")) {
+            LowerButtonLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
+        } else if (Order.equals("GalleryButtons")) {
+            LowerButtonLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
         }
 
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            int position = parent.getChildAdapterPosition(view); // item position
-            int column = position % spanCount; // item column
+        LowerButtonLayout.setLayoutParams(LowerButtonLayoutParams);
+        //LowerButtonLayout.setBackgroundColor(Color.CYAN);
+        LowerButtonLayout.setId(View.generateViewId());
+        LowerButtonLayout.setGravity(Gravity.CENTER);
+        LowerButtonLayout.addView(lowerChild);
 
-            if (includeEdge) {
-                outRect.left = spacing - column * spacing / spanCount; // spacing - column * ((1f / spanCount) * spacing)
-                outRect.right = (column + 1) * spacing / spanCount; // (column + 1) * ((1f / spanCount) * spacing)
 
-                if (position < spanCount) { // top edge
-                    outRect.top = spacing;
-                }
-                outRect.bottom = spacing; // item bottom
-            } else {
-                outRect.left = column * spacing / spanCount; // column * ((1f / spanCount) * spacing)
-                outRect.right = spacing - (column + 1) * spacing / spanCount; // spacing - (column + 1) * ((1f /    spanCount) * spacing)
-                if (position >= spanCount) {
-                    outRect.top = spacing; // item top
-                }
-            }
+        com.daimajia.slider.library.SliderLayout GalleryLayout = new SliderLayout(this);
+        RelativeLayout.LayoutParams GalleryLayoutParams = new RelativeLayout.LayoutParams(2 * width / 3, 2 * width / 3 - width / 12);
+        if (Order.equals("ButtonsGallery")) {
+            GalleryLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+        } else if (Order.equals("GalleryButtons")) {
+            GalleryLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
         }
 
+        GalleryLayout.setLayoutParams(GalleryLayoutParams);
+        GalleryLayout.setId(View.generateViewId());
+
+
+        for (int i = 0; i < data.size(); i++) {
+            DefaultSliderView demoSlider = new DefaultSliderView(this);
+            demoSlider//.description()
+                    .image(data.get(i))
+                    .setScaleType(BaseSliderView.ScaleType.Fit)
+                    .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
+                        @Override
+                        public void onSliderClick(BaseSliderView slider) {
+                            /*Intent k = new Intent(HomeScreen.this, Kanded_list_News.class);
+                            k.putExtra("value_theme", value_theme);
+                            startActivity(k);
+                            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);*/
+                        }
+                    });
+            GalleryLayout.addSlider(demoSlider);
+            GalleryLayout.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
+            GalleryLayout.setPresetTransformer(SliderLayout.Transformer.Background2Foreground);
+            GalleryLayout.setCustomAnimation(new DescriptionAnimation());
+        }
+        TextView GalleryLayoutText = new TextView(this);
+        RelativeLayout.LayoutParams GalleryLayoutTextParams = new RelativeLayout.LayoutParams(2 * width / 3, width / 12);
+        GalleryLayoutTextParams.addRule(RelativeLayout.BELOW, GalleryLayout.getId());
+        if (Order.equals("ButtonsGallery")) {
+            GalleryLayoutTextParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+        } else if (Order.equals("GalleryButtons")) {
+            GalleryLayoutTextParams.addRule(RelativeLayout.ALIGN_PARENT_START);
+        }
+        GalleryLayoutText.setLayoutParams(GalleryLayoutTextParams);
+        GalleryLayoutText.setBackgroundColor(Color.YELLOW);
+        GalleryLayoutText.setGravity(Gravity.CENTER);
+        GalleryLayoutText.setText("Gallery");
+
+
+        GalleryButtonRowLayout.addView(UpperButtonLayout);
+        GalleryButtonRowLayout.addView(LowerButtonLayout);
+        GalleryButtonRowLayout.addView(GalleryLayout);
+        GalleryButtonRowLayout.addView(GalleryLayoutText);
+
+        return GalleryButtonRowLayout;
     }
 
-    public static int calculateNoOfColumns(Context context) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        return (int) (dpWidth / 180);
+    public LinearLayout ButtonsRow(ArrayList<String> ButtonsText, ArrayList<String> ButtonsURLs) {
+        LinearLayout ButtonsRow = new LinearLayout(this);
+        LinearLayout.LayoutParams ButtonRowLayout = new LinearLayout.LayoutParams(width, width / 3);
+        ButtonsRow.setLayoutParams(ButtonRowLayout);
+        //ButtonsRow.setBackgroundColor(Color.DKGRAY);
+        ButtonsRow.setOrientation(LinearLayout.HORIZONTAL);
+
+
+        /*Button LeftButton=new Button(this);
+        LinearLayout.LayoutParams LeftButtonParams = new LinearLayout.LayoutParams(width/3-20, width/3-20);
+        LeftButtonLayoutParams.setMargins(10,10,10,10);
+        LeftButton.setLayoutParams(LeftButtonParams);
+        LeftButton.setGravity(Gravity.CENTER);
+
+        LeftButton.setBackgroundResource(R.drawable.customborder1);
+        LeftButton.setPadding(0,20,0,0);
+        //resizing image
+        Bitmap InitialBitmap = ((BitmapDrawable)getResources().getDrawable(R.drawable.microphone)).getBitmap();
+        Bitmap bitmapResized = Bitmap.createScaledBitmap(InitialBitmap, 100, 100, false);
+        LeftButton.setCompoundDrawablesWithIntrinsicBounds(null,new BitmapDrawable(getResources(), bitmapResized),null,null);
+        LeftButton.setText("عضویت در پارک");
+        LeftButton.setTextSize(14);*/
+
+
+        View leftChild = getLayoutInflater().inflate(R.layout.item_button_row, null);
+        LinearLayout.LayoutParams ButtonParams = new LinearLayout.LayoutParams(width / 3, width / 3);
+        leftChild.setLayoutParams(ButtonParams);
+        ((TextView) leftChild.findViewById(R.id.TextButton)).setText(ButtonsText.get(0));
+        Picasso.with(getApplicationContext()).load(ButtonsURLs.get(0)).fit()
+                .into((ImageView) leftChild.findViewById(R.id.ButtonImage));
+        LinearLayout LeftButtonLayout = new LinearLayout(this);
+        LeftButtonLayout.setLayoutParams(ButtonParams);
+        LeftButtonLayout.setGravity(Gravity.CENTER);
+        LeftButtonLayout.addView(leftChild);
+
+
+        View middleChild = getLayoutInflater().inflate(R.layout.item_button_row, null);
+        middleChild.setLayoutParams(ButtonParams);
+        ((TextView) middleChild.findViewById(R.id.TextButton)).setText(ButtonsText.get(1));
+        Picasso.with(getApplicationContext()).load(ButtonsURLs.get(1)).fit()
+                .into((ImageView) middleChild.findViewById(R.id.ButtonImage));
+        LinearLayout MiddleButtonLayout = new LinearLayout(this);
+        MiddleButtonLayout.setLayoutParams(ButtonParams);
+        MiddleButtonLayout.setGravity(Gravity.CENTER);
+        MiddleButtonLayout.addView(middleChild);
+
+
+        View rightChild = getLayoutInflater().inflate(R.layout.item_button_row, null);
+        rightChild.setLayoutParams(ButtonParams);
+        ((TextView) rightChild.findViewById(R.id.TextButton)).setText(ButtonsText.get(2));
+        //rightChild.findViewById(R.id.TextButton).setBackgroundResource(R.drawable.back2);
+        Picasso.with(getApplicationContext()).load(ButtonsURLs.get(2)).fit()
+                .into((ImageView) rightChild.findViewById(R.id.ButtonImage));
+        LinearLayout RightButtonLayout = new LinearLayout(this);
+        RightButtonLayout.setLayoutParams(ButtonParams);
+        RightButtonLayout.setGravity(Gravity.CENTER);
+        RightButtonLayout.addView(rightChild);
+
+
+        ButtonsRow.addView(LeftButtonLayout);
+        ButtonsRow.addView(MiddleButtonLayout);
+        ButtonsRow.addView(RightButtonLayout);
+        return ButtonsRow;
     }
 }
