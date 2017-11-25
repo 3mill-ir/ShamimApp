@@ -1,17 +1,26 @@
 package ir.hezareh.park;
 
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
@@ -76,30 +85,45 @@ public class HomeScreen extends AppCompatActivity {
         Slider.addView(child);
 
 
+        RelativeLayout.LayoutParams NewsRecyclerLayoutParams = new RelativeLayout.LayoutParams(width, RelativeLayout.LayoutParams.WRAP_CONTENT);
         //RecyclerView for News
+        NewsRecyclerLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+        RelativeLayout myyy = new RelativeLayout(this);
+        myyy.setLayoutParams(NewsRecyclerLayoutParams);
+
         RecyclerView NewsRecycler=new RecyclerView(this);
-        MyRecyclerAdapter myRecyclerAdapter = new MyRecyclerAdapter(getApplicationContext(), null);
-        LinearLayout.LayoutParams NewsRecyclerLayoutParams = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT);
-        NewsRecyclerLayoutParams.gravity = Gravity.CENTER_VERTICAL;
+        RecyclerViewAdapter myRecyclerAdapter = new RecyclerViewAdapter(this, null);
+        LinearLayout.LayoutParams NewsRecyclerLayoutParams1 = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT);
+        NewsRecyclerLayoutParams1.gravity = Gravity.CENTER_VERTICAL;
+        NewsRecycler.setLayoutParams(NewsRecyclerLayoutParams1);
         NewsRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
         NewsRecycler.addItemDecoration(new EqualSpacingItemDecoration(10, EqualSpacingItemDecoration.HORIZONTAL));
         NewsRecycler.setItemAnimator(new DefaultItemAnimator());
-        NewsRecycler.setLayoutParams(NewsRecyclerLayoutParams);
         NewsRecycler.setAdapter(myRecyclerAdapter);
+
+        myyy.addView(NewsRecycler);
+
+
 
 
         ArrayList<String> text = new ArrayList<>();
         text.add("about");
         text.add("contact");
         text.add("Park");
+        text.add("about");
+        text.add("contact");
+        text.add("Park");
+        text.add("about");
+        text.add("contact");
+        text.add("اسلایدر");
 
 
         ArrayList<String> Orders = new ArrayList<>();
         Orders.add("Slider");
         Orders.add("NewsRecycler");
-
+        Orders.add("poll");
         Orders.add("Button_Group");
-
+        Orders.add("PieChart");
         Orders.add("Gallery");
         Orders.add("Button_Group");
         Orders.add("ROW");
@@ -113,7 +137,7 @@ public class HomeScreen extends AppCompatActivity {
                     Root_Layout.addView(GalleryButton(my, "GalleryButtons", text, my));
                     break;
                 case "NewsRecycler":
-                    Root_Layout.addView(NewsRecycler);
+                    Root_Layout.addView(myyy);
                     break;
                 case "Button_Group":
                     Root_Layout.addView(ButtonsRow(text, my));
@@ -121,8 +145,111 @@ public class HomeScreen extends AppCompatActivity {
                 case "ROW":
                     Root_Layout.addView(GalleryButton(my, "ButtonsGallery", text, my));
                     break;
+                case "PieChart":
+                    MyPieChart pieChartActivity = new MyPieChart(getApplicationContext(), width, width / 2);
+                    Root_Layout.addView(pieChartActivity.getItem());
+                    break;
+                case "poll":
+                    Root_Layout.addView(pollQuestion(text, "آیا از عملکرد شهردار خود راضی هستید؟آیا از عملکرد شهردار خود راضی هستید"));
+                    break;
+
             }
         }
+    }
+
+    public ScrollView pollQuestion(ArrayList<String> data, String QuestionText) {
+        ScrollView my = new ScrollView(this);
+        my.setVerticalScrollBarEnabled(true);
+        LinearLayout PollQuestionLayout = new LinearLayout(this);
+        PollQuestionLayout.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams PollQuestionLayoutParams = new LinearLayout.LayoutParams(width, width / 2);
+        //PollQuestionLayoutParams.gravity=Gravity.END;
+        PollQuestionLayout.setLayoutParams(PollQuestionLayoutParams);
+        //PollQuestionLayout.setGravity(Gravity.END);
+        my.setLayoutParams(PollQuestionLayoutParams);
+
+        TextView questionText = new TextView(this);
+        ViewGroup.LayoutParams txt = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100);
+        questionText.setLayoutParams(txt);
+        questionText.setText(QuestionText);
+        questionText.setGravity(Gravity.END);
+        /*questionText.setSingleLine(true);
+        //questionText.setEllipsize(TextUtils.TruncateAt.END);
+        questionText.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+
+        questionText.setMarqueeRepeatLimit(-1);
+        questionText.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        //questionText.setTextDirection(View.TEXT_DIRECTION_RTL);
+        questionText.setGravity(Gravity.END);
+
+
+        *//*Animation animationToRight = new TranslateAnimation(-200,200, 0, 0);
+        Animation animationToLeft = new TranslateAnimation(200, -200, 0, 0);
+
+        animationToLeft.setDuration(1200);
+        animationToLeft.setRepeatMode(Animation.RESTART);
+        animationToLeft.setRepeatCount(Animation.INFINITE);*//*
+
+        questionText.setFocusable(true);
+        questionText.setFocusableInTouchMode(true);
+        questionText.setHorizontallyScrolling(true);
+        questionText.setSelected(true);*/
+
+        questionText.setText(QuestionText);
+        questionText.setTypeface(Utils.font_set("irsans", getApplicationContext()));
+        Paint textPaint = questionText.getPaint();
+        String text = questionText.getText().toString();//get text
+        int width = Math.round(textPaint.measureText(text));//measure the text size
+        ViewGroup.LayoutParams params = questionText.getLayoutParams();
+        params.width = width;
+        questionText.setLayoutParams(params); //refine
+
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getRealMetrics(displaymetrics);
+        int screenWidth = displaymetrics.widthPixels;
+
+        //this is optional. do not scroll if text is shorter than screen width
+        //remove this won't effect the scroll
+        if (width <= screenWidth) {
+            //All text can fit in screen.
+            //return;
+        } else {
+            //set the animation
+
+            TranslateAnimation slide = new TranslateAnimation(-width, screenWidth, 0, 0);
+            slide.setDuration(width * 5 + screenWidth);
+            slide.setRepeatCount(Animation.INFINITE);
+            slide.setRepeatMode(Animation.RESTART);
+            slide.setInterpolator(new LinearInterpolator());
+            questionText.startAnimation(slide);
+        }
+
+
+        RadioGroup radioGroupAnswers = new RadioGroup(this);
+        //radioGroupAnswers.setOrientation(LinearLayout.HORIZONTAL);
+        radioGroupAnswers.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        //params11.gravity=Gravity.START;
+        radioGroupAnswers.setLayoutParams(params11);
+        //radioGroupAnswers.setGravity(Gravity.START);
+        radioGroupAnswers.setBackgroundColor(Color.YELLOW);
+
+        for (String item : data) {
+            RadioButton Choice = new RadioButton(this);
+            Choice.setText(item);
+            //Choice.setLeft(100);
+            //Choice.setLayoutParams(params11);
+            Choice.setGravity(Gravity.CENTER);
+
+            Choice.setId(View.generateViewId());
+            radioGroupAnswers.addView(Choice);
+        }
+        PollQuestionLayout.addView(questionText);
+        PollQuestionLayout.addView(radioGroupAnswers);
+
+        my.addView(PollQuestionLayout);
+
+        return my;
     }
 
     public RelativeLayout GalleryButton(ArrayList<String> data, String Order, ArrayList<String> ButtonsText, ArrayList<String> ButtonsURLs) {
@@ -229,6 +356,7 @@ public class HomeScreen extends AppCompatActivity {
 
         return GalleryButtonRowLayout;
     }
+
 
     public LinearLayout ButtonsRow(ArrayList<String> ButtonsText, ArrayList<String> ButtonsURLs) {
         LinearLayout ButtonsRow = new LinearLayout(this);

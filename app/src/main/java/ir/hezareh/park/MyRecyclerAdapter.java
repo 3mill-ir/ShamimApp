@@ -136,7 +136,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
             BYekan = Typeface.createFromAsset(mContext.getAssets(), "fonts/BYekan.ttf");
         }
 
-
         @Override
         public void onClick(View v) {
             Log.i("Clicked", "position: " + String.valueOf(getAdapterPosition()));
