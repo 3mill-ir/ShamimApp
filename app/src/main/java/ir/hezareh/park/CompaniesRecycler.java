@@ -29,26 +29,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 
-/**
- * Created by rf on 27/08/2017.
- */
-
-
-public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.MyViewHolder> {
+public class CompaniesRecycler extends RecyclerView.Adapter<CompaniesRecycler.MyViewHolder> {
 
     private Context mContext;
     private ArrayList<HashMap<String, String>> RequestsList;
     private int lastPosition = -1;
 
-    public MyRecyclerAdapter(Context context, ArrayList<HashMap<String, String>> data) {
+    public CompaniesRecycler(Context context, ArrayList<HashMap<String, String>> data) {
         //this.RequestsList = data;
-        this.mContext=context;
+        this.mContext = context;
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.news_large_item, parent, false);
+                .inflate(R.layout.item_company, parent, false);
 
         return new MyViewHolder(itemView);
     }
@@ -66,15 +61,15 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
 
         int height = Utils.getDisplayMetrics(mContext).widthPixels;
 
-        LinearLayout.LayoutParams ItemLayout = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        holder.item.setLayoutParams(ItemLayout);
+        //LinearLayout.LayoutParams ItemLayout = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        //holder.item.setLayoutParams(ItemLayout);
 
 
         RelativeLayout.LayoutParams ThumbnailLayout = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 4 * height / 10);
         //holder.thumbnail.setLayoutParams(ThumbnailLayout);
 
 
-        holder.title.setText("تیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبر");
+        holder.title.setText("تیتر خبر");
         //holder.title.setBackgroundColor(Color.YELLOW);
         final AtomicBoolean playAnimation = new AtomicBoolean(true);
 
@@ -114,7 +109,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
                     }
 
                 });
-
     }
 
     @Override

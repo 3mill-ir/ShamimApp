@@ -1,6 +1,7 @@
 package ir.hezareh.park;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
@@ -42,11 +43,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_ITEM) {
             //Inflating recycle view item layout
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.news_item, parent, false);
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.news_small_item, parent, false);
             return new ItemViewHolder(itemView);
         } else if (viewType == TYPE_HEADER) {
             //Inflating header view
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.news_item, parent, false);
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.news_small_item, parent, false);
             return new HeaderViewHolder(itemView);
         } else if (viewType == TYPE_FOOTER) {
             //Inflating footer view
@@ -73,6 +74,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             footerHolder.footerText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Intent k = new Intent(activity, Companies.class);
+                    activity.startActivity(k);
                     Toast.makeText(activity, "You clicked at Footer View", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -111,12 +114,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         @Override
                         public void onError() {
                             //holder.img_progress.setVisibility(View.GONE);
-                            itemViewHolder.thumbnail.setImageResource(R.drawable.full);
+                            itemViewHolder.thumbnail.setImageResource(R.drawable.corrupted);
                         }
                     });
             itemViewHolder.title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Intent k = new Intent(activity, NewsCategory.class);
+                    activity.startActivity(k);
+
+
                     Toast.makeText(activity, "You clicked at item " + position, Toast.LENGTH_SHORT).show();
                 }
             });
@@ -127,16 +134,23 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public int getItemViewType(int position) {
         if (position == 0) {
             return TYPE_ITEM;/*return TYPE_HEADER;*/
-        } else if (position == /*stringArrayList.size()*/ 3 + 1) {
+        } else if (position == /*stringArrayList.size()*/ 2 + 1) {
             return TYPE_FOOTER;
         }
         return TYPE_ITEM;
     }
 
+
     @Override
     public int getItemCount() {
         // return stringArrayList.size() + 2;
-        return 5;
+        return 4;
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+        holder.itemView.clearAnimation();
+        super.onViewDetachedFromWindow(holder);
     }
 
     private class HeaderViewHolder extends RecyclerView.ViewHolder {
@@ -156,8 +170,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         public FooterViewHolder(View view) {
             super(view);
             footerText = view.findViewById(R.id.footerText);
-            footerLayout = itemView.findViewById(R.id.footerLayout);
-            cardView = itemView.findViewById(R.id.card_view);
+            footerLayout = view.findViewById(R.id.footerLayout);
+            cardView = view.findViewById(R.id.card_view);
         }
     }
 
@@ -180,4 +194,5 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             BYekan = Typeface.createFromAsset(activity.getAssets(), "fonts/BYekan.ttf");
         }
     }
+
 }
