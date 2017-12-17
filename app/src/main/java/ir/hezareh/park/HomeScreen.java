@@ -26,17 +26,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import javassist.CannotCompileException;
-import javassist.NotFoundException;
 
 public class HomeScreen extends AppCompatActivity {
 
@@ -92,46 +85,6 @@ public class HomeScreen extends AppCompatActivity {
         my.add("https://i.pinimg.com/736x/2c/d6/85/2cd6857b8ae17c36e9e6dab2c11bf02c--earth-hd-florida-georgia.jpg");
 
 
-        Map<String, Class<?>> props = new HashMap<String, Class<?>>();
-        props.put("foo", Integer.class);
-        props.put("bar", String.class);
-
-        try {
-
-            Class<?> clazz = PojoGenerator.generate(TAG, props);
-
-            Object obj = clazz.newInstance();
-
-            System.out.println("Clazz: " + clazz);
-            System.out.println("Object: " + obj);
-            System.out.println("Serializable? " + (obj instanceof Serializable));
-
-            for (final Method method : clazz.getDeclaredMethods()) {
-                System.out.println(method);
-            }
-
-            // set property "bar"
-
-            clazz.getMethod("setBar", String.class).invoke(obj, "Hello World!");
-
-
-            // get property "bar"
-            String result = (String) clazz.getMethod("getBar").invoke(obj);
-            System.out.println("Value for bar: " + result);
-
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        } catch (CannotCompileException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        }
 
         //getComponents();
 
@@ -552,7 +505,6 @@ public class HomeScreen extends AppCompatActivity {
         private int value1 = 1;
         private String value2 = "abc";
         private transient int value3 = 3;
-
         BagOfPrimitives() {
             // no-args constructor
         }
