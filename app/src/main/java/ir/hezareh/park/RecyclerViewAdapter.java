@@ -70,7 +70,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (holder instanceof FooterViewHolder) {
             FooterViewHolder footerHolder = (FooterViewHolder) holder;
             footerHolder.footerText.setText("ادامه مطلب ...");
-            footerHolder.footerText.setTypeface(Utils.font_set("iransans", activity));
+            footerHolder.footerText.setTypeface(new Utils(activity).font_set("iransans"));
             footerHolder.footerText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -88,7 +88,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             anim.setDuration(500);
             holder.itemView.startAnimation(anim);
 
-            int height = Utils.getDisplayMetrics(activity).widthPixels;
+            int height = new Utils(activity).getDisplayMetrics().widthPixels;
 
             LinearLayout.LayoutParams ItemLayout = new LinearLayout.LayoutParams(5 * height / 10, LinearLayout.LayoutParams.WRAP_CONTENT);
             itemViewHolder.item.setLayoutParams(ItemLayout);
@@ -100,7 +100,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             itemViewHolder.title.setText("تیتر خبر");
             itemViewHolder.title.setBackgroundColor(Color.YELLOW);
 
-            Picasso.with(this.activity).load(HomeScreen.URL_encode("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQeMlm9p4uVeGfSw-_JrUviRXqoHFPwIUhY6PUkTAiN1KtSJIPixg"))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
+            Picasso.with(this.activity).load(Utils.URL_encode("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQeMlm9p4uVeGfSw-_JrUviRXqoHFPwIUhY6PUkTAiN1KtSJIPixg"))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
                     .fit()
                     //.resize(5*height/10,5*height/10)
                     //.transform(new CropCircleTransformation())

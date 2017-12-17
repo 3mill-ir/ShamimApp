@@ -1,8 +1,5 @@
 package ir.hezareh.park;
 
-import android.content.Context;
-import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -12,35 +9,47 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javassist.CannotCompileException;
+import javassist.NotFoundException;
 
 public class HomeScreen extends AppCompatActivity {
-    public static final int FIRST_LEVEL_COUNT = 6;
-    public static final int SECOND_LEVEL_COUNT = 4;
-    public static final int THIRD_LEVEL_COUNT = 20;
+
+    public static final String TAG = HomeScreen.class
+            .getSimpleName();
     int width;
-    DrawerLayout drawer;
-    ExpandableListAdapter listAdapter;
-    ExpandableListView expListView;
+    ListView firstLevelListView;
+    ListView secondLevelListView;
+    ListView thirdLevelListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
     HashMap<String, List<String>> listDataChildChild;
-    private List<String> _listDataHeader; // header titles
-    // child data in format of header title, child title
-    private HashMap<String, List<String>> _listDataChild;
-
-    public static String URL_encode(String URL) {
-        final String ALLOWED_URI_CHARS = "@#&=*+-_.,:!?()/~'%";
-        return Uri.encode(URL, ALLOWED_URI_CHARS);
-    }
+    ArrayList<String> my;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -65,15 +74,97 @@ public class HomeScreen extends AppCompatActivity {
         setContentView(R.layout.activity_home_screen);
 
 
-        width = Utils.getDisplayMetrics(getApplicationContext()).widthPixels;
+        my = new ArrayList<>();
+        my.add("https://i.ytimg.com/vi/IwxBAwobISo/maxresdefault.jpg");
+        my.add("https://ak9.picdn.net/shutterstock/videos/12871889/thumb/1.jpg");
+        my.add("https://i.pinimg.com/736x/2c/d6/85/2cd6857b8ae17c36e9e6dab2c11bf02c--earth-hd-florida-georgia.jpg");
+        my.add("https://i.ytimg.com/vi/IwxBAwobISo/maxresdefault.jpg");
+        my.add("https://ak9.picdn.net/shutterstock/videos/12871889/thumb/1.jpg");
+        my.add("https://i.pinimg.com/736x/2c/d6/85/2cd6857b8ae17c36e9e6dab2c11bf02c--earth-hd-florida-georgia.jpg");
+        my.add("https://i.ytimg.com/vi/IwxBAwobISo/maxresdefault.jpg");
+        my.add("https://ak9.picdn.net/shutterstock/videos/12871889/thumb/1.jpg");
+        my.add("https://i.pinimg.com/736x/2c/d6/85/2cd6857b8ae17c36e9e6dab2c11bf02c--earth-hd-florida-georgia.jpg");
+        my.add("https://i.ytimg.com/vi/IwxBAwobISo/maxresdefault.jpg");
+        my.add("https://ak9.picdn.net/shutterstock/videos/12871889/thumb/1.jpg");
+        my.add("https://i.pinimg.com/736x/2c/d6/85/2cd6857b8ae17c36e9e6dab2c11bf02c--earth-hd-florida-georgia.jpg");
+        my.add("https://i.ytimg.com/vi/IwxBAwobISo/maxresdefault.jpg");
+        my.add("https://ak9.picdn.net/shutterstock/videos/12871889/thumb/1.jpg");
+        my.add("https://i.pinimg.com/736x/2c/d6/85/2cd6857b8ae17c36e9e6dab2c11bf02c--earth-hd-florida-georgia.jpg");
+
+
+        Map<String, Class<?>> props = new HashMap<String, Class<?>>();
+        props.put("foo", Integer.class);
+        props.put("bar", String.class);
+
+        try {
+
+            Class<?> clazz = PojoGenerator.generate(TAG, props);
+
+            Object obj = clazz.newInstance();
+
+            System.out.println("Clazz: " + clazz);
+            System.out.println("Object: " + obj);
+            System.out.println("Serializable? " + (obj instanceof Serializable));
+
+            for (final Method method : clazz.getDeclaredMethods()) {
+                System.out.println(method);
+            }
+
+            // set property "bar"
+
+            clazz.getMethod("setBar", String.class).invoke(obj, "Hello World!");
+
+
+            // get property "bar"
+            String result = (String) clazz.getMethod("getBar").invoke(obj);
+            System.out.println("Value for bar: " + result);
+
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        } catch (CannotCompileException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
+
+        //getComponents();
+
+        // Serialization
+        BagOfPrimitives obj1 = new BagOfPrimitives();
+        Gson gson = new Gson();
+        String json = gson.toJson(obj1);
+
+        Log.e("json model", json);
+
+        String[] anotherStr = gson.fromJson("[\"abc\"]", String[].class);
+        Integer one = gson.fromJson("1", Integer.class);
+        String[] anotherStr1 = gson.fromJson("[\"abc\",\"aaa\"]", String[].class);
+
+        Log.e("anotherStr1", anotherStr1[1]);
+        Log.e("One", one + "");
+        //Collection<Integer> ints = .immutableList(1,2,3,4,5);
+
+
+        listDataHeader = new ArrayList<String>();
+        listDataChild = new HashMap<String, List<String>>();
+        listDataChildChild = new HashMap<String, List<String>>();
+
+
+        width = new Utils(getApplicationContext()).getDisplayMetrics().widthPixels;
 
         LinearLayout Root_Layout = (LinearLayout) findViewById(R.id.main_layout);
 
 
         ArrayList<String> my = new ArrayList<>();
-        my.add(URL_encode("https://i.ytimg.com/vi/IwxBAwobISo/maxresdefault.jpg"));
-        my.add(URL_encode("https://ak9.picdn.net/shutterstock/videos/12871889/thumb/1.jpg"));
-        my.add(URL_encode("https://i.pinimg.com/736x/2c/d6/85/2cd6857b8ae17c36e9e6dab2c11bf02c--earth-hd-florida-georgia.jpg"));
+        my.add(Utils.URL_encode("https://i.ytimg.com/vi/IwxBAwobISo/maxresdefault.jpg"));
+        my.add(Utils.URL_encode("https://ak9.picdn.net/shutterstock/videos/12871889/thumb/1.jpg"));
+        my.add(Utils.URL_encode("https://i.pinimg.com/736x/2c/d6/85/2cd6857b8ae17c36e9e6dab2c11bf02c--earth-hd-florida-georgia.jpg"));
 
 
         ArrayList<String> text = new ArrayList<>();
@@ -83,12 +174,11 @@ public class HomeScreen extends AppCompatActivity {
 
 
         ArrayList<String> Orders = new ArrayList<>();
-
         Orders.add("NewsRecycler");
-        Orders.add("poll");
         Orders.add("Slider");
         Orders.add("Gallery");
         Orders.add("PieChart");
+        Orders.add("poll");
         Orders.add("Button_Group");
         Orders.add("ROW");
 
@@ -124,6 +214,8 @@ public class HomeScreen extends AppCompatActivity {
                     break;
             }
         }
+        ((TextView) findViewById(R.id.header_text)).setTypeface(new Utils(getApplicationContext()).font_set("BYekan"));
+
         findViewById(R.id.drawer_icon).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,250 +223,340 @@ public class HomeScreen extends AppCompatActivity {
             }
         });
 
-        prepareListData();
 
-        expListView = (ExpandableListView) findViewById(R.id.expanded_menu);
-        expListView.setAdapter(new ParentLevel(this, listDataHeader, listDataChild));
+        firstLevelListView = (ListView) findViewById(R.id.first_level_menu);
+        secondLevelListView = (ListView) findViewById(R.id.second_level_menu);
+        thirdLevelListView = (ListView) findViewById(R.id.third_level_menu);
 
-        // get the listview
-        expListView = (ExpandableListView) findViewById(R.id.expanded_menu);
+        LayoutInflater myinflater = getLayoutInflater();
 
-        // preparing list data
-        prepareListData();
+        ViewGroup secondLevelListViewHeader = (ViewGroup) myinflater.inflate(R.layout.menulistheader, secondLevelListView, false);
+        secondLevelListView.addHeaderView(secondLevelListViewHeader, null, false);
 
-        listAdapter = new MenuExpandableListAdapter(this, listDataHeader, listDataChild);
 
-        // setting list adapter
-        expListView.setAdapter(listAdapter);
+        ViewGroup thirdLevelListViewHeader = (ViewGroup) myinflater.inflate(R.layout.menulistheader, thirdLevelListView, false);
+        thirdLevelListView.addHeaderView(thirdLevelListViewHeader, null, false);
+
+
+        secondLevelListViewHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                firstLevelListView.setVisibility(View.VISIBLE);
+                secondLevelListView.setVisibility(View.GONE);
+            }
+        });
+        thirdLevelListViewHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                secondLevelListView.setVisibility(View.VISIBLE);
+                thirdLevelListView.setVisibility(View.GONE);
+            }
+        });
+
+
+        firstLevelListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int position1, long id) {
+
+                firstLevelListView.setVisibility(View.GONE);
+                secondLevelListView.setVisibility(View.VISIBLE);
+
+                ListAdapter listAdapter1 = new ListAdapter(getApplicationContext(), listDataChild.get(listDataHeader.get(position1)));
+                secondLevelListView.setAdapter(listAdapter1);
+
+                secondLevelListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        secondLevelListView.setVisibility(View.GONE);
+                        thirdLevelListView.setVisibility(View.VISIBLE);
+
+                        Log.e("inner position clicked", position - 1 + "");//because of header it should be minus 1
+                        Log.e("outer position clicked", position1 + "");
+                        Log.e("third level item", listDataChildChild.get(listDataChild.get(listDataHeader.get(position1)).get(position - 1)) + "");
+
+                        ListAdapter listAdapter2 = new ListAdapter(getApplicationContext(), listDataChildChild.get(listDataChild.get(listDataHeader.get(position1)).get(position - 1)));
+                        thirdLevelListView.setAdapter(listAdapter2);
+                    }
+                });
+
+            }
+        });
+
+
+        // Instantiate the RequestQueue.
+        /*RequestQueue queue = Volley.newRequestQueue(this);
+        String url ="http://3mill.ir/css/menu.txt";
+
+         Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        try {
+                            String t=new String(response.getBytes("ISO-8859-1"));
+                            Log.d(TAG, t);
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+               Log.e(TAG,"That didn't work!");
+            }
+        });
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);*/
+        this.makeJsonObjectRequest();
 
 
     }
 
-    private void prepareListData() {
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
-        listDataChildChild = new HashMap<String, List<String>>();
-        // Adding child data
-        listDataHeader.add("250 فیلم برتر");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
+    public void makeJsonObjectRequest() {
 
-        // Adding child data
-        List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
-        top250.add("پدر خوانده");
-        top250.add("پدر خوانده قسمت 2");
-        top250.add("Pulp Fiction");
-        top250.add("The Good, the Bad and the Ugly");
-        top250.add("The Dark Knight");
-        top250.add("12 Angry Men");
-
-        List<String> nowShowing = new ArrayList<String>();
-        nowShowing.add("The Conjuring");
-        nowShowing.add("Despicable Me 2");
-        nowShowing.add("Turbo");
-        nowShowing.add("Grown Ups 2");
-        nowShowing.add("Red 2");
-        nowShowing.add("The Wolverine");
-
-        List<String> comingSoon = new ArrayList<String>();
-        comingSoon.add("2 Guns");
-        comingSoon.add("The Smurfs 2");
-        comingSoon.add("The Spectacular Now");
-        comingSoon.add("The Canyons");
-        comingSoon.add("Europa Report");
-
-
-        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
-        listDataChild.put(listDataHeader.get(1), nowShowing);
-        listDataChild.put(listDataHeader.get(2), comingSoon);
-
-        List<String> Shawshank = new ArrayList<String>();
-        Shawshank.add("Shawshank1");
-        Shawshank.add("Shawshank2");
-        Shawshank.add("Shawshank3");
-
-        listDataChildChild.put(top250.get(0), Shawshank);
-
-
-    }
-
-    public class ParentLevel extends BaseExpandableListAdapter {
-
-        private Context _context;
-        private List<String> _listDataHeader; // header titles
-        // child data in format of header title, child title
-        private HashMap<String, List<String>> _listDataChild;
-
-        public ParentLevel(Context context, List<String> listDataHeader,
-                           HashMap<String, List<String>> listChildData) {
-
-            this._context = context;
-            this._listDataHeader = listDataHeader;
-            this._listDataChild = listChildData;
-        }
-
-        @Override
-        public Object getChild(int groupPosition, int childPosititon) {
-            return this._listDataChild.get(this._listDataHeader.get(groupPosition)).get(childPosititon);
-        }
-
-        @Override
-        public long getChildId(int groupPosition, int childPosition) {
-            return childPosition;
-        }
-
-        @Override
-        public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-            SecondLevelExpandableListView secondLevelELV = new SecondLevelExpandableListView(getApplicationContext());
-            secondLevelELV.setAdapter(new SecondLevelAdapter(_context));
-            secondLevelELV.setGroupIndicator(getResources().getDrawable(R.drawable.ic_access_time_black_24dp));
-            return secondLevelELV;
-        }
-
-        @Override
-        public int getChildrenCount(int groupPosition) {
-            return this._listDataChild.get(this._listDataHeader.get(groupPosition)).size();
-        }
-
-        @Override
-        public Object getGroup(int groupPosition) {
-            return this._listDataHeader.get(groupPosition);
-        }
-
-        @Override
-        public int getGroupCount() {
-            return this._listDataHeader.size();
-        }
-
-        @Override
-        public long getGroupId(int groupPosition) {
-            return groupPosition;
-        }
-
-        @Override
-        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-            String headerTitle = (String) getGroup(groupPosition);
-            if (convertView == null) {
-                LayoutInflater inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.menu_list_item, null);
-                TextView text = (TextView) convertView.findViewById(R.id.lblListItem);
-                text.setText(headerTitle);
-            }
-            return convertView;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return true;
-        }
-
-        @Override
-        public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return true;
-        }
-
-
-        public class SecondLevelExpandableListView extends ExpandableListView {
-
-            public SecondLevelExpandableListView(Context context) {
-                super(context);
-            }
-
-            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-                //999999 is a size in pixels. ExpandableListView requires a maximum height in order to do measurement calculations.
-                heightMeasureSpec = MeasureSpec.makeMeasureSpec(999999, MeasureSpec.AT_MOST);
-                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-            }
-        }
-
-        public class SecondLevelAdapter extends BaseExpandableListAdapter {
-
-            private Context _context;
-            private List<String> _listDataHeader; // header titles
-            private HashMap<String, List<String>> _listDataChildChild;
-            private HashMap<String, List<String>> _listDataChild;
-
-            public SecondLevelAdapter(Context context) {
-                this._context = context;
-                this._listDataHeader = listDataHeader;
-                this._listDataChild = listDataChild;
-                this._listDataChildChild = listDataChildChild;
-            }
+        final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                "http://arefnaghshin.ir/menu.txt", null, new Response.Listener<JSONObject>() {
 
             @Override
-            public Object getGroup(int groupPosition) {
-                //Log.e("TAG",String.valueOf(_listDataChildChild.get("The Shawshank Redemption").size()));
-                //Log.e("TAG2",String.valueOf(_listDataChildChild.get(_listDataChild.get(_listDataHeader.get(groupPosition)).get(0))));
-                //Log.e("TAG2",String.valueOf(_listDataChild.get(_listDataHeader.get(groupPosition)).get(0)));
-                return this._listDataChild.get(this._listDataHeader.get(groupPosition)); //this._listDataHeader.get(groupPosition);
-            }
+            public void onResponse(JSONObject response) {
+                //String utf8string=new String(response,"UTF-8");
+                try {
+                    String jsonResponse = new String(response.toString().getBytes("ISO-8859-1"));
+                    Log.d(TAG, jsonResponse);
 
-            @Override
-            public int getGroupCount() {
-                Log.e("TAG33", String.valueOf(this._listDataChild.get("Now Showing").size()));
-                return this._listDataChild.get("Now Showing").size();
-            }
+                    //parsing 3 level listview and check for null items
+                    JSONArray jsonArray = response.getJSONArray("Root");
 
-            @Override
-            public long getGroupId(int groupPosition) {
-                return groupPosition;
-            }
+                    for (int i = 0; i < jsonArray.length(); i++) {
 
-            @Override
-            public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-                String headerTitle = (String) getGroup(groupPosition);
-                if (convertView == null) {
-                    LayoutInflater inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    convertView = inflater.inflate(R.layout.menu_list_item, null);
-                    TextView lblListHeader = (TextView) convertView
-                            .findViewById(R.id.lblListItem);
-                    lblListHeader.setTypeface(null, Typeface.BOLD);
-                    lblListHeader.setText(headerTitle);
+                        List<String> submenu = new ArrayList<String>();
+
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                        String Menu1 = jsonObject.getString("Menu1");
+
+                        listDataHeader.add(new String(Menu1.getBytes("ISO-8859-1")));
+
+                        Log.i("FirstLevelMenu", new String(Menu1.getBytes("ISO-8859-1")));
+
+                        if (!jsonObject.isNull("List")) {
+
+                            JSONArray list = jsonObject.getJSONArray("List");
+
+                            for (int j = 0; j < list.length(); j++) {
+
+                                List<String> submenu2 = new ArrayList<String>();
+
+                                JSONObject jsonObject1 = list.getJSONObject(j);
+
+                                String Menu2 = jsonObject1.getString("Menu2");
+
+                                Log.i("SecondMenu", new String(Menu2.getBytes("ISO-8859-1")));
+
+                                if (!jsonObject1.isNull("List")) {
+
+                                    JSONArray list2 = jsonObject1.getJSONArray("List");
+
+                                    for (int k = 0; k < list2.length(); k++) {
+
+                                        JSONObject jsonObject2 = list2.getJSONObject(k);
+
+                                        String Menu3 = jsonObject2.getString("Menu3");
+
+                                        Log.i("ThirdLevelMenu", new String(Menu3.getBytes("ISO-8859-1")));
+
+                                        submenu2.add(new String(Menu3.getBytes("ISO-8859-1")));
+
+                                    }
+                                    //listDataChildChild.put(listDataChild.get(listDataHeader.get(i)).get(j),submenu2);
+                                }
+                                submenu.add(new String(Menu2.getBytes("ISO-8859-1")));
+
+                                listDataChild.put(listDataHeader.get(i), submenu);
+
+                                //Log.e("ThirdLevelMenu", (listDataChild.get(listDataHeader.get(i)).get(j)));
+
+                                listDataChildChild.put(listDataChild.get(listDataHeader.get(i)).get(j), submenu2);
+                            }
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(),
+                            "Error: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
                 }
-                return convertView;
+                final ListAdapter listAdapter = new ListAdapter(getApplicationContext(), listDataHeader);
+                firstLevelListView.setAdapter(listAdapter);
+                //hidepDialog();
+                //NewsCategory.myRecyclerAdapter.notifyDataSetChanged();
+                //NewsCategory.myRecyclerAdapter.notifyItemInserted(0);
+
+                //swipeRefreshLayout.setRefreshing(false);
             }
 
+        }, new Response.ErrorListener() {
+
             @Override
-            public Object getChild(int groupPosition, int childPosition) {
-                return this._listDataChild.get(this._listDataChildChild.get(groupPosition))
-                        .get(childPosition);
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("TAG", "Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                // hide the progress dialog
+                //hidepDialog();
+                //swipeRefreshLayout.setRefreshing(false);
             }
+        });
+        jsonObjReq.setShouldCache(false);
+
+        // Adding request to request queue
+        App.getInstance().addToRequestQueue(jsonObjReq);
+    }
+
+    public void getComponents() {
+
+        final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                "http://arefnaghshin.ir/json.txt", null, new Response.Listener<JSONObject>() {
 
             @Override
-            public long getChildId(int groupPosition, int childPosition) {
-                return childPosition;
-            }
+            public void onResponse(JSONObject response) {
+                //String utf8string=new String(response,"UTF-8");
+                try {
+                    String jsonResponse = new String(response.toString().getBytes("ISO-8859-1"));
+                    Log.d(TAG, jsonResponse);
 
-            @Override
-            public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-                final String childText = (String) getChild(groupPosition, childPosition);
-                if (convertView == null) {
-                    LayoutInflater inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    convertView = inflater.inflate(R.layout.menu_list_item, null);
+                    //parsing 3 level listview and check for null items
+                    JSONArray jsonArray = response.getJSONArray("Root");
 
-                    TextView txtListChild = (TextView) convertView
-                            .findViewById(R.id.lblListItem);
+                    for (int i = 0; i < jsonArray.length(); i++) {
 
-                    txtListChild.setText(childText);
+                        List<String> componentNameList = new ArrayList<String>();
+
+                        JSONObject component = jsonArray.getJSONObject(i);
+
+                        String componentName = component.getString("Component");
+
+                        componentNameList.add(new String(componentName.getBytes("ISO-8859-1")));
+
+                        Log.i("Component name", new String(componentName.getBytes("ISO-8859-1")));
+
+
+                        for (String item : componentNameList) {
+                            if (item.equals("Slider")) {
+                                JSONArray sliderList = component.getJSONArray("slide");
+                                for (int j = 0; j < sliderList.length(); j++) {
+                                    Log.i("Slider List", sliderList.get(i).toString());
+                                }
+                            }
+
+                            if (item.equals("RowButton")) {
+                                JSONArray sliderList = component.getJSONArray("Button");
+                                for (int j = 0; j < sliderList.length(); j++) {
+                                    JSONObject jsonObject = sliderList.getJSONObject(j);
+                                    String ButtonText = jsonObject.getString("text");
+                                    String ButtonImage = jsonObject.getString("Image");
+                                    //Log.i("Button List:",new String(BtoString().getBytes("ISO-8859-1")));
+                                }
+                            }
+                            /*if(item.equals("ButtonGalleryRow"))
+                            {
+                                JSONArray sliderList=component.getJSONArray("Button");
+                                for (int j=0;j<sliderList.length();j++)
+                                {
+                                    Log.i("Button List:",sliderList.get(i).toString());
+                                }
+                                JSONArray sliderList=component.getJSONArray("Button");
+                                for (int j=0;j<sliderList.length();j++)
+                                {
+                                    Log.i("Button List:",sliderList.get(i).toString());
+                                }
+                            }*/
+                        }
+
+
+
+                        /*if (!component.isNull("slide")) {
+
+                            JSONArray list = component.getJSONArray("slide");
+
+                            for (int j = 0; j < list.length(); j++) {
+
+                                List<String> submenu2 = new ArrayList<String>();
+
+                                JSONObject jsonObject1 = list.getJSONObject(j);
+
+                                String Menu2 = jsonObject1.getString("Menu2");
+
+                                Log.i("SecondMenu", new String(Menu2.getBytes("ISO-8859-1")));
+
+                                if (!jsonObject1.isNull("List")) {
+
+                                    JSONArray list2 = jsonObject1.getJSONArray("List");
+
+                                    for (int k = 0; k < list2.length(); k++) {
+
+                                        JSONObject jsonObject2 = list2.getJSONObject(k);
+
+                                        String Menu3 = jsonObject2.getString("Menu3");
+
+                                        Log.i("ThirdLevelMenu", new String(Menu3.getBytes("ISO-8859-1")));
+
+                                        submenu2.add(new String(Menu3.getBytes("ISO-8859-1")));
+
+                                    }
+                                    //listDataChildChild.put(listDataChild.get(listDataHeader.get(i)).get(j),submenu2);
+                                }
+                                submenu.add(new String(Menu2.getBytes("ISO-8859-1")));
+ }
+                        }*/
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(),
+                            "Error: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
                 }
-                return convertView;
+                final ListAdapter listAdapter = new ListAdapter(getApplicationContext(), listDataHeader);
+                firstLevelListView.setAdapter(listAdapter);
+                //hidepDialog();
+                //NewsCategory.myRecyclerAdapter.notifyDataSetChanged();
+                //NewsCategory.myRecyclerAdapter.notifyItemInserted(0);
+
+                //swipeRefreshLayout.setRefreshing(false);
             }
 
-            @Override
-            public int getChildrenCount(int groupPosition) {
-                return this._listDataChildChild.get("The Shawshank Redemption").size();
-            }
+        }, new Response.ErrorListener() {
 
             @Override
-            public boolean hasStableIds() {
-                return true;
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("TAG", "Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                // hide the progress dialog
+                //hidepDialog();
+                //swipeRefreshLayout.setRefreshing(false);
             }
+        });
+        jsonObjReq.setShouldCache(false);
 
-            @Override
-            public boolean isChildSelectable(int groupPosition, int childPosition) {
-                return true;
-            }
+        // Adding request to request queue
+        App.getInstance().addToRequestQueue(jsonObjReq);
+    }
+
+    class BagOfPrimitives {
+        private int value1 = 1;
+        private String value2 = "abc";
+        private transient int value3 = 3;
+
+        BagOfPrimitives() {
+            // no-args constructor
         }
     }
+
+
 }

@@ -30,17 +30,44 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <!-- The navigation drawer -->
-                <ExpandableListView
-                    android:id="@+id/expanded_menu"
+                <ListView
+                    android:id="@+id/first_level_menu"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="start"
                     android:background="#e4e5ea"
                     android:choiceMode="singleChoice"
-                    android:divider="@null"
-                    android:dividerHeight="1dp"
+                    android:divider="@drawable/list_divider_item"
+                    android:dividerHeight="2dp"
                     android:footerDividersEnabled="false"
-                    android:headerDividersEnabled="true" />
+                    android:headerDividersEnabled="false" />
+
+                <ListView
+                    android:id="@+id/second_level_menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start"
+                    android:background="#e4e5ea"
+                    android:choiceMode="singleChoice"
+                    android:divider="@drawable/list_divider_item"
+                    android:dividerHeight="2dp"
+                    android:footerDividersEnabled="false"
+                    android:headerDividersEnabled="false"
+                    android:visibility="gone" />
+
+                <ListView
+                    android:id="@+id/third_level_menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start"
+                    android:background="#e4e5ea"
+                    android:choiceMode="singleChoice"
+                    android:divider="@drawable/list_divider_item"
+                    android:dividerHeight="2dp"
+                    android:footerDividersEnabled="false"
+                    android:headerDividersEnabled="false"
+                    android:visibility="gone" />
+
             </RelativeLayout>
 
         </LinearLayout>

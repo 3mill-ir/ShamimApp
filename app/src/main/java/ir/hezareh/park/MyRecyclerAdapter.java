@@ -24,6 +24,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
@@ -39,10 +40,13 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
     private Context mContext;
     private ArrayList<HashMap<String, String>> RequestsList;
     private int lastPosition = -1;
+    private List<Root> news;
 
-    public MyRecyclerAdapter(Context context, ArrayList<HashMap<String, String>> data) {
+
+    public MyRecyclerAdapter(Context context, ArrayList<HashMap<String, String>> data, List<Root> _news) {
         //this.RequestsList = data;
         this.mContext=context;
+        this.news = _news;
     }
 
     @Override
@@ -64,7 +68,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         anim.setDuration(500);
         holder.itemView.startAnimation(anim);
 
-        int height = Utils.getDisplayMetrics(mContext).widthPixels;
+        int height = new Utils(mContext).getDisplayMetrics().widthPixels;
 
         LinearLayout.LayoutParams ItemLayout = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         holder.item.setLayoutParams(ItemLayout);
@@ -74,11 +78,11 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         //holder.thumbnail.setLayoutParams(ThumbnailLayout);
 
 
-        holder.title.setText("تیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبرتیتر خبر");
+        holder.title.setText(this.news.get(position).getName());
         //holder.title.setBackgroundColor(Color.YELLOW);
         final AtomicBoolean playAnimation = new AtomicBoolean(true);
 
-        Picasso.with(this.mContext).load(HomeScreen.URL_encode("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQeMlm9p4uVeGfSw-_JrUviRXqoHFPwIUhY6PUkTAiN1KtSJIPixg"))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
+        Picasso.with(this.mContext).load(Utils.URL_encode(news.get(position).getImage()))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
                 .fit()
                 //.resize(5*height/10,5*height/10)
                 //.transform(new CropCircleTransformation())
@@ -119,7 +123,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
 
     @Override
     public int getItemCount() {
-        return 10;
+        return news.size();
     }
 
     @Override

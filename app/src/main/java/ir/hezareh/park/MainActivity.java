@@ -12,8 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ListView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +21,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     DrawerLayout drawer;
-    ExpandableListAdapter listAdapter;
-    ExpandableListView expListView;
+    ListAdapter listAdapter;
+    ListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         // preparing list data
         //prepareListData();
 
-        listAdapter = new MenuExpandableListAdapter(this, listDataHeader, listDataChild);
+        listAdapter = new ListAdapter(this, listDataHeader);
 
         // setting list adapter
         expListView.setAdapter(listAdapter);

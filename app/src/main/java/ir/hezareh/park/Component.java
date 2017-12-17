@@ -24,6 +24,8 @@ import com.daimajia.slider.library.Indicators.PagerIndicator;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
+import com.mzelzoghbi.zgallery.ZGrid;
+import com.mzelzoghbi.zgallery.entities.ZColor;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -123,7 +125,7 @@ public class Component {
         questionText.setHorizontallyScrolling(true);
         questionText.setSelected(true);*/
 
-        questionText.setTypeface(Utils.font_set("irsans", activity));
+        questionText.setTypeface(new Utils(activity).font_set("irsans"));
         Paint textPaint = questionText.getPaint();
         String text = questionText.getText().toString();//get text
         int textWidth = Math.round(textPaint.measureText(text));//measure the text size
@@ -284,7 +286,7 @@ public class Component {
         return GalleryButtonRowLayout;
     }
 
-    public LinearLayout ButtonsRow(int width, ArrayList<String> ButtonsText, ArrayList<String> ButtonsURLs) {
+    public LinearLayout ButtonsRow(int width, ArrayList<String> ButtonsText, final ArrayList<String> ButtonsURLs) {
         LinearLayout ButtonsRow = new LinearLayout(activity);
         LinearLayout.LayoutParams ButtonRowLayout = new LinearLayout.LayoutParams(width, width / 3);
         ButtonsRow.setLayoutParams(ButtonRowLayout);
@@ -333,6 +335,7 @@ public class Component {
 
         View rightChild = activity.getLayoutInflater().inflate(R.layout.item_button_row, null);
         rightChild.setLayoutParams(ButtonParams);
+        rightChild.setId(View.generateViewId());
         ((TextView) rightChild.findViewById(R.id.TextButton)).setText(ButtonsText.get(2));
         //rightChild.findViewById(R.id.TextButton).setBackgroundResource(R.drawable.back2);
         Picasso.with(activity).load(ButtonsURLs.get(2)).fit()
@@ -342,10 +345,25 @@ public class Component {
         RightButtonLayout.setGravity(Gravity.CENTER);
         RightButtonLayout.addView(rightChild);
 
+        rightChild.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ZGrid.with(activity, ButtonsURLs)
+                        .setToolbarColorResId(R.color.colorPrimary) // toolbar color
+                        .setTitle("گالری تصاویر") // toolbar title
+                        .setToolbarTitleColor(ZColor.WHITE) // toolbar title color
+                        .setSpanCount(3) // colums count
+                        .setGridImgPlaceHolder(R.color.colorPrimary) // color placeholder for the grid image until it loads
+                        .show();
+            }
+        });
+
 
         ButtonsRow.addView(LeftButtonLayout);
         ButtonsRow.addView(MiddleButtonLayout);
         ButtonsRow.addView(RightButtonLayout);
+
+
         return ButtonsRow;
     }
 

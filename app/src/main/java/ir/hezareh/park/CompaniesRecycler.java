@@ -59,7 +59,7 @@ public class CompaniesRecycler extends RecyclerView.Adapter<CompaniesRecycler.My
         anim.setDuration(500);
         holder.itemView.startAnimation(anim);
 
-        int height = Utils.getDisplayMetrics(mContext).widthPixels;
+        int height = new Utils(mContext).getDisplayMetrics().widthPixels;
 
         //LinearLayout.LayoutParams ItemLayout = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         //holder.item.setLayoutParams(ItemLayout);
@@ -73,7 +73,7 @@ public class CompaniesRecycler extends RecyclerView.Adapter<CompaniesRecycler.My
         //holder.title.setBackgroundColor(Color.YELLOW);
         final AtomicBoolean playAnimation = new AtomicBoolean(true);
 
-        Picasso.with(this.mContext).load(HomeScreen.URL_encode("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQeMlm9p4uVeGfSw-_JrUviRXqoHFPwIUhY6PUkTAiN1KtSJIPixg"))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
+        Picasso.with(this.mContext).load(Utils.URL_encode("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQeMlm9p4uVeGfSw-_JrUviRXqoHFPwIUhY6PUkTAiN1KtSJIPixg"))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
                 .fit()
                 //.resize(5*height/10,5*height/10)
                 //.transform(new CropCircleTransformation())
