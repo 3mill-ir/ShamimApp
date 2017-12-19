@@ -67,8 +67,8 @@ public class Companies extends AppCompatActivity {
         list.add("شرکت های دانش بنیان");
         list.add("واحد های فناور");
 
-        ListAdapter listAdapter1 = new ListAdapter(getApplicationContext(), list);
-        CompanyListView.setAdapter(listAdapter1);
+        // listAdapter1 = new ListAdapter(getApplicationContext(), list);
+        //CompanyListView.setAdapter(listAdapter1);
 
         recyclerView1 = (RecyclerView) findViewById(R.id.fanavar_recycler);
         myRecyclerAdapter = new CompaniesRecycler(getApplicationContext(), null);

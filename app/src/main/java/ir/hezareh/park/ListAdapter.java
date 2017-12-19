@@ -14,9 +14,9 @@ import java.util.List;
 public class ListAdapter extends BaseAdapter {
 
     private Context _context;
-    private List<String> _listData; // header titles
+    private List<sidemenu> _listData; // header titles
 
-    public ListAdapter(Context context, List<String> listData) {
+    public ListAdapter(Context context, List<sidemenu> listData) {
         this._context = context;
         this._listData = listData;
     }
@@ -33,7 +33,7 @@ public class ListAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return _listData.get(position).getID();
     }
 
     @Override
@@ -53,7 +53,8 @@ public class ListAdapter extends BaseAdapter {
         TextView lblListHeader = (TextView) convertView
                 .findViewById(R.id.lblListItem);
         lblListHeader.setTypeface(new Utils(_context).font_set("iransans"), Typeface.NORMAL);
-        lblListHeader.setText(_listData.get(position));
+        lblListHeader.setText(_listData.get(position).getName());
+
 
         return convertView;
     }

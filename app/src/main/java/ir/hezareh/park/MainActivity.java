@@ -67,10 +67,10 @@ public class MainActivity extends AppCompatActivity {
         // preparing list data
         //prepareListData();
 
-        listAdapter = new ListAdapter(this, listDataHeader);
+        //listAdapter = new ListAdapter(this, listDataHeader);
 
         // setting list adapter
-        expListView.setAdapter(listAdapter);
+        //expListView.setAdapter(listAdapter);
 
 
     }

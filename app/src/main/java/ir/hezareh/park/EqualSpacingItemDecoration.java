@@ -6,12 +6,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 public class EqualSpacingItemDecoration extends RecyclerView.ItemDecoration {
-    private final int spacing;
-    private int displayMode;
-
     public static final int HORIZONTAL = 0;
     public static final int VERTICAL = 1;
     public static final int GRID = 2;
+    private final int spacing;
+    private int displayMode;
 
     public EqualSpacingItemDecoration(int spacing) {
         this(spacing, -1);

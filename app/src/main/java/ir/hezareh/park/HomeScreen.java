@@ -19,6 +19,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 
@@ -43,6 +44,12 @@ public class HomeScreen extends AppCompatActivity {
     HashMap<String, List<String>> listDataChild;
     HashMap<String, List<String>> listDataChildChild;
     ArrayList<String> my;
+    ArrayList<sidemenu> list = new ArrayList<>();
+    ArrayList<Integer> global;
+    int pos = 0;
+
+    //ListAdapter listAdapter12;
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -68,6 +75,8 @@ public class HomeScreen extends AppCompatActivity {
 
 
         my = new ArrayList<>();
+        global = new ArrayList<>();
+
         my.add("https://i.ytimg.com/vi/IwxBAwobISo/maxresdefault.jpg");
         my.add("https://ak9.picdn.net/shutterstock/videos/12871889/thumb/1.jpg");
         my.add("https://i.pinimg.com/736x/2c/d6/85/2cd6857b8ae17c36e9e6dab2c11bf02c--earth-hd-florida-georgia.jpg");
@@ -90,7 +99,7 @@ public class HomeScreen extends AppCompatActivity {
 
         // Serialization
         BagOfPrimitives obj1 = new BagOfPrimitives();
-        Gson gson = new Gson();
+        final Gson gson = new Gson();
         String json = gson.toJson(obj1);
 
         Log.e("json model", json);
@@ -187,53 +196,50 @@ public class HomeScreen extends AppCompatActivity {
         secondLevelListView.addHeaderView(secondLevelListViewHeader, null, false);
 
 
-        ViewGroup thirdLevelListViewHeader = (ViewGroup) myinflater.inflate(R.layout.menulistheader, thirdLevelListView, false);
+        /*ViewGroup thirdLevelListViewHeader = (ViewGroup) myinflater.inflate(R.layout.menulistheader, thirdLevelListView, false);
         thirdLevelListView.addHeaderView(thirdLevelListViewHeader, null, false);
-
+*/
 
         secondLevelListViewHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firstLevelListView.setVisibility(View.VISIBLE);
-                secondLevelListView.setVisibility(View.GONE);
+
+                for (int item : global) {
+                    Log.i("globalss", item + "");
+                }
+
+
+                //Log.i("global",getChildListmenuName(list,global.get(--pos),false).get(0).getName()+"");
+                if (pos == 0) {
+                    firstLevelListView.setVisibility(View.VISIBLE);
+                    secondLevelListView.setVisibility(View.GONE);
+                    ListAdapter listAdapter = new ListAdapter(getApplicationContext(), new HomeScreen().getChildListmenuName(list, 13, true));
+                    global.remove(pos);
+                    firstLevelListView.setAdapter(listAdapter);
+                    //--pos;
+
+                } else {
+                    --pos;
+                    //firstLevelListView.setVisibility(View.GONE);
+                    //secondLevelListView.setVisibility(View.VISIBLE);
+
+                    ListAdapter listAdapter12 = new ListAdapter(getApplicationContext(), getChildListmenuName(list, global.get(pos), false));
+                    secondLevelListView.setAdapter(listAdapter12);
+                    global.remove(pos);
+                }
+                Log.d("position", pos + "");
+
+
+
             }
         });
-        thirdLevelListViewHeader.setOnClickListener(new View.OnClickListener() {
+        /*thirdLevelListViewHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 secondLevelListView.setVisibility(View.VISIBLE);
                 thirdLevelListView.setVisibility(View.GONE);
             }
-        });
-
-
-        firstLevelListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position1, long id) {
-
-                firstLevelListView.setVisibility(View.GONE);
-                secondLevelListView.setVisibility(View.VISIBLE);
-
-                ListAdapter listAdapter1 = new ListAdapter(getApplicationContext(), listDataChild.get(listDataHeader.get(position1)));
-                secondLevelListView.setAdapter(listAdapter1);
-
-                secondLevelListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        secondLevelListView.setVisibility(View.GONE);
-                        thirdLevelListView.setVisibility(View.VISIBLE);
-
-                        Log.e("inner position clicked", position - 1 + "");//because of header it should be minus 1
-                        Log.e("outer position clicked", position1 + "");
-                        Log.e("third level item", listDataChildChild.get(listDataChild.get(listDataHeader.get(position1)).get(position - 1)) + "");
-
-                        ListAdapter listAdapter2 = new ListAdapter(getApplicationContext(), listDataChildChild.get(listDataChild.get(listDataHeader.get(position1)).get(position - 1)));
-                        thirdLevelListView.setAdapter(listAdapter2);
-                    }
-                });
-
-            }
-        });
+        });*/
 
 
         // Instantiate the RequestQueue.
@@ -261,10 +267,182 @@ public class HomeScreen extends AppCompatActivity {
         });
         // Add the request to the RequestQueue.
         queue.add(stringRequest);*/
-        this.makeJsonObjectRequest();
+        this.makeJsonArrayRequest();
+        //this.makeJsonObjectRequest();
+
+
+        firstLevelListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int position1, long id) {
+
+                firstLevelListView.setVisibility(View.GONE);
+                secondLevelListView.setVisibility(View.VISIBLE);
+                global.add((int) id);
+                //ListAdapter listAdapter1 = new ListAdapter(getApplicationContext(), listDataChild.get(listDataHeader.get(position1)));
+                ListAdapter listAdapter1 = new ListAdapter(getApplicationContext(), new HomeScreen().getChildListmenuName(list, new HomeScreen().getChildListmenuName(list, 13, true).get(position1).getID(), false));
+                secondLevelListView.setAdapter(listAdapter1);
+                Log.e("IDDDDD", "" + new HomeScreen().getChildListmenuName(list, 13, true).get(position1).getID());
+
+                for (sidemenu _menu : new HomeScreen().getChildListmenuName(list, position1, false)) {
+
+                    Log.e("menuu", "" + new HomeScreen().getChildListmenuName(list, position1, false));
+
+                }
+                Log.d("position", pos + "");
+
+
+            }
+        });
+
+        secondLevelListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //secondLevelListView.setVisibility(View.GONE);
+                //thirdLevelListView.setVisibility(View.VISIBLE);
+                pos++;
+                Log.e("IDDDDD", "" + (int) id);
+                global.add((int) id);
+                ListAdapter listAdapter12 = new ListAdapter(getApplicationContext(), getChildListmenuName(list, (int) id, false));
+                secondLevelListView.setAdapter(listAdapter12);
+
+                Log.d("position", pos + "");
+
+                //Log.e("IDDDDD",""+new HomeScreen().getChildListmenuName(list,list.get(position).getID(),false));
+
+                //Log.e("inner position clicked", position - 1 + "");//because of header it should be minus 1
+                //Log.e("outer position clicked", position1 + "");
+                //Log.e("third level item", listDataChildChild.get(listDataChild.get(listDataHeader.get(position1)).get(position - 1)) + "");
+
+                //ListAdapter listAdapter2 = new ListAdapter(getApplicationContext(), listDataChildChild.get(listDataChild.get(listDataHeader.get(position1)).get(position - 1)));
+                //thirdLevelListView.setAdapter(listAdapter2);
+            }
+        });
+
+
 
 
     }
+
+    private void makeJsonArrayRequest() {
+
+
+        JsonArrayRequest req = new JsonArrayRequest("http://arefnaghshin.ir/myyy.txt",
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG, response.toString());
+
+                        try {
+                            // Parsing json array response
+                            // loop through each json object
+                            ArrayList<sidemenu> Root = new ArrayList<>();
+                            ArrayList<sidemenu> child = new ArrayList<>();
+
+                            for (int i = 0; i < response.length(); i++) {
+
+                                JSONObject sidemenu = (JSONObject) response.get(i);
+
+                                sidemenu _menu = new sidemenu();
+
+                                int ID = sidemenu.getInt("ID");
+                                String name = sidemenu.getString("Name");
+                                String F_MenuID = sidemenu.getString("F_MenuID");
+
+                                if (F_MenuID.equals("null")) {
+                                    Log.e("Root:", name);
+                                    try {
+                                        _menu.setName(new String(name.getBytes("ISO-8859-1")));
+                                    } catch (UnsupportedEncodingException e) {
+                                        e.printStackTrace();
+                                    }
+                                    _menu.setID(ID);
+                                    _menu.setFMenuID(F_MenuID);
+                                    Root.add(_menu);
+                                    list.add(_menu);
+                                } else {
+                                    try {
+                                        _menu.setName(new String(name.getBytes("ISO-8859-1")));
+                                    } catch (UnsupportedEncodingException e) {
+                                        e.printStackTrace();
+                                    }
+                                    _menu.setID(ID);
+                                    _menu.setFMenuID(F_MenuID);
+                                    child.add(_menu);
+                                    list.add(_menu);
+                                }
+
+                            }
+
+                            for (int j = 0; j < Root.size(); j++) {
+                                Log.d("list 3", list.get(j).getID() + "");
+                                Log.e("Root F_menu", Root.get(j).getID() + "");
+                                for (int i = 0; i < child.size(); i++) {
+                                    if (child.get(i).getFMenuID().equals(String.valueOf(Root.get(j).getID()))) {
+                                        Log.e("Child ID", child.get(i).getFMenuID() + "");
+                                        Log.e("existed", child.get(i).getName());
+                                    }
+                                }
+                            }
+                            for (sidemenu _menu : new HomeScreen().getChildListmenuName(list, 13, false)) {
+
+                                Log.e("menuu", "" + _menu.getName());
+
+                            }
+                            ListAdapter listAdapter = new ListAdapter(getApplicationContext(), new HomeScreen().getChildListmenuName(list, 13, true));
+
+                            firstLevelListView.setAdapter(listAdapter);
+
+                            //new HomeScreen().getChildListmenuName(list,16);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(),
+                                    "Error: " + e.getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+
+                        //hidepDialog();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                //hidepDialog();
+            }
+        });
+
+        // Adding request to request queue
+        req.setShouldCache(false);
+
+        // Adding request to request queue
+        App.getInstance().addToRequestQueue(req);
+    }
+
+    public ArrayList<sidemenu> getChildListmenuName(ArrayList<sidemenu> list, int ID, boolean isRoot) {
+        ArrayList<sidemenu> result = new ArrayList<>();
+        for (sidemenu _menu : list) {
+            if (_menu.getFMenuID() != "null" && !isRoot) {
+                if (Integer.valueOf((String) _menu.getFMenuID()) == ID) {
+                    Log.d("found!FMenuID", _menu.getFMenuID() + "");
+                    try {
+                        Log.d("found!getName", new String(_menu.getName().getBytes("ISO-8859-1")) + "");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("found!ID", _menu.getID() + "");
+
+                    result.add(_menu);
+                }
+            } else if (_menu.getFMenuID() == "null" && isRoot) {
+                result.add(_menu);
+            }
+
+        }
+        return result;
+    }
+
+
 
     public void makeJsonObjectRequest() {
 
@@ -342,8 +520,8 @@ public class HomeScreen extends AppCompatActivity {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                final ListAdapter listAdapter = new ListAdapter(getApplicationContext(), listDataHeader);
-                firstLevelListView.setAdapter(listAdapter);
+                //final ListAdapter listAdapter = new ListAdapter(getApplicationContext(), listDataHeader);
+                //firstLevelListView.setAdapter(listAdapter);
                 //hidepDialog();
                 //NewsCategory.myRecyclerAdapter.notifyDataSetChanged();
                 //NewsCategory.myRecyclerAdapter.notifyItemInserted(0);
@@ -474,8 +652,8 @@ public class HomeScreen extends AppCompatActivity {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                final ListAdapter listAdapter = new ListAdapter(getApplicationContext(), listDataHeader);
-                firstLevelListView.setAdapter(listAdapter);
+                //final ListAdapter listAdapter = new ListAdapter(getApplicationContext(), listDataHeader);
+                //firstLevelListView.setAdapter(listAdapter);
                 //hidepDialog();
                 //NewsCategory.myRecyclerAdapter.notifyDataSetChanged();
                 //NewsCategory.myRecyclerAdapter.notifyItemInserted(0);

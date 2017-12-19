@@ -45,7 +45,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
 
     public MyRecyclerAdapter(Context context, ArrayList<HashMap<String, String>> data, List<Root> _news) {
         //this.RequestsList = data;
-        this.mContext=context;
+        this.mContext = context;
         this.news = _news;
     }
 

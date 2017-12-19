@@ -64,7 +64,6 @@ public class NewsCategory extends AppCompatActivity {
         setContentView(R.layout.activity_news_category);
 
 
-
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
@@ -237,6 +236,7 @@ public class NewsCategory extends AppCompatActivity {
 
                 //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
                 //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
                 swipeRefreshLayout.setOnRefreshListener(this);
 
                 swipeRefreshLayout.post(new Runnable() {
@@ -250,6 +250,7 @@ public class NewsCategory extends AppCompatActivity {
             }
             return rootView;
         }
+
         @Override
         public void onRefresh() {
             makeJsonObjectRequest();
