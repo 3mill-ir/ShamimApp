@@ -204,8 +204,8 @@ public class HomeScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                for (int item : global) {
-                    Log.i("globalss", item + "");
+                for (int i = 0; i < global.size(); i++) {
+                    Log.i("gloabs" + i, global.get(i).toString());
                 }
 
 
@@ -225,11 +225,12 @@ public class HomeScreen extends AppCompatActivity {
 
                     ListAdapter listAdapter12 = new ListAdapter(getApplicationContext(), getChildListmenuName(list, global.get(pos), false));
                     secondLevelListView.setAdapter(listAdapter12);
-                    global.remove(pos);
+                    global.remove(pos + 1);
                 }
                 Log.d("position", pos + "");
-
-
+                for (int i = 0; i < global.size(); i++) {
+                    Log.i("after gloabs" + i, global.get(i).toString());
+                }
 
             }
         });
@@ -290,7 +291,6 @@ public class HomeScreen extends AppCompatActivity {
                 }
                 Log.d("position", pos + "");
 
-
             }
         });
 
@@ -299,7 +299,7 @@ public class HomeScreen extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //secondLevelListView.setVisibility(View.GONE);
                 //thirdLevelListView.setVisibility(View.VISIBLE);
-                pos++;
+                ++pos;
                 Log.e("IDDDDD", "" + (int) id);
                 global.add((int) id);
                 ListAdapter listAdapter12 = new ListAdapter(getApplicationContext(), getChildListmenuName(list, (int) id, false));
@@ -332,15 +332,516 @@ public class HomeScreen extends AppCompatActivity {
                     public void onResponse(JSONArray response) {
                         Log.d(TAG, response.toString());
 
+
+                        String jsonArray = "[  \n" +
+                                "   {  \n" +
+                                "      \"$id\":\"1\",\n" +
+                                "      \"ID\":11,\n" +
+                                "      \"Name\":\"ss2\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":3.0,\n" +
+                                "      \"Status\":true,\n" +
+                                "      \"Language\":\"FA\",\n" +
+                                "      \"F_MenuID\":null,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"None\",\n" +
+                                "      \"MetaKeywords\":\"hy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"1\",\n" +
+                                "      \"ID\":90,\n" +
+                                "      \"Name\":\"navad \",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":3.0,\n" +
+                                "      \"Status\":true,\n" +
+                                "      \"Language\":\"FA\",\n" +
+                                "      \"F_MenuID\":11,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"None\",\n" +
+                                "      \"MetaKeywords\":\"hy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },{  \n" +
+                                "      \"$id\":\"1\",\n" +
+                                "      \"ID\":91,\n" +
+                                "      \"Name\":\"navad o yek\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":3.0,\n" +
+                                "      \"Status\":true,\n" +
+                                "      \"Language\":\"FA\",\n" +
+                                "      \"F_MenuID\":90,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"None\",\n" +
+                                "      \"MetaKeywords\":\"hy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },{  \n" +
+                                "      \"$id\":\"1\",\n" +
+                                "      \"ID\":95,\n" +
+                                "      \"Name\":\"navad o yek12\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":3.0,\n" +
+                                "      \"Status\":true,\n" +
+                                "      \"Language\":\"FA\",\n" +
+                                "      \"F_MenuID\":90,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"None\",\n" +
+                                "      \"MetaKeywords\":\"hy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"2\",\n" +
+                                "      \"ID\":13,\n" +
+                                "      \"Name\":\"ss12\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":11.0,\n" +
+                                "      \"Status\":true,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":12,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"tt\",\n" +
+                                "      \"MetaKeywords\":\"yy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"3\",\n" +
+                                "      \"ID\":14,\n" +
+                                "      \"Name\":\"ss1313\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":1.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":13,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"tt\",\n" +
+                                "      \"MetaKeywords\":\"yy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"4\",\n" +
+                                "      \"ID\":15,\n" +
+                                "      \"Name\":\"ss\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":11.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":null,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"tt\",\n" +
+                                "      \"MetaKeywords\":\"yy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"5\",\n" +
+                                "      \"ID\":16,\n" +
+                                "      \"Name\":\"ss\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":11.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":null,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"tt\",\n" +
+                                "      \"MetaKeywords\":\"yy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"6\",\n" +
+                                "      \"ID\":17,\n" +
+                                "      \"Name\":\"ss\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":11.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":null,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"tt\",\n" +
+                                "      \"MetaKeywords\":\"yy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"7\",\n" +
+                                "      \"ID\":18,\n" +
+                                "      \"Name\":\"ss\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":11.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":null,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"tt\",\n" +
+                                "      \"MetaKeywords\":\"hy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"8\",\n" +
+                                "      \"ID\":21,\n" +
+                                "      \"Name\":\"ss\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":11.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":null,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"tt\",\n" +
+                                "      \"MetaKeywords\":\"yy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"9\",\n" +
+                                "      \"ID\":22,\n" +
+                                "      \"Name\":\"ssnemone\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":11.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":null,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"tt\",\n" +
+                                "      \"MetaKeywords\":\"yy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"10\",\n" +
+                                "      \"ID\":23,\n" +
+                                "      \"Name\":\"dsdsf\",\n" +
+                                "      \"Description\":\"sdfsdf\",\n" +
+                                "      \"Weight\":22.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":null,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"ee\",\n" +
+                                "      \"MetaKeywords\":\"ee\",\n" +
+                                "      \"MetaDescription\":\"ss\",\n" +
+                                "      \"MetaTittle\":\"sdsd\",\n" +
+                                "      \"MetaSeoName\":\"sd\",\n" +
+                                "      \"DisplayInFooter\":false,\n" +
+                                "      \"DisplayInSidebar\":true\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"11\",\n" +
+                                "      \"ID\":24,\n" +
+                                "      \"Name\":\"dsdsf\",\n" +
+                                "      \"Description\":\"sdfsdf\",\n" +
+                                "      \"Weight\":22.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":null,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"ee\",\n" +
+                                "      \"MetaKeywords\":\"ee\",\n" +
+                                "      \"MetaDescription\":\"ss\",\n" +
+                                "      \"MetaTittle\":\"sdsd\",\n" +
+                                "      \"MetaSeoName\":\"sd\",\n" +
+                                "      \"DisplayInFooter\":false,\n" +
+                                "      \"DisplayInSidebar\":true\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"12\",\n" +
+                                "      \"ID\":25,\n" +
+                                "      \"Name\":\"dsdsfsaat1217\",\n" +
+                                "      \"Description\":\"sdfsdf\",\n" +
+                                "      \"Weight\":22.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":null,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"ee\",\n" +
+                                "      \"MetaKeywords\":\"ee\",\n" +
+                                "      \"MetaDescription\":\"ss\",\n" +
+                                "      \"MetaTittle\":\"aa\",\n" +
+                                "      \"MetaSeoName\":\"aa\",\n" +
+                                "      \"DisplayInFooter\":false,\n" +
+                                "      \"DisplayInSidebar\":true\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"13\",\n" +
+                                "      \"ID\":26,\n" +
+                                "      \"Name\":\"ss2\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":11.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":null,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"tt\",\n" +
+                                "      \"MetaKeywords\":\"hy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"14\",\n" +
+                                "      \"ID\":27,\n" +
+                                "      \"Name\":\"ss2addhamin alan az sherkat\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":11.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":null,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"tt\",\n" +
+                                "      \"MetaKeywords\":\"hy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"15\",\n" +
+                                "      \"ID\":28,\n" +
+                                "      \"Name\":\"ss2addhamin alan az sherkat33\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":11.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":null,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"tt\",\n" +
+                                "      \"MetaKeywords\":\"hy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"16\",\n" +
+                                "      \"ID\":29,\n" +
+                                "      \"Name\":\"s\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":11.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":null,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"tt\",\n" +
+                                "      \"MetaKeywords\":\"hy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"17\",\n" +
+                                "      \"ID\":30,\n" +
+                                "      \"Name\":\"s#\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":11.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":null,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"tt\",\n" +
+                                "      \"MetaKeywords\":\"hy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"18\",\n" +
+                                "      \"ID\":31,\n" +
+                                "      \"Name\":\"menuupdates\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":11.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":null,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"tt\",\n" +
+                                "      \"MetaKeywords\":\"h\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"19\",\n" +
+                                "      \"ID\":32,\n" +
+                                "      \"Name\":\"ss2\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":11.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":15,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"tt\",\n" +
+                                "      \"MetaKeywords\":\"hy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"20\",\n" +
+                                "      \"ID\":33,\n" +
+                                "      \"Name\":\"in alan up shode az server\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":11.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":16,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"tt\",\n" +
+                                "      \"MetaKeywords\":\"hy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"21\",\n" +
+                                "      \"ID\":34,\n" +
+                                "      \"Name\":\"in alan add shode az server\",\n" +
+                                "      \"Description\":\"ss\",\n" +
+                                "      \"Weight\":11.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"gg\",\n" +
+                                "      \"F_MenuID\":16,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"rrr\",\n" +
+                                "      \"Type\":\"tt\",\n" +
+                                "      \"MetaKeywords\":\"hy\",\n" +
+                                "      \"MetaDescription\":\"yy\",\n" +
+                                "      \"MetaTittle\":\"yy\",\n" +
+                                "      \"MetaSeoName\":\"uuu\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":false\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"22\",\n" +
+                                "      \"ID\":35,\n" +
+                                "      \"Name\":\"اخبار1\",\n" +
+                                "      \"Description\":\"fsafdfdsfadfsdafsdafsafsadfsdgsg\",\n" +
+                                "      \"Weight\":2.0,\n" +
+                                "      \"Status\":true,\n" +
+                                "      \"Language\":\"EN\",\n" +
+                                "      \"F_MenuID\":15,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"RTTH053POQ1J.jpg\",\n" +
+                                "      \"Type\":\"Static\",\n" +
+                                "      \"MetaKeywords\":\"اخبار\",\n" +
+                                "      \"MetaDescription\":\"اخبار\",\n" +
+                                "      \"MetaTittle\":\"اخبار\",\n" +
+                                "      \"MetaSeoName\":\"اخبار\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":true\n" +
+                                "   },\n" +
+                                "   {  \n" +
+                                "      \"$id\":\"23\",\n" +
+                                "      \"ID\":36,\n" +
+                                "      \"Name\":\"خبر عمومی\",\n" +
+                                "      \"Description\":\"بسشلشبلشبسب بل ثقلثفلقث فثقفثفصث\",\n" +
+                                "      \"Weight\":1.0,\n" +
+                                "      \"Status\":false,\n" +
+                                "      \"Language\":\"FA\",\n" +
+                                "      \"F_MenuID\":35,\n" +
+                                "      \"F_UserID\":\"89a3b463-ac70-4f14-a9d6-a4c660720ebd\",\n" +
+                                "      \"Image\":\"MR4LBRR7HITK.jpg\",\n" +
+                                "      \"Type\":\"Dynamic\",\n" +
+                                "      \"MetaKeywords\":\"خبر\",\n" +
+                                "      \"MetaDescription\":\"خبر\",\n" +
+                                "      \"MetaTittle\":\"خبر\",\n" +
+                                "      \"MetaSeoName\":\"خبر\",\n" +
+                                "      \"DisplayInFooter\":true,\n" +
+                                "      \"DisplayInSidebar\":true\n" +
+                                "   }\n" +
+                                "]";
+
+
+
+
+
                         try {
+                            JSONArray jsonArray1 = new JSONArray(jsonArray);
                             // Parsing json array response
                             // loop through each json object
                             ArrayList<sidemenu> Root = new ArrayList<>();
                             ArrayList<sidemenu> child = new ArrayList<>();
 
-                            for (int i = 0; i < response.length(); i++) {
+                            for (int i = 0; i < jsonArray1.length(); i++) {
 
-                                JSONObject sidemenu = (JSONObject) response.get(i);
+                                JSONObject sidemenu = (JSONObject) jsonArray1.get(i);
 
                                 sidemenu _menu = new sidemenu();
 
@@ -399,7 +900,6 @@ public class HomeScreen extends AppCompatActivity {
                                     "Error: " + e.getMessage(),
                                     Toast.LENGTH_LONG).show();
                         }
-
                         //hidepDialog();
                     }
                 }, new Response.ErrorListener() {
