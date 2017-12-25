@@ -3,7 +3,6 @@ package ir.hezareh.park;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,36 +33,36 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-import ir.hezareh.park.models.Item;
+import ir.hezareh.park.models.ModelComponent;
 
 
 public class Component {
-    Context activity;
+    Context context;
 
     public Component(Context _context) {
-        this.activity = _context;
+        this.context = _context;
     }
 
 
-    public RelativeLayout Slider(int width, int height, List<Item> Items) {
-        RelativeLayout Slider = new RelativeLayout(activity);
+    public RelativeLayout Slider(int width, int height, List<ModelComponent.Item> Items) {
+        RelativeLayout Slider = new RelativeLayout(context);
         RelativeLayout.LayoutParams Slider_Layout = new RelativeLayout.LayoutParams(width, width / 2);
         Slider.setLayoutParams(Slider_Layout);
 
-        LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View child = inflater.inflate(R.layout.custom_slider_layout, null);
 
 
         com.daimajia.slider.library.SliderLayout ImageSlider = child.findViewById(R.id.slider);
-        for (Item item : Items) {
-            DefaultSliderView demoSlider = new DefaultSliderView(activity);
+        for (ModelComponent.Item item : Items) {
+            DefaultSliderView demoSlider = new DefaultSliderView(context);
             demoSlider//.description()
-                    .image(item.getImage())
+                    .image(item.getImage().toString())
                     .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                         @Override
                         public void onSliderClick(BaseSliderView slider) {
-                            Intent k = new Intent(activity, NewsListActivity.class);
-                            activity.startActivity(k);
+                            Intent k = new Intent(context, NewsListActivity.class);
+                            context.startActivity(k);
                         }
                     });
             ImageSlider.addSlider(demoSlider);
@@ -77,16 +76,16 @@ public class Component {
         return Slider;
     }
 
-    public RecyclerView News(int width, int height) {
-        RecyclerView NewsRecycler = new RecyclerView(activity);
+    public RecyclerView News(int width, int height, ModelComponent modelComponent) {
+        RecyclerView NewsRecycler = new RecyclerView(context);
 
-        RecyclerViewAdapter myRecyclerAdapter = new RecyclerViewAdapter(activity, null);
+        RecyclerViewAdapter myRecyclerAdapter = new RecyclerViewAdapter(context, modelComponent.getItem());
 
         LinearLayout.LayoutParams NewsRecyclerLayoutParams = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT);
         NewsRecyclerLayoutParams.gravity = Gravity.CENTER_VERTICAL;
         NewsRecycler.setLayoutParams(NewsRecyclerLayoutParams);
 
-        NewsRecycler.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, true));
+        NewsRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, true));
         NewsRecycler.addItemDecoration(new EqualSpacingItemDecoration(10, EqualSpacingItemDecoration.HORIZONTAL));
         NewsRecycler.setItemAnimator(new DefaultItemAnimator());
         NewsRecycler.setAdapter(myRecyclerAdapter);
@@ -95,22 +94,27 @@ public class Component {
     }
 
 
-    public LinearLayout pollQuestion(int screenWidth, int height, ArrayList<String> data, String QuestionText) {
-        //ScrollView PollQuestionScrollView = new ScrollView(activity);
+    public LinearLayout pollQuestion(int screenWidth, int height, ModelComponent modelComponent) {
+        //ScrollView PollQuestionScrollView = new ScrollView(context);
         //PollQuestionScrollView.setVerticalScrollBarEnabled(true);
-        LinearLayout PollQuestionLayout = new LinearLayout(activity);
+        LinearLayout PollQuestionLayout = new LinearLayout(context);
+
         PollQuestionLayout.setOrientation(LinearLayout.VERTICAL);
-        LinearLayout.LayoutParams PollQuestionLayoutParams = new LinearLayout.LayoutParams(screenWidth, screenWidth / 2);
-        //PollQuestionLayoutParams.gravity=Gravity.END;
+        PollQuestionLayout.setBackgroundResource(R.drawable.item_background);
+        LinearLayout.LayoutParams PollQuestionLayoutParams = new LinearLayout.LayoutParams(screenWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
+        PollQuestionLayoutParams.setMargins(0, 20, 0, 20);
+        //PollQuestionLayout.setMinimumHeight(screenWidth/2);
+        ///PollQuestionLayout.setGravity(Gravity.CENTER);
         PollQuestionLayout.setLayoutParams(PollQuestionLayoutParams);
-        //PollQuestionLayout.setGravity(Gravity.END);
         //PollQuestionScrollView.setLayoutParams(PollQuestionLayoutParams);
 
-        TextView questionText = new TextView(activity);
-        ViewGroup.LayoutParams questionTextLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100);
+        TextView questionText = new TextView(context);
+        LinearLayout.LayoutParams questionTextLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100);
+        questionTextLayoutParams.gravity = Gravity.CENTER;
         questionText.setLayoutParams(questionTextLayoutParams);
-        questionText.setText(QuestionText);
-        questionText.setGravity(Gravity.END);
+
+        questionText.setText(modelComponent.getQuestion());
+        questionText.setGravity(Gravity.CENTER);
         /*questionText.setSingleLine(true);
         //questionText.setEllipsize(TextUtils.TruncateAt.END);
         questionText.setEllipsize(TextUtils.TruncateAt.MARQUEE);
@@ -133,12 +137,14 @@ public class Component {
         questionText.setHorizontallyScrolling(true);
         questionText.setSelected(true);*/
 
-        questionText.setTypeface(new Utils(activity).font_set("irsans"));
+        questionText.setTypeface(new Utils(context).font_set("irsans"));
         Paint textPaint = questionText.getPaint();
         String text = questionText.getText().toString();//get text
         int textWidth = Math.round(textPaint.measureText(text));//measure the text size
         ViewGroup.LayoutParams params = questionText.getLayoutParams();
         params.width = textWidth;
+        //questionText.setTextDirection();
+
         questionText.setLayoutParams(params); //refine
 
         /*DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -162,22 +168,25 @@ public class Component {
         }
 
 
-        RadioGroup radioGroupAnswers = new RadioGroup(activity);
-        radioGroupAnswers.setOrientation(LinearLayout.HORIZONTAL);
+        RadioGroup radioGroupAnswers = new RadioGroup(context);
+        radioGroupAnswers.setOrientation(LinearLayout.VERTICAL);
+        radioGroupAnswers.setGravity(Gravity.END);
         //radioGroupAnswers.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         LinearLayout.LayoutParams answerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        //params11.gravity=Gravity.START;
         radioGroupAnswers.setLayoutParams(answerParams);
-        //radioGroupAnswers.setGravity(Gravity.START);
-        radioGroupAnswers.setBackgroundColor(Color.YELLOW);
 
-        for (String item : data) {
-            RadioButton Choice = new RadioButton(activity);
-            Choice.setText(item);
+        //radioGroupAnswers.setGravity(Gravity.START);
+        //radioGroupAnswers.setBackgroundColor(Color.YELLOW);
+        radioGroupAnswers.setPadding(0, 0, 20, 20);
+
+        for (ModelComponent.Item item : modelComponent.getItem()) {
+            RadioButton Choice = new RadioButton(context);
+            Choice.setText(item.getText());
+            Choice.setTypeface(new Utils(context).font_set("BYekan"));
             //Choice.setLeft(100);
             //Choice.setLayoutParams(params11);
             Choice.setGravity(Gravity.CENTER);
-            Choice.setHighlightColor(Color.YELLOW);
+            //Choice.setHighlightColor(Color.YELLOW);
             Choice.setId(View.generateViewId());
             radioGroupAnswers.addView(Choice);
         }
@@ -189,22 +198,23 @@ public class Component {
         return PollQuestionLayout;
     }
 
-    public RelativeLayout GalleryButton(int width, List<Item> Items, String Order, ArrayList<String> ButtonsText, ArrayList<String> ButtonsURLs) {
-        RelativeLayout GalleryButtonRowLayout = new RelativeLayout(activity);
+    public RelativeLayout GalleryButton(int width, ModelComponent modelComponent, String Order, ArrayList<String> ButtonsText, ArrayList<String> ButtonsURLs) {
+        RelativeLayout GalleryButtonRowLayout = new RelativeLayout(context);
         RelativeLayout.LayoutParams GalleryButtonRowLayoutParams = new RelativeLayout.LayoutParams(width, 2 * width / 3);
         GalleryButtonRowLayout.setLayoutParams(GalleryButtonRowLayoutParams);
         GalleryButtonRowLayout.setId(View.generateViewId());
 
-        LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View upperChild = inflater.inflate(R.layout.item_button_row, null);
         LinearLayout.LayoutParams ButtonParams = new LinearLayout.LayoutParams(width / 3, width / 3);
         upperChild.setLayoutParams(ButtonParams);
-        ((TextView) upperChild.findViewById(R.id.TextButton)).setText(ButtonsText.get(0));
-        Picasso.with(activity).load(ButtonsURLs.get(0)).fit()
+        ((TextView) upperChild.findViewById(R.id.TextButton)).setText(modelComponent.getButtonItem().get(0).getText());
+        ((TextView) upperChild.findViewById(R.id.TextButton)).setTypeface(new Utils(context).font_set("BHoma"));
+        Picasso.with(context).load(modelComponent.getButtonItem().get(0).getImage().toString()).fit()
                 .into((ImageView) upperChild.findViewById(R.id.ButtonImage));
 
 
-        LinearLayout UpperButtonLayout = new LinearLayout(activity);
+        LinearLayout UpperButtonLayout = new LinearLayout(context);
         RelativeLayout.LayoutParams UpperButtonLayoutParams = new RelativeLayout.LayoutParams(width / 3, width / 3);
         if (Order.equals("ButtonsGallery")) {
             UpperButtonLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
@@ -219,11 +229,14 @@ public class Component {
 
         View lowerChild = inflater.inflate(R.layout.item_button_row, null);
         lowerChild.setLayoutParams(ButtonParams);
-        ((TextView) lowerChild.findViewById(R.id.TextButton)).setText(ButtonsText.get(1));
-        Picasso.with(activity.getApplicationContext()).load(ButtonsURLs.get(1)).fit()
+        ((TextView) lowerChild.findViewById(R.id.TextButton)).setText(modelComponent.getButtonItem().get(1).getText());
+        ((TextView) lowerChild.findViewById(R.id.TextButton)).setTypeface(new Utils(context).font_set("BHoma"));
+        Picasso.with(context.getApplicationContext())
+                .load(modelComponent.getButtonItem().get(1).getImage().toString())
+                .fit()
                 .into((ImageView) lowerChild.findViewById(R.id.ButtonImage));
 
-        LinearLayout LowerButtonLayout = new LinearLayout(activity);
+        LinearLayout LowerButtonLayout = new LinearLayout(context);
         RelativeLayout.LayoutParams LowerButtonLayoutParams = new RelativeLayout.LayoutParams(width / 3, width / 3);
         LowerButtonLayoutParams.addRule(RelativeLayout.BELOW, UpperButtonLayout.getId());
 
@@ -241,7 +254,7 @@ public class Component {
         LowerButtonLayout.addView(lowerChild);
 
 
-        com.daimajia.slider.library.SliderLayout GalleryLayout = new SliderLayout(activity);
+        com.daimajia.slider.library.SliderLayout GalleryLayout = new SliderLayout(context);
         RelativeLayout.LayoutParams GalleryLayoutParams = new RelativeLayout.LayoutParams(2 * width / 3, 2 * width / 3 - width / 12);
         if (Order.equals("ButtonsGallery")) {
             GalleryLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
@@ -253,16 +266,16 @@ public class Component {
         GalleryLayout.setId(View.generateViewId());
 
 
-        for (Item item : Items) {
-            DefaultSliderView demoSlider = new DefaultSliderView(activity);
+        for (ModelComponent.GalleryItem item : modelComponent.getGalleryItem()) {
+            DefaultSliderView demoSlider = new DefaultSliderView(context);
             demoSlider//.description()
-                    .image(item.getImage())
+                    .image(item.getImage().toString())
                     .setScaleType(BaseSliderView.ScaleType.Fit)
                     .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                         @Override
                         public void onSliderClick(BaseSliderView slider) {
-                            Intent k = new Intent(activity, FanBazar.class);
-                            activity.startActivity(k);
+                            Intent k = new Intent(context, FanBazar.class);
+                            context.startActivity(k);
                         }
                     });
             GalleryLayout.addSlider(demoSlider);
@@ -271,7 +284,7 @@ public class Component {
             GalleryLayout.setCustomAnimation(new DescriptionAnimation());
 
         }
-        TextView GalleryLayoutText = new TextView(activity);
+        TextView GalleryLayoutText = new TextView(context);
         RelativeLayout.LayoutParams GalleryLayoutTextParams = new RelativeLayout.LayoutParams(2 * width / 3, width / 12);
         GalleryLayoutTextParams.addRule(RelativeLayout.BELOW, GalleryLayout.getId());
         if (Order.equals("ButtonsGallery")) {
@@ -280,9 +293,10 @@ public class Component {
             GalleryLayoutTextParams.addRule(RelativeLayout.ALIGN_PARENT_START);
         }
         GalleryLayoutText.setLayoutParams(GalleryLayoutTextParams);
-        GalleryLayoutText.setBackgroundColor(Color.YELLOW);
+        GalleryLayoutText.setBackgroundResource(R.drawable.back);
         GalleryLayoutText.setGravity(Gravity.CENTER);
-        GalleryLayoutText.setText("Gallery");
+        GalleryLayoutText.setText("گالری تصاویر");
+        GalleryLayoutText.setTypeface(new Utils(context).font_set("BHoma"));
 
 
         GalleryButtonRowLayout.addView(UpperButtonLayout);
@@ -293,13 +307,13 @@ public class Component {
         return GalleryButtonRowLayout;
     }
 
-    public LinearLayout ButtonsRow(int width, ArrayList<String> ButtonsText, final ArrayList<String> ButtonsURLs) {
-        LinearLayout ButtonsRow = new LinearLayout(activity);
+    public LinearLayout ButtonsRow(int width, ModelComponent modelComponent, final ArrayList<String> urls) {
+        LinearLayout ButtonsRow = new LinearLayout(context);
         LinearLayout.LayoutParams ButtonRowLayout = new LinearLayout.LayoutParams(width, width / 3);
+
         ButtonsRow.setLayoutParams(ButtonRowLayout);
         //ButtonsRow.setBackgroundColor(Color.DKGRAY);
         ButtonsRow.setOrientation(LinearLayout.HORIZONTAL);
-
 
         /*Button LeftButton=new Button(this);
         LinearLayout.LayoutParams LeftButtonParams = new LinearLayout.LayoutParams(width/3-20, width/3-20);
@@ -316,14 +330,17 @@ public class Component {
         LeftButton.setText("عضویت در پارک");
         LeftButton.setTextSize(14);*/
 
-        LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View leftChild = inflater.inflate(R.layout.item_button_row, null);
         LinearLayout.LayoutParams ButtonParams = new LinearLayout.LayoutParams(width / 3, width / 3);
         leftChild.setLayoutParams(ButtonParams);
-        ((TextView) leftChild.findViewById(R.id.TextButton)).setText(ButtonsText.get(0));
-        Picasso.with(activity).load(ButtonsURLs.get(0)).fit()
+        ((TextView) leftChild.findViewById(R.id.TextButton)).setText(modelComponent.getItem().get(0).getText());
+        ((TextView) leftChild.findViewById(R.id.TextButton)).setTypeface(new Utils(context).font_set("BHoma"));
+        Picasso.with(context)
+                .load(modelComponent.getItem().get(0).getImage().toString())
+                .fit()
                 .into((ImageView) leftChild.findViewById(R.id.ButtonImage));
-        LinearLayout LeftButtonLayout = new LinearLayout(activity);
+        LinearLayout LeftButtonLayout = new LinearLayout(context);
         LeftButtonLayout.setLayoutParams(ButtonParams);
         LeftButtonLayout.setGravity(Gravity.CENTER);
         LeftButtonLayout.addView(leftChild);
@@ -331,10 +348,13 @@ public class Component {
 
         View middleChild = inflater.inflate(R.layout.item_button_row, null);
         middleChild.setLayoutParams(ButtonParams);
-        ((TextView) middleChild.findViewById(R.id.TextButton)).setText(ButtonsText.get(1));
-        Picasso.with(activity).load(ButtonsURLs.get(1)).fit()
+        ((TextView) middleChild.findViewById(R.id.TextButton)).setText(modelComponent.getItem().get(1).getText());
+        ((TextView) middleChild.findViewById(R.id.TextButton)).setTypeface(new Utils(context).font_set("BHoma"));
+        Picasso.with(context)
+                .load(modelComponent.getItem().get(1).getImage().toString())
+                .fit()
                 .into((ImageView) middleChild.findViewById(R.id.ButtonImage));
-        LinearLayout MiddleButtonLayout = new LinearLayout(activity);
+        LinearLayout MiddleButtonLayout = new LinearLayout(context);
         MiddleButtonLayout.setLayoutParams(ButtonParams);
         MiddleButtonLayout.setGravity(Gravity.CENTER);
         MiddleButtonLayout.addView(middleChild);
@@ -343,11 +363,14 @@ public class Component {
         View rightChild = inflater.inflate(R.layout.item_button_row, null);
         rightChild.setLayoutParams(ButtonParams);
         rightChild.setId(View.generateViewId());
-        ((TextView) rightChild.findViewById(R.id.TextButton)).setText(ButtonsText.get(2));
+        ((TextView) rightChild.findViewById(R.id.TextButton)).setText(modelComponent.getItem().get(2).getText());
+        ((TextView) rightChild.findViewById(R.id.TextButton)).setTypeface(new Utils(context).font_set("BHoma"));
         //rightChild.findViewById(R.id.TextButton).setBackgroundResource(R.drawable.back2);
-        Picasso.with(activity).load(ButtonsURLs.get(2)).fit()
+        Picasso.with(context)
+                .load(modelComponent.getItem().get(2).getImage().toString())
+                .fit()
                 .into((ImageView) rightChild.findViewById(R.id.ButtonImage));
-        LinearLayout RightButtonLayout = new LinearLayout(activity);
+        LinearLayout RightButtonLayout = new LinearLayout(context);
         RightButtonLayout.setLayoutParams(ButtonParams);
         RightButtonLayout.setGravity(Gravity.CENTER);
         RightButtonLayout.addView(rightChild);
@@ -355,7 +378,7 @@ public class Component {
         rightChild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ZGrid.with((Activity) activity, ButtonsURLs)
+                ZGrid.with((Activity) context, urls)
                         .setToolbarColorResId(R.color.colorPrimary) // toolbar color
                         .setTitle("گالری تصاویر") // toolbar title
                         .setToolbarTitleColor(ZColor.WHITE) // toolbar title color
@@ -369,9 +392,7 @@ public class Component {
         ButtonsRow.addView(MiddleButtonLayout);
         ButtonsRow.addView(RightButtonLayout);
 
-
         return ButtonsRow;
     }
-
 
 }

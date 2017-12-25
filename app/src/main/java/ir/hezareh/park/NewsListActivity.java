@@ -145,7 +145,7 @@ public class NewsListActivity extends AppCompatActivity implements SwipeRefreshL
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 //progressBar.setVisibility(View.GONE);
-                NewsRecycler.setAdapter(myRecyclerAdapter);
+                //NewsRecycler.setAdapter(myRecyclerAdapter);
                 swipeRefreshLayout.setRefreshing(false);
                 invalidateOptionsMenu();
             }

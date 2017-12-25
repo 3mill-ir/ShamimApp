@@ -80,26 +80,26 @@ public class FanBazar extends AppCompatActivity {
 
                     for (ModelComponent component : components) {
                         switch (component.getComponent()) {
-                            case "Slider":
-                                Root_Layout.addView(new Component(FanBazar.this).Slider(width, 0, component.getItems()));
+                            case "slider":
+                                Root_Layout.addView(new Component(FanBazar.this).Slider(width, 0, component.getItem()));
                                 break;
-                            case "gallery left":
-                                Root_Layout.addView(new Component(FanBazar.this).GalleryButton(width, component.getItems(), "GalleryButtons", text, my));
+                            case "ButtonGalleryRow":
+                                Root_Layout.addView(new Component(FanBazar.this).GalleryButton(width, component, "GalleryButtons", text, my));
                                 break;
-                            case "list":
-                                Root_Layout.addView(new Component(FanBazar.this).News(width, 0));
+                            case "NewsList":
+                                Root_Layout.addView(new Component(FanBazar.this).News(width, 0, component));
                                 break;
-                            case "Button":
-                                Root_Layout.addView(new Component(FanBazar.this).ButtonsRow(width, text, my));
+                            case "RowButton":
+                                Root_Layout.addView(new Component(FanBazar.this).ButtonsRow(width, component, my));
                                 break;
-                            case "gallery right":
-                                Root_Layout.addView(new Component(FanBazar.this).GalleryButton(width, component.getItems(), "ButtonsGallery", text, my));
+                            case "GalleryButtonRow":
+                                Root_Layout.addView(new Component(FanBazar.this).GalleryButton(width, component, "ButtonsGallery", text, my));
                                 break;
-                            case "diagraan":
+                            case "Diagram":
                                 Root_Layout.addView(new MyPieChart(FanBazar.this, width, width / 2).getItem());
                                 break;
-                            case "poll":
-                                Root_Layout.addView(new Component(FanBazar.this).pollQuestion(width, 0, text, "آیا از عملکرد شهردار خود راضی هستید؟آیا از عملکرد شهردار خود راضی هستید"));
+                            case "PollQuestion":
+                                Root_Layout.addView(new Component(FanBazar.this).pollQuestion(width, 0, component));
                                 break;
                         }
                     }

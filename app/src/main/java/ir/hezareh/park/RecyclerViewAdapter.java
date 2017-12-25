@@ -3,7 +3,6 @@ package ir.hezareh.park;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,8 +20,9 @@ import android.widget.Toast;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import java.util.List;
 
+import ir.hezareh.park.models.ModelComponent;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -31,12 +31,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int TYPE_FOOTER = 1;
     private static final int TYPE_ITEM = 2;
 
-    private ArrayList<String> stringArrayList;
-    private Context activity;
+    List<ModelComponent.Item> newItems;
+    private Context context;
 
-    public RecyclerViewAdapter(Context _activity, ArrayList<String> strings) {
-        this.activity = _activity;
-        this.stringArrayList = strings;
+    public RecyclerViewAdapter(Context _context, List<ModelComponent.Item> _newItems) {
+        this.context = _context;
+        this.newItems = _newItems;
     }
 
     @Override
@@ -64,43 +64,44 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             headerHolder.headerTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(activity, "You clicked at Header View!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "You clicked at Header View!", Toast.LENGTH_SHORT).show();
                 }
             });
         } else if (holder instanceof FooterViewHolder) {
             FooterViewHolder footerHolder = (FooterViewHolder) holder;
             footerHolder.footerText.setText("ادامه مطلب ...");
-            footerHolder.footerText.setTypeface(new Utils(activity).font_set("iransans"));
+            footerHolder.footerText.setTypeface(new Utils(context).font_set("iransans"));
             footerHolder.footerText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent k = new Intent(activity, Companies.class);
-                    activity.startActivity(k);
-                    Toast.makeText(activity, "You clicked at Footer View", Toast.LENGTH_SHORT).show();
+                    Intent k = new Intent(context, Companies.class);
+                    context.startActivity(k);
+                    Toast.makeText(context, "You clicked at Footer View", Toast.LENGTH_SHORT).show();
                 }
             });
         } else if (holder instanceof ItemViewHolder) {
             final ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
-            itemViewHolder.title.setText("Recycler Item" + position);
-
 
             ScaleAnimation anim = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             anim.setDuration(500);
             holder.itemView.startAnimation(anim);
 
-            int height = new Utils(activity).getDisplayMetrics().widthPixels;
+            int widthPixels = new Utils(context).getDisplayMetrics().widthPixels;
 
-            LinearLayout.LayoutParams ItemLayout = new LinearLayout.LayoutParams(5 * height / 10, LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams ItemLayout = new LinearLayout.LayoutParams(5 * widthPixels / 10, LinearLayout.LayoutParams.WRAP_CONTENT);
             itemViewHolder.item.setLayoutParams(ItemLayout);
 
-            RelativeLayout.LayoutParams ThumbnailLayout = new RelativeLayout.LayoutParams(5 * height / 10, 4 * height / 10);
+            RelativeLayout.LayoutParams ThumbnailLayout = new RelativeLayout.LayoutParams(5 * widthPixels / 10, 4 * widthPixels / 10);
             itemViewHolder.thumbnail.setLayoutParams(ThumbnailLayout);
 
+            itemViewHolder.title.setText(newItems.get(position).getText());
+            itemViewHolder.title.setTypeface(new Utils(context).font_set("irsans"));
 
-            itemViewHolder.title.setText("تیتر خبر");
             itemViewHolder.title.setBackgroundColor(Color.YELLOW);
 
-            Picasso.with(this.activity).load(Utils.URL_encode("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQeMlm9p4uVeGfSw-_JrUviRXqoHFPwIUhY6PUkTAiN1KtSJIPixg"))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
+            itemViewHolder.date.setText(newItems.get(position).getDate().toString());
+
+            Picasso.with(context).load(Utils.URL_encode(newItems.get(position).getImage().toString()))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
                     .fit()
                     //.resize(5*height/10,5*height/10)
                     //.transform(new CropCircleTransformation())
@@ -120,11 +121,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             itemViewHolder.title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent k = new Intent(activity, NewsCategory.class);
-                    activity.startActivity(k);
+                    Intent k = new Intent(context, NewsCategory.class);
+                    context.startActivity(k);
 
 
-                    Toast.makeText(activity, "You clicked at item " + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "You clicked at item " + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -134,7 +135,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public int getItemViewType(int position) {
         if (position == 0) {
             return TYPE_ITEM;/*return TYPE_HEADER;*/
-        } else if (position == /*stringArrayList.size()*/ 2 + 1) {
+        } else if (position == newItems.size()) {
             return TYPE_FOOTER;
         }
         return TYPE_ITEM;
@@ -144,7 +145,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public int getItemCount() {
         // return stringArrayList.size() + 2;
-        return 4;
+        return newItems.size() + 1;
     }
 
     @Override
@@ -177,9 +178,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
+        public TextView date;
         public ImageView thumbnail;
         public ProgressBar img_progress;
-        public Typeface BYekan;
         public CardView cardView;
         public LinearLayout item;
 
@@ -190,8 +191,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             img_progress = itemView.findViewById(R.id.image_progressbar);
             cardView = itemView.findViewById(R.id.card_view);
             item = itemView.findViewById(R.id.list_item);
+            date = itemView.findViewById(R.id.date);
             //itemView.setOnClickListener((View.OnClickListener) activity);
-            BYekan = Typeface.createFromAsset(activity.getAssets(), "fonts/BYekan.ttf");
         }
     }
 

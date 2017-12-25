@@ -1,5 +1,7 @@
 package ir.hezareh.park.models;
 
+import android.support.annotation.Nullable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -7,37 +9,37 @@ import java.util.List;
 
 public class ModelComponent {
 
+    @SerializedName("ID")
+    @Expose
+    private int iD;
 
-    @SerializedName("$id")
-    @Expose
-    private String $id;
-    @SerializedName("Items")
-    @Expose
-    private List<Item> items = null;
     @SerializedName("Component")
     @Expose
     private String component;
+    @Nullable
     @SerializedName("Question")
     @Expose
-    private Object question;
-    @SerializedName("Url")
+    private String question;
+
+
+    @SerializedName("Item")
     @Expose
-    private Object url;
+    private List<Item> item = null;
 
-    public String get$id() {
-        return $id;
+    @SerializedName("ButtonItem")
+    @Expose
+    private List<ButtonItem> buttonItem = null;
+
+    @SerializedName("GalleryItem")
+    @Expose
+    private List<GalleryItem> galleryItem = null;
+
+    public int getID() {
+        return iD;
     }
 
-    public void set$id(String $id) {
-        this.$id = $id;
-    }
-
-    public List<Item> getItems() {
-        return items;
-    }
-
-    public void setItems(List<Item> items) {
-        this.items = items;
+    public void setID(int iD) {
+        this.iD = iD;
     }
 
     public String getComponent() {
@@ -48,23 +50,128 @@ public class ModelComponent {
         this.component = component;
     }
 
-    public Object getQuestion() {
+    public String getQuestion() {
         return question;
     }
 
-    public void setQuestion(Object question) {
+    public void setQuestion(String question) {
         this.question = question;
     }
 
-    public Object getUrl() {
-        return url;
+
+    public List<Item> getItem() {
+        return item;
     }
 
-    public void setUrl(Object url) {
-        this.url = url;
+    public void setItem(List<Item> item) {
+        this.item = item;
+    }
+
+    public List<ButtonItem> getButtonItem() {
+        return buttonItem;
+    }
+
+    public void setButtonItem(List<ButtonItem> buttonItem) {
+        this.buttonItem = buttonItem;
+    }
+
+    public List<GalleryItem> getGalleryItem() {
+        return galleryItem;
+    }
+
+    public void setGalleryItem(List<GalleryItem> galleryItem) {
+        this.galleryItem = galleryItem;
     }
 
 
+    public class Item {
+        @SerializedName("ID")
+        @Expose
+        protected int iD;
+        @SerializedName("Image")
+        @Expose
+        protected Object image;
+        @SerializedName("Text")
+        @Expose
+        protected String text;
+        @SerializedName("Date")
+        @Expose
+        protected Object date;
+        @SerializedName("Vote")
+        @Expose
+        protected int vote;
+        @SerializedName("Type")
+        @Expose
+        protected Object type;
+        @SerializedName("Content")
+        @Expose
+        protected Object content;
+
+        public int getID() {
+            return iD;
+        }
+
+        public void setID(int iD) {
+            this.iD = iD;
+        }
+
+        public Object getImage() {
+            return image;
+        }
+
+        public void setImage(Object image) {
+            this.image = image;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public Object getDate() {
+            return date;
+        }
+
+        public void setDate(Object date) {
+            this.date = date;
+        }
+
+        public int getVote() {
+            return vote;
+        }
+
+        public void setVote(int vote) {
+            this.vote = vote;
+        }
+
+        public Object getType() {
+            return type;
+        }
+
+        public void setType(Object type) {
+            this.type = type;
+        }
+
+        public Object getContent() {
+            return content;
+        }
+
+        public void setContent(Object content) {
+            this.content = content;
+        }
+
+    }
+
+    public class ButtonItem extends Item {
+
+    }
+
+    public class GalleryItem extends Item {
+
+    }
 }
 
 

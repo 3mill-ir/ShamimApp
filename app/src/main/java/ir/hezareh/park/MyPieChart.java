@@ -2,6 +2,7 @@ package ir.hezareh.park;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.github.mikephil.charting.animation.Easing;
@@ -23,8 +24,11 @@ public class MyPieChart {
 
     MyPieChart(Context c, int width, int height) {
         ChartLayout = new RelativeLayout(c);
-        RelativeLayout.LayoutParams ChartLayoutParams = new RelativeLayout.LayoutParams(width, height);
+
+        LinearLayout.LayoutParams ChartLayoutParams = new LinearLayout.LayoutParams(width, height);
+        ChartLayoutParams.setMargins(0, 20, 0, 0);
         ChartLayout.setLayoutParams(ChartLayoutParams);
+        ChartLayout.setBackgroundResource(R.drawable.item_background);
 
         chart = new PieChart(c);
         chart.setLayoutParams(ChartLayoutParams);

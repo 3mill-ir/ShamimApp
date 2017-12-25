@@ -35,7 +35,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import ir.hezareh.park.models.Item;
 import ir.hezareh.park.models.ModelComponent;
 import ir.hezareh.park.models.sidemenu;
 
@@ -883,11 +882,11 @@ public class HomeScreen extends AppCompatActivity {
                 try {
                     String jsonResponse = new String(response.toString().getBytes("ISO-8859-1"));
                     Log.d(TAG, jsonResponse);
-                    JSONArray jsonArray = response.getJSONArray("root");
+                    JSONArray jsonArray = response.getJSONArray("Root");
                     Gson gson = new Gson();
                     Type collectionType = new TypeToken<Collection<ModelComponent>>() {
                     }.getType();
-                    List<ModelComponent> components = gson.fromJson(jsonArray.toString(), collectionType);
+                    List<ModelComponent> components = gson.fromJson(new String(jsonArray.toString().getBytes("ISO-8859-1")), collectionType);
 
 
                     LinearLayout Root_Layout = (LinearLayout) findViewById(R.id.main_layout);
@@ -910,35 +909,36 @@ public class HomeScreen extends AppCompatActivity {
 
                     //Root_Layout.addView(mTopToolbar);
 
-                    for (ModelComponent component : components) {
-                        for (Item item : component.getItems()) {
-                            Log.d(TAG, item.getImage() + "");
-                        }
-                    }
+                    //for (ModelComponent component : components) {
+                    //for (ModelComponent.Item item : component.getItems()) {
+
+                    Log.d(TAG, components.get(5).getQuestion() + "");
+                    //}
+                    //}
 
 
                     for (ModelComponent component : components) {
                         switch (component.getComponent()) {
-                            case "Slider":
-                                Root_Layout.addView(new Component(HomeScreen.this).Slider(width, 0, component.getItems()));
+                            case "slider":
+                                Root_Layout.addView(new Component(HomeScreen.this).Slider(width, 0, component.getItem()));
                                 break;
-                            case "gallery left":
-                                Root_Layout.addView(new Component(HomeScreen.this).GalleryButton(width, component.getItems(), "GalleryButtons", text, my));
+                            case "ButtonGalleryRow":
+                                Root_Layout.addView(new Component(HomeScreen.this).GalleryButton(width, component, "GalleryButtons", text, my));
                                 break;
-                            case "list":
-                                Root_Layout.addView(new Component(HomeScreen.this).News(width, 0));
+                            case "NewsList":
+                                Root_Layout.addView(new Component(HomeScreen.this).News(width, 0, component));
                                 break;
-                            case "Button":
-                                Root_Layout.addView(new Component(HomeScreen.this).ButtonsRow(width, text, my));
+                            case "RowButton":
+                                Root_Layout.addView(new Component(HomeScreen.this).ButtonsRow(width, component, my));
                                 break;
-                            case "gallery right":
-                                Root_Layout.addView(new Component(HomeScreen.this).GalleryButton(width, component.getItems(), "ButtonsGallery", text, my));
+                            case "GalleryButtonRow":
+                                Root_Layout.addView(new Component(HomeScreen.this).GalleryButton(width, component, "ButtonsGallery", text, my));
                                 break;
-                            case "diagraan":
+                            case "Diagram":
                                 Root_Layout.addView(new MyPieChart(HomeScreen.this, width, width / 2).getItem());
                                 break;
-                            case "poll":
-                                Root_Layout.addView(new Component(HomeScreen.this).pollQuestion(width, 0, text, "آیا از عملکرد شهردار خود راضی هستید؟آیا از عملکرد شهردار خود راضی هستید"));
+                            case "PollQuestion":
+                                Root_Layout.addView(new Component(HomeScreen.this).pollQuestion(width, 0, component));
                                 break;
                         }
                     }
