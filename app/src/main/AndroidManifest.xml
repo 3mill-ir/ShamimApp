@@ -25,7 +25,7 @@
         <activity
             android:name=".NewsListActivity"
             android:label="@string/title_activity_news_list"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
@@ -35,7 +35,8 @@
             android:label="@string/title_activity_news_category"
             android:theme="@style/AppTheme" />
         <activity android:name=".Companies" />
-        <activity android:name=".Gallery"></activity>
+        <activity android:name=".Gallery" />
+        <activity android:name=".FanBazar"></activity>
     </application>
 
 </manifest>

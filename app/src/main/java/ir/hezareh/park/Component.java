@@ -1,12 +1,15 @@
 package ir.hezareh.park;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -29,34 +32,38 @@ import com.mzelzoghbi.zgallery.entities.ZColor;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import ir.hezareh.park.models.Item;
 
 
 public class Component {
-    Activity activity;
+    Context activity;
 
-    public Component(Activity activity) {
-        this.activity = activity;
+    public Component(Context _context) {
+        this.activity = _context;
     }
 
-    public RelativeLayout Slider(int width, int height, ArrayList<String> ImageURLs) {
+
+    public RelativeLayout Slider(int width, int height, List<Item> Items) {
         RelativeLayout Slider = new RelativeLayout(activity);
         RelativeLayout.LayoutParams Slider_Layout = new RelativeLayout.LayoutParams(width, width / 2);
         Slider.setLayoutParams(Slider_Layout);
-        View child = activity.getLayoutInflater().inflate(R.layout.custom_slider_layout, null);
+
+        LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View child = inflater.inflate(R.layout.custom_slider_layout, null);
 
 
         com.daimajia.slider.library.SliderLayout ImageSlider = child.findViewById(R.id.slider);
-        for (int i = 0; i < ImageURLs.size(); i++) {
+        for (Item item : Items) {
             DefaultSliderView demoSlider = new DefaultSliderView(activity);
             demoSlider//.description()
-                    .image(ImageURLs.get(i))
+                    .image(item.getImage())
                     .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                         @Override
                         public void onSliderClick(BaseSliderView slider) {
-                            /*Intent k = new Intent(HomeScreen.this, Kanded_list_News.class);
-                            k.putExtra("value_theme", value_theme);
-                            startActivity(k);
-                            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);*/
+                            Intent k = new Intent(activity, NewsListActivity.class);
+                            activity.startActivity(k);
                         }
                     });
             ImageSlider.addSlider(demoSlider);
@@ -64,6 +71,7 @@ public class Component {
             ImageSlider.setCustomIndicator((PagerIndicator) child.findViewById(R.id.custom_indicator));
             ImageSlider.setPresetTransformer(SliderLayout.Transformer.Background2Foreground);
             ImageSlider.setCustomAnimation(new DescriptionAnimation());
+
         }
         Slider.addView(child);
         return Slider;
@@ -157,9 +165,9 @@ public class Component {
         RadioGroup radioGroupAnswers = new RadioGroup(activity);
         radioGroupAnswers.setOrientation(LinearLayout.HORIZONTAL);
         //radioGroupAnswers.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-        LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams answerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         //params11.gravity=Gravity.START;
-        radioGroupAnswers.setLayoutParams(params11);
+        radioGroupAnswers.setLayoutParams(answerParams);
         //radioGroupAnswers.setGravity(Gravity.START);
         radioGroupAnswers.setBackgroundColor(Color.YELLOW);
 
@@ -181,14 +189,14 @@ public class Component {
         return PollQuestionLayout;
     }
 
-    public RelativeLayout GalleryButton(int width, ArrayList<String> data, String Order, ArrayList<String> ButtonsText, ArrayList<String> ButtonsURLs) {
+    public RelativeLayout GalleryButton(int width, List<Item> Items, String Order, ArrayList<String> ButtonsText, ArrayList<String> ButtonsURLs) {
         RelativeLayout GalleryButtonRowLayout = new RelativeLayout(activity);
         RelativeLayout.LayoutParams GalleryButtonRowLayoutParams = new RelativeLayout.LayoutParams(width, 2 * width / 3);
         GalleryButtonRowLayout.setLayoutParams(GalleryButtonRowLayoutParams);
         GalleryButtonRowLayout.setId(View.generateViewId());
 
-
-        View upperChild = activity.getLayoutInflater().inflate(R.layout.item_button_row, null);
+        LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View upperChild = inflater.inflate(R.layout.item_button_row, null);
         LinearLayout.LayoutParams ButtonParams = new LinearLayout.LayoutParams(width / 3, width / 3);
         upperChild.setLayoutParams(ButtonParams);
         ((TextView) upperChild.findViewById(R.id.TextButton)).setText(ButtonsText.get(0));
@@ -209,7 +217,7 @@ public class Component {
         UpperButtonLayout.setGravity(Gravity.CENTER);
         UpperButtonLayout.addView(upperChild);
 
-        View lowerChild = activity.getLayoutInflater().inflate(R.layout.item_button_row, null);
+        View lowerChild = inflater.inflate(R.layout.item_button_row, null);
         lowerChild.setLayoutParams(ButtonParams);
         ((TextView) lowerChild.findViewById(R.id.TextButton)).setText(ButtonsText.get(1));
         Picasso.with(activity.getApplicationContext()).load(ButtonsURLs.get(1)).fit()
@@ -245,24 +253,23 @@ public class Component {
         GalleryLayout.setId(View.generateViewId());
 
 
-        for (int i = 0; i < data.size(); i++) {
+        for (Item item : Items) {
             DefaultSliderView demoSlider = new DefaultSliderView(activity);
             demoSlider//.description()
-                    .image(data.get(i))
+                    .image(item.getImage())
                     .setScaleType(BaseSliderView.ScaleType.Fit)
                     .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                         @Override
                         public void onSliderClick(BaseSliderView slider) {
-                            /*Intent k = new Intent(HomeScreen.this, Kanded_list_News.class);
-                            k.putExtra("value_theme", value_theme);
-                            startActivity(k);
-                            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);*/
+                            Intent k = new Intent(activity, FanBazar.class);
+                            activity.startActivity(k);
                         }
                     });
             GalleryLayout.addSlider(demoSlider);
             GalleryLayout.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
             GalleryLayout.setPresetTransformer(SliderLayout.Transformer.Background2Foreground);
             GalleryLayout.setCustomAnimation(new DescriptionAnimation());
+
         }
         TextView GalleryLayoutText = new TextView(activity);
         RelativeLayout.LayoutParams GalleryLayoutTextParams = new RelativeLayout.LayoutParams(2 * width / 3, width / 12);
@@ -309,8 +316,8 @@ public class Component {
         LeftButton.setText("عضویت در پارک");
         LeftButton.setTextSize(14);*/
 
-
-        View leftChild = activity.getLayoutInflater().inflate(R.layout.item_button_row, null);
+        LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View leftChild = inflater.inflate(R.layout.item_button_row, null);
         LinearLayout.LayoutParams ButtonParams = new LinearLayout.LayoutParams(width / 3, width / 3);
         leftChild.setLayoutParams(ButtonParams);
         ((TextView) leftChild.findViewById(R.id.TextButton)).setText(ButtonsText.get(0));
@@ -322,7 +329,7 @@ public class Component {
         LeftButtonLayout.addView(leftChild);
 
 
-        View middleChild = activity.getLayoutInflater().inflate(R.layout.item_button_row, null);
+        View middleChild = inflater.inflate(R.layout.item_button_row, null);
         middleChild.setLayoutParams(ButtonParams);
         ((TextView) middleChild.findViewById(R.id.TextButton)).setText(ButtonsText.get(1));
         Picasso.with(activity).load(ButtonsURLs.get(1)).fit()
@@ -333,7 +340,7 @@ public class Component {
         MiddleButtonLayout.addView(middleChild);
 
 
-        View rightChild = activity.getLayoutInflater().inflate(R.layout.item_button_row, null);
+        View rightChild = inflater.inflate(R.layout.item_button_row, null);
         rightChild.setLayoutParams(ButtonParams);
         rightChild.setId(View.generateViewId());
         ((TextView) rightChild.findViewById(R.id.TextButton)).setText(ButtonsText.get(2));
@@ -348,7 +355,7 @@ public class Component {
         rightChild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ZGrid.with(activity, ButtonsURLs)
+                ZGrid.with((Activity) activity, ButtonsURLs)
                         .setToolbarColorResId(R.color.colorPrimary) // toolbar color
                         .setTitle("گالری تصاویر") // toolbar title
                         .setToolbarTitleColor(ZColor.WHITE) // toolbar title color
@@ -357,7 +364,6 @@ public class Component {
                         .show();
             }
         });
-
 
         ButtonsRow.addView(LeftButtonLayout);
         ButtonsRow.addView(MiddleButtonLayout);

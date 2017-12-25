@@ -1,6 +1,6 @@
 package ir.hezareh.park;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -32,11 +32,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int TYPE_ITEM = 2;
 
     private ArrayList<String> stringArrayList;
-    private Activity activity;
+    private Context activity;
 
-    public RecyclerViewAdapter(Activity _activity, ArrayList<String> strings) {
+    public RecyclerViewAdapter(Context _activity, ArrayList<String> strings) {
         this.activity = _activity;
-        //this.stringArrayList = strings;
+        this.stringArrayList = strings;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof HeaderViewHolder) {
             HeaderViewHolder headerHolder = (HeaderViewHolder) holder;
             headerHolder.headerTitle.setText("Header View");
@@ -124,7 +124,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     activity.startActivity(k);
 
 
-                    Toast.makeText(activity, "You clicked at item " + position, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "You clicked at item " + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
                 }
             });
         }

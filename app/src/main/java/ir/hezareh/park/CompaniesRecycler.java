@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,28 +17,27 @@ import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import ir.hezareh.park.models.CompanyList;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 
 public class CompaniesRecycler extends RecyclerView.Adapter<CompaniesRecycler.MyViewHolder> {
 
     private Context mContext;
-    private ArrayList<HashMap<String, String>> RequestsList;
+    private List<CompanyList.CompanyInfo> _listcompany;
     private int lastPosition = -1;
 
-    public CompaniesRecycler(Context context, ArrayList<HashMap<String, String>> data) {
-        //this.RequestsList = data;
+    public CompaniesRecycler(Context context, List<CompanyList.CompanyInfo> listcompany) {
+        this._listcompany = listcompany;
         this.mContext = context;
     }
 
@@ -65,15 +66,29 @@ public class CompaniesRecycler extends RecyclerView.Adapter<CompaniesRecycler.My
         //holder.item.setLayoutParams(ItemLayout);
 
 
-        RelativeLayout.LayoutParams ThumbnailLayout = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 4 * height / 10);
+        //RelativeLayout.LayoutParams ThumbnailLayout = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 4 * height / 10);
         //holder.thumbnail.setLayoutParams(ThumbnailLayout);
 
 
-        holder.title.setText("تیتر خبر");
+        holder.title.setText(_listcompany.get(position).getName());
+        holder.title.setTypeface(new Utils(mContext).font_set("BYekan"), Typeface.BOLD);
         //holder.title.setBackgroundColor(Color.YELLOW);
+
+        holder.CEO.setText(_listcompany.get(position).getCEO());
+        holder.CEO.setTypeface(new Utils(mContext).font_set("BYekan"), Typeface.BOLD_ITALIC);
+
+        holder.website.setText(_listcompany.get(position).getWebsite());
+        holder.website.setTypeface(new Utils(mContext).font_set("BYekan"), Typeface.ITALIC);
+        holder.website.setMovementMethod(new LinkMovementMethod());
+
+        holder.website.setClickable(true);
+        holder.website.setMovementMethod(LinkMovementMethod.getInstance());
+        String text = "<a href='" + _listcompany.get(position).getWebsite() + "'>" + _listcompany.get(position).getWebsite() + " </a>";
+        holder.website.setText(Html.fromHtml(text));
+
         final AtomicBoolean playAnimation = new AtomicBoolean(true);
 
-        Picasso.with(this.mContext).load(Utils.URL_encode("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQeMlm9p4uVeGfSw-_JrUviRXqoHFPwIUhY6PUkTAiN1KtSJIPixg"))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
+        Picasso.with(this.mContext).load(Utils.URL_encode(_listcompany.get(position).getLogo()))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
                 .fit()
                 //.resize(5*height/10,5*height/10)
                 //.transform(new CropCircleTransformation())
@@ -107,13 +122,12 @@ public class CompaniesRecycler extends RecyclerView.Adapter<CompaniesRecycler.My
                             playAnimation.set(false);
                         }
                     }
-
                 });
     }
 
     @Override
     public int getItemCount() {
-        return 10;
+        return _listcompany.size();
     }
 
     @Override
@@ -125,6 +139,8 @@ public class CompaniesRecycler extends RecyclerView.Adapter<CompaniesRecycler.My
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView title;
         public ImageView thumbnail;
+        public TextView website;
+        public TextView CEO;
         public ProgressBar img_progress;
         public Typeface BYekan;
         public CardView cardView;
@@ -134,6 +150,8 @@ public class CompaniesRecycler extends RecyclerView.Adapter<CompaniesRecycler.My
             super(view);
             title = view.findViewById(R.id.title);
             thumbnail = view.findViewById(R.id.thumbnail);
+            website = view.findViewById(R.id.website);
+            CEO = view.findViewById(R.id.CEO);
             img_progress = view.findViewById(R.id.image_progressbar);
             cardView = view.findViewById(R.id.card_view);
             item = view.findViewById(R.id.list_item);

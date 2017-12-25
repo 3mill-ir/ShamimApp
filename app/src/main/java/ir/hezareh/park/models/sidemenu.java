@@ -1,4 +1,4 @@
-package ir.hezareh.park;
+package ir.hezareh.park.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

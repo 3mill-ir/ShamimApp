@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import ir.hezareh.park.models.News;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 
@@ -40,10 +41,10 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
     private Context mContext;
     private ArrayList<HashMap<String, String>> RequestsList;
     private int lastPosition = -1;
-    private List<Root> news;
+    private List<News> news;
 
 
-    public MyRecyclerAdapter(Context context, ArrayList<HashMap<String, String>> data, List<Root> _news) {
+    public MyRecyclerAdapter(Context context, ArrayList<HashMap<String, String>> data, List<News> _news) {
         //this.RequestsList = data;
         this.mContext = context;
         this.news = _news;

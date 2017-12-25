@@ -1,4 +1,4 @@
-package ir.hezareh.park;
+package ir.hezareh.park.models;
 
 /**
  * Created by rf on 10/12/2017.
@@ -7,7 +7,7 @@ package ir.hezareh.park;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Root {
+public class News {
 
     @SerializedName("Name")
     @Expose

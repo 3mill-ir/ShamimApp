@@ -14,23 +14,32 @@
         card_view:cardElevation="5dp">
 
         <RelativeLayout
+
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@drawable/item_company_border"
             android:padding="5dp">
 
-            <ImageView
-                android:id="@+id/overflow"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:src="@drawable/ic_more_vert_black_24dp" />
+                android:gravity="center"
+                android:paddingBottom="6dp"
+                android:paddingEnd="3dp"
+                android:paddingStart="3dp"
+                android:paddingTop="6dp"
+                android:textColor="#4c4c4c"
+                android:textSize="16dp" />
 
             <RelativeLayout
                 android:id="@+id/ImageLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/overflow">
+                android:layout_below="@+id/title">
 
                 <ProgressBar
                     android:id="@+id/image_progressbar"
@@ -51,33 +60,23 @@
 
 
             <TextView
-                android:id="@+id/title"
+                android:id="@+id/CEO"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/ImageLayout"
                 android:gravity="center"
-                android:textColor="#4c4c4c"
-                android:textSize="15dp" />
-
-
-            <TextView
-                android:id="@+id/link"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/title"
-                android:gravity="center"
-                android:text="شرکت هزاره سومی ها"
-                android:textSize="12dp" />
+                android:padding="3dp"
+                android:text="CEO"
+                android:textSize="14dp" />
 
             <TextView
                 android:id="@+id/website"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/link"
+                android:layout_below="@id/CEO"
                 android:gravity="center"
                 android:text="www.3mill.ir"
-                android:textSize="12dp" />
-
+                android:textSize="14dp" />
 
         </RelativeLayout>
 

@@ -3,9 +3,14 @@ package ir.hezareh.park;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,12 +19,18 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-public class NewsListActivity extends AppCompatActivity {
-    LinearLayout Root_Layout;
-    private String url = "https://www.google.de/?gfe_rd=cr&dcr=0&ei=kg86WqiBDsistgea_pHgDQ";
+import com.squareup.picasso.Picasso;
+
+
+public class NewsListActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+    SwipeRefreshLayout swipeRefreshLayout;
+    RecyclerView NewsRecycler;
+    RecyclerViewAdapter myRecyclerAdapter;
+    int screenHeight;
+    private String url = "https://www.digikala.com/";
     private WebView webView;
     private ProgressBar progressBar;
     private float m_downX;
@@ -29,35 +40,87 @@ public class NewsListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        View logo = getLayoutInflater().inflate(R.layout.custom_toolbar, null);
+        CollapsingToolbarLayout layout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        layout.setTitleEnabled(true);
+        layout.setTitle("");
+        screenHeight = new Utils(getApplicationContext()).getDisplayMetrics().heightPixels;
 
-        Root_Layout = (LinearLayout) findViewById(R.id.main_layout);
+        //View logo = getLayoutInflater().inflate(R.layout.custom_toolbar, null);
+
+        //Root_Layout = (LinearLayout) findViewById(R.id.main_layout);
 
         setSupportActionBar(toolbar);
-        toolbar.addView(logo);
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Utils.expand(webView);
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+
         webView = (WebView) findViewById(R.id.webView);
         //progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        NewsRecycler = (RecyclerView) findViewById(R.id.news_recycler);
 
+        myRecyclerAdapter = new RecyclerViewAdapter(getApplicationContext(), null);
+
+        NewsRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, true));
+        NewsRecycler.addItemDecoration(new EqualSpacingItemDecoration(10, EqualSpacingItemDecoration.HORIZONTAL));
+        NewsRecycler.setItemAnimator(new DefaultItemAnimator());
+
+        //LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,screenHeight/3);
+        //webView.setLayoutParams(params);
         initWebView();
+        //webView.loadUrl(url);
 
-        webView.loadUrl(url);
-        renderPost();
+        Picasso.with(getApplicationContext())
+                .load("https://www.planwallpaper.com/static/images/desktop-year-of-the-tiger-images-wallpaper.jpg")
+                .fit()
+                .into((ImageView) findViewById(R.id.news_detail_header));
+
+
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        /**
+         * Showing Swipe Refresh animation on activity create
+         * As animation won't start on onCreate, post runnable is used
+         */
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(true);
+                webView.loadUrl(url);
+                //((ImageView) findViewById(R.id.news_detail_header)).setBackgroundResource(R.drawable.shadow);
+                //renderPost()
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
 
     }
 
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+        webView.loadUrl(url);
+        //((ImageView) findViewById(R.id.news_detail_header)).setBackgroundResource(R.drawable.shadow);
+        //renderPost();
+
+        swipeRefreshLayout.setRefreshing(false);
+
+    }
+
+
     private void renderPost() {
-        webView.loadUrl("google.com");
+        //webView.loadUrl("https://www.google.com/");
     }
 
 
@@ -67,7 +130,8 @@ public class NewsListActivity extends AppCompatActivity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                progressBar.setVisibility(View.VISIBLE);
+                //progressBar.setVisibility(View.VISIBLE);
+                swipeRefreshLayout.setRefreshing(true);
                 invalidateOptionsMenu();
             }
 
@@ -80,14 +144,17 @@ public class NewsListActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                progressBar.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
+                NewsRecycler.setAdapter(myRecyclerAdapter);
+                swipeRefreshLayout.setRefreshing(false);
                 invalidateOptionsMenu();
             }
 
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
-                progressBar.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
+                swipeRefreshLayout.setRefreshing(false);
                 invalidateOptionsMenu();
             }
         });
@@ -123,6 +190,7 @@ public class NewsListActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private class MyWebChromeClient extends WebChromeClient {
         Context context;

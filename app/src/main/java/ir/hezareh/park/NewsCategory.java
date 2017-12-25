@@ -15,7 +15,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +37,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import ir.hezareh.park.models.News;
 
 
 public class NewsCategory extends AppCompatActivity {
@@ -104,12 +105,6 @@ public class NewsCategory extends AppCompatActivity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_news_category, menu);
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -138,7 +133,7 @@ public class NewsCategory extends AppCompatActivity {
         public RecyclerView NewsRecycler;
         public SwipeRefreshLayout swipeRefreshLayout;
         public MyRecyclerAdapter myRecyclerAdapter;
-        List<Root> newslist;
+        List<News> newslist;
 
         public PlaceholderFragment() {
 
@@ -166,22 +161,17 @@ public class NewsCategory extends AppCompatActivity {
                     String utf8string;
                     try {
                         utf8string = new String(response.toString().getBytes("ISO-8859-1"));
-
                         Log.d(TAG, utf8string);
-
-
                         JSONArray jsonArray = response.getJSONArray("Root");
-
                         Gson gson = new Gson();
-
-                        Type collectionType = new TypeToken<Collection<Root>>() {
+                        Type collectionType = new TypeToken<Collection<News>>() {
                         }.getType();
-                        List<Root> news = gson.fromJson(String.valueOf(jsonArray), collectionType);
+                        List<News> news = gson.fromJson(String.valueOf(jsonArray), collectionType);
 
                         //List<News> news = Arrays.asList(gson.fromJson(response.toString(), News[].class));
                         newslist = new ArrayList<>(news);
                         Log.i("Post", news.size() + " posts loaded.");
-                        for (Root news1 : newslist) {
+                        for (News news1 : newslist) {
                             Log.i("Post", news1.toString());
                         }
                     } catch (JSONException e) {
@@ -196,9 +186,7 @@ public class NewsCategory extends AppCompatActivity {
                     myRecyclerAdapter = new MyRecyclerAdapter(getActivity(), null, newslist);
 
                     myRecyclerAdapter.notifyDataSetChanged();
-
                     NewsRecycler.setAdapter(myRecyclerAdapter);
-
                     swipeRefreshLayout.setRefreshing(false);
 
                 }
