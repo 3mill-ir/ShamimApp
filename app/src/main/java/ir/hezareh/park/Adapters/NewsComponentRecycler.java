@@ -1,4 +1,4 @@
-package ir.hezareh.park;
+package ir.hezareh.park.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,10 +22,14 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import ir.hezareh.park.NewsCategory;
+import ir.hezareh.park.NewsDetailActivity;
+import ir.hezareh.park.R;
+import ir.hezareh.park.Utils;
 import ir.hezareh.park.models.ModelComponent;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_FOOTER = 1;
@@ -34,7 +38,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     List<ModelComponent.Item> newItems;
     private Context context;
 
-    public RecyclerViewAdapter(Context _context, List<ModelComponent.Item> _newItems) {
+    public NewsComponentRecycler(Context _context, List<ModelComponent.Item> _newItems) {
         this.context = _context;
         this.newItems = _newItems;
     }
@@ -74,9 +78,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             footerHolder.footerText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent k = new Intent(context, Companies.class);
+                    Intent k = new Intent(context, NewsCategory.class);
                     context.startActivity(k);
-                    Toast.makeText(context, "You clicked at Footer View", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "You clicked at Footer View", Toast.LENGTH_SHORT).show();
                 }
             });
         } else if (holder instanceof ItemViewHolder) {
@@ -121,11 +125,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             itemViewHolder.title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent k = new Intent(context, NewsCategory.class);
+                    Intent k = new Intent(context, NewsDetailActivity.class);
                     context.startActivity(k);
 
 
-                    Toast.makeText(context, "You clicked at item " + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "You clicked at item " + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
                 }
             });
         }

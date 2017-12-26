@@ -54,7 +54,6 @@ public class Gallery extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
         super.onBackPressed();
     }
 

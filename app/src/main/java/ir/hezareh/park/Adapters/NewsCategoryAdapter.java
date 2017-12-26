@@ -1,7 +1,6 @@
-package ir.hezareh.park;
+package ir.hezareh.park.Adapters;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -27,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import ir.hezareh.park.R;
+import ir.hezareh.park.Utils;
 import ir.hezareh.park.models.News;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
@@ -36,7 +37,7 @@ import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
  */
 
 
-public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.MyViewHolder> {
+public class NewsCategoryAdapter extends RecyclerView.Adapter<NewsCategoryAdapter.MyViewHolder> {
 
     private Context mContext;
     private ArrayList<HashMap<String, String>> RequestsList;
@@ -44,7 +45,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
     private List<News> news;
 
 
-    public MyRecyclerAdapter(Context context, ArrayList<HashMap<String, String>> data, List<News> _news) {
+    public NewsCategoryAdapter(Context context, ArrayList<HashMap<String, String>> data, List<News> _news) {
         //this.RequestsList = data;
         this.mContext = context;
         this.news = _news;
@@ -137,7 +138,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         public TextView title;
         public ImageView thumbnail;
         public ProgressBar img_progress;
-        public Typeface BYekan;
         public CardView cardView;
         public LinearLayout item;
 
@@ -149,8 +149,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
             cardView = view.findViewById(R.id.card_view);
             item = view.findViewById(R.id.list_item);
             view.setOnClickListener(this);
-
-            BYekan = Typeface.createFromAsset(mContext.getAssets(), "fonts/BYekan.ttf");
         }
 
         @Override

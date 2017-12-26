@@ -1,6 +1,7 @@
-package ir.hezareh.park;
+package ir.hezareh.park.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -26,6 +26,9 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import ir.hezareh.park.FanBazar;
+import ir.hezareh.park.R;
+import ir.hezareh.park.Utils;
 import ir.hezareh.park.models.CompanyList;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
@@ -163,7 +166,10 @@ public class CompaniesRecycler extends RecyclerView.Adapter<CompaniesRecycler.My
         @Override
         public void onClick(View v) {
             Log.i("Clicked", "position: " + String.valueOf(getAdapterPosition()));
-            Toast.makeText(mContext, String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(mContext, String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(mContext, FanBazar.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mContext.startActivity(intent);
         }
     }
 

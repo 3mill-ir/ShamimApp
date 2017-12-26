@@ -1,4 +1,4 @@
-package ir.hezareh.park;
+package ir.hezareh.park.Adapters;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -11,39 +11,45 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import ir.hezareh.park.models.CompanyList;
+import ir.hezareh.park.R;
+import ir.hezareh.park.Utils;
+import ir.hezareh.park.models.sidemenu;
 
-/**
- * Created by rf on 24/12/2017.
- */
 
-public class CompanyListAdapter extends BaseAdapter {
+public class HomeSideMenuListAdapter extends BaseAdapter {
 
     private Context _context;
-    private List<CompanyList> _listcompany;
+    private List<sidemenu> _listData; // header titles
 
-    public CompanyListAdapter(Context context, List<CompanyList> listcompany) {
+    public HomeSideMenuListAdapter(Context context, List<sidemenu> listData) {
         this._context = context;
-        this._listcompany = listcompany;
+        this._listData = listData;
     }
+
 
     @Override
     public int getCount() {
-        return _listcompany.size();
+        return _listData.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return _listcompany.get(position).getCompanyList();
+        return _listData.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return _listData.get(position).getID();
+    }
+
+    @Override
+    public boolean hasStableIds() {
+        return false;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        //String headerTitle = (String) getGroup(groupPosition);
         if (convertView == null) {
             LayoutInflater Inflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -53,10 +59,16 @@ public class CompanyListAdapter extends BaseAdapter {
         TextView lblListHeader = convertView.findViewById(R.id.lblListItem);
         lblListHeader.setTypeface(new Utils(_context).font_set("iransans"), Typeface.NORMAL);
 
-        lblListHeader.setText(_listcompany.get(position).getType());
+        lblListHeader.setText(_listData.get(position).getName());
 
         lblListHeader.setTextColor(Color.BLACK);
 
         return convertView;
     }
+
+    @Override
+    public boolean isEnabled(int position) {
+        return super.isEnabled(position);
+    }
+
 }

@@ -1,4 +1,4 @@
-package ir.hezareh.park;
+package ir.hezareh.park.Component;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -18,11 +18,13 @@ import com.github.mikephil.charting.utils.MPPointF;
 import java.util.ArrayList;
 import java.util.List;
 
+import ir.hezareh.park.R;
+
 public class MyPieChart {
     private PieChart chart;
     private RelativeLayout ChartLayout;
 
-    MyPieChart(Context c, int width, int height) {
+    public MyPieChart(Context c, int width, int height) {
         ChartLayout = new RelativeLayout(c);
 
         LinearLayout.LayoutParams ChartLayoutParams = new LinearLayout.LayoutParams(width, height);
