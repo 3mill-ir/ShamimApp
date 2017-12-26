@@ -18,6 +18,7 @@ allprojects {
         maven { url "http://jzaccone.github.io/SlidingMenu-aar" }
         maven { url "https://mvnrepository.com/artifact/javassist/javassist" }
         jcenter()
+        maven { url "https://jitpack.io" }
     }
 }
 
