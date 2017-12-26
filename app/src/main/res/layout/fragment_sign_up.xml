@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:isScrollContainer="true"
+    android:paddingBottom="0dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp"
+    tools:context="ir.hezareh.park.SignIn_SignUp">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:scaleType="fitXY"
+        app:srcCompat="@null" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="75dp"
+        app:srcCompat="@drawable/person" />
+
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp"
+            android:paddingTop="160dp">
+
+
+            <!--  Name Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/name_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="2dp"
+                android:layoutDirection="rtl">
+
+                <EditText
+                    android:id="@+id/input_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:cursorVisible="false"
+                    android:drawablePadding="2dp"
+                    android:drawableRight="@drawable/ic_person_black_24dp"
+                    android:hint="نام"
+                    android:inputType="textCapWords|textNoSuggestions"
+                    android:maxLength="10"
+                    android:textColor="#000000" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- phone number Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/family_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="2dp"
+                android:layoutDirection="rtl">
+
+                <EditText
+                    android:id="@+id/input_family"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:cursorVisible="false"
+                    android:drawablePadding="2dp"
+                    android:drawableRight="@drawable/ic_people_black_24dp"
+                    android:hint="نام خانوادگی"
+                    android:inputType="textCapWords|textNoSuggestions"
+                    android:maxLength="20"
+                    android:textColor="#000000" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- phone number Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/phone_number_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="2dp"
+                android:layoutDirection="rtl">
+
+                <EditText
+                    android:id="@+id/input_phone_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:cursorVisible="false"
+                    android:drawablePadding="2dp"
+                    android:drawableRight="@drawable/ic_phone_iphone_black_24dp"
+                    android:hint="شماره همراه"
+                    android:inputType="number"
+                    android:maxLength="11"
+                    android:textAlignment="viewEnd"
+                    android:textColor="#000000" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- Password Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/password_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="2dp"
+                android:layoutDirection="rtl"
+                app:passwordToggleEnabled="true">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/input_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:cursorVisible="false"
+                    android:drawablePadding="2dp"
+                    android:drawableStart="@drawable/ic_lock_black_24dp"
+                    android:hint="رمز عبور"
+                    android:inputType="textPassword"
+                    android:maxLength="12"
+                    android:textAlignment="viewEnd"
+                    android:textColor="#000000" />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <!-- Address Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/address_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="2dp"
+                android:layoutDirection="rtl">
+
+                <EditText
+                    android:id="@+id/input_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:cursorVisible="false"
+                    android:drawablePadding="2dp"
+                    android:drawableRight="@drawable/ic_person_pin_circle_black_24dp"
+                    android:hint="آدرس"
+                    android:inputType="text|textNoSuggestions"
+                    android:maxLength="50"
+                    android:textColor="#000000" />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <!-- Signup Button -->
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_sign_up"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/laybg"
+                android:text="ثبت مشخصات"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/link_login"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="34dp"
+                android:gravity="center"
+                android:text="عضو هستید؟ می توانید از اینجا وارد شوید"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</RelativeLayout>
+

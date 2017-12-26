@@ -38,6 +38,7 @@ import ir.hezareh.park.Adapters.NewsComponentRecycler;
 import ir.hezareh.park.Companies;
 import ir.hezareh.park.FanBazar;
 import ir.hezareh.park.R;
+import ir.hezareh.park.SignIn_SignUp;
 import ir.hezareh.park.Utils;
 import ir.hezareh.park.models.ModelComponent;
 
@@ -295,8 +296,8 @@ public class Component {
                     .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                         @Override
                         public void onSliderClick(BaseSliderView slider) {
-                            //Intent k = new Intent(context, FanBazar.class);
-                            //context.startActivity(k);
+                            Intent k = new Intent(context, SignIn_SignUp.class);
+                            context.startActivity(k);
                         }
                     });
             GalleryLayout.addSlider(demoSlider);
