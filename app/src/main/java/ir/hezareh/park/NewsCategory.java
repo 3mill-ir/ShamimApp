@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import ir.hezareh.park.Adapters.EqualSpacingItemDecoration;
+import ir.hezareh.park.Adapters.NewsCategoryAdapter;
 import ir.hezareh.park.models.News;
 
 
@@ -132,7 +134,7 @@ public class NewsCategory extends AppCompatActivity {
          */
         public RecyclerView NewsRecycler;
         public SwipeRefreshLayout swipeRefreshLayout;
-        public MyRecyclerAdapter myRecyclerAdapter;
+        public NewsCategoryAdapter newsCategoryAdapter;
         List<News> newslist;
 
         public PlaceholderFragment() {
@@ -183,10 +185,10 @@ public class NewsCategory extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     //hidepDialog();
-                    myRecyclerAdapter = new MyRecyclerAdapter(getActivity(), null, newslist);
+                    newsCategoryAdapter = new NewsCategoryAdapter(getActivity(), null, newslist);
 
-                    myRecyclerAdapter.notifyDataSetChanged();
-                    NewsRecycler.setAdapter(myRecyclerAdapter);
+                    newsCategoryAdapter.notifyDataSetChanged();
+                    NewsRecycler.setAdapter(newsCategoryAdapter);
                     swipeRefreshLayout.setRefreshing(false);
 
                 }

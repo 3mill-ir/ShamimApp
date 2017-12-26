@@ -24,11 +24,14 @@ import android.widget.ProgressBar;
 
 import com.squareup.picasso.Picasso;
 
+import ir.hezareh.park.Adapters.EqualSpacingItemDecoration;
+import ir.hezareh.park.Adapters.NewsComponentRecycler;
 
-public class NewsListActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+
+public class NewsDetailActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     SwipeRefreshLayout swipeRefreshLayout;
     RecyclerView NewsRecycler;
-    RecyclerViewAdapter myRecyclerAdapter;
+    NewsComponentRecycler componentRecycler;
     int screenHeight;
     private String url = "https://www.digikala.com/";
     private WebView webView;
@@ -70,7 +73,7 @@ public class NewsListActivity extends AppCompatActivity implements SwipeRefreshL
         //progressBar = (ProgressBar) findViewById(R.id.progressBar);
         NewsRecycler = (RecyclerView) findViewById(R.id.news_recycler);
 
-        myRecyclerAdapter = new RecyclerViewAdapter(getApplicationContext(), null);
+        componentRecycler = new NewsComponentRecycler(getApplicationContext(), null);
 
         NewsRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, true));
         NewsRecycler.addItemDecoration(new EqualSpacingItemDecoration(10, EqualSpacingItemDecoration.HORIZONTAL));

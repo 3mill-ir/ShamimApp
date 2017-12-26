@@ -21,7 +21,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     DrawerLayout drawer;
-    ListAdapter listAdapter;
     ListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;

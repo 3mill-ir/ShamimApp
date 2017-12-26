@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -24,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import ir.hezareh.park.Component.Component;
+import ir.hezareh.park.Component.MyPieChart;
 import ir.hezareh.park.models.ModelComponent;
 
 public class FanBazar extends AppCompatActivity {
@@ -36,6 +39,9 @@ public class FanBazar extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fan_bazar);
         width = new Utils(getApplicationContext()).getDisplayMetrics().widthPixels;
+        ((TextView) findViewById(R.id.header_text)).setText("فن بازار");
+        ((TextView) findViewById(R.id.header_text)).setTypeface(new Utils(getApplicationContext()).font_set("BYekan"));
+
 
         showComponents();
     }
@@ -50,12 +56,12 @@ public class FanBazar extends AppCompatActivity {
                 try {
                     String jsonResponse = new String(response.toString().getBytes("ISO-8859-1"));
                     Log.d(TAG, jsonResponse);
-
-                    JSONArray jsonArray = response.getJSONArray("root");
+                    JSONArray jsonArray = response.getJSONArray("Root");
                     Gson gson = new Gson();
                     Type collectionType = new TypeToken<Collection<ModelComponent>>() {
                     }.getType();
-                    List<ModelComponent> components = gson.fromJson(jsonArray.toString(), collectionType);
+                    List<ModelComponent> components = gson.fromJson(new String(jsonArray.toString().getBytes("ISO-8859-1")), collectionType);
+
 
                     LinearLayout Root_Layout = (LinearLayout) findViewById(R.id.main_layout);
 
@@ -84,7 +90,7 @@ public class FanBazar extends AppCompatActivity {
                                 Root_Layout.addView(new Component(FanBazar.this).Slider(width, 0, component.getItem()));
                                 break;
                             case "ButtonGalleryRow":
-                                Root_Layout.addView(new Component(FanBazar.this).GalleryButton(width, component, "GalleryButtons", text, my));
+                                Root_Layout.addView(new Component(FanBazar.this).GalleryButton(width, component, "GalleryButtons"));
                                 break;
                             case "NewsList":
                                 Root_Layout.addView(new Component(FanBazar.this).News(width, 0, component));
@@ -93,7 +99,7 @@ public class FanBazar extends AppCompatActivity {
                                 Root_Layout.addView(new Component(FanBazar.this).ButtonsRow(width, component, my));
                                 break;
                             case "GalleryButtonRow":
-                                Root_Layout.addView(new Component(FanBazar.this).GalleryButton(width, component, "ButtonsGallery", text, my));
+                                Root_Layout.addView(new Component(FanBazar.this).GalleryButton(width, component, "ButtonsGallery"));
                                 break;
                             case "Diagram":
                                 Root_Layout.addView(new MyPieChart(FanBazar.this, width, width / 2).getItem());
@@ -117,8 +123,7 @@ public class FanBazar extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d("TAG", "Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
                 // hide the progress dialog
                 //hidepDialog();
             }

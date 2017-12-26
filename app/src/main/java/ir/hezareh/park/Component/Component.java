@@ -1,4 +1,4 @@
-package ir.hezareh.park;
+package ir.hezareh.park.Component;
 
 import android.app.Activity;
 import android.content.Context;
@@ -33,6 +33,12 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import ir.hezareh.park.Adapters.EqualSpacingItemDecoration;
+import ir.hezareh.park.Adapters.NewsComponentRecycler;
+import ir.hezareh.park.Companies;
+import ir.hezareh.park.FanBazar;
+import ir.hezareh.park.R;
+import ir.hezareh.park.Utils;
 import ir.hezareh.park.models.ModelComponent;
 
 
@@ -61,8 +67,8 @@ public class Component {
                     .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                         @Override
                         public void onSliderClick(BaseSliderView slider) {
-                            Intent k = new Intent(context, NewsListActivity.class);
-                            context.startActivity(k);
+                            /*Intent k = new Intent(context, NewsDetailActivity.class);
+                            context.startActivity(k);*/
                         }
                     });
             ImageSlider.addSlider(demoSlider);
@@ -79,7 +85,7 @@ public class Component {
     public RecyclerView News(int width, int height, ModelComponent modelComponent) {
         RecyclerView NewsRecycler = new RecyclerView(context);
 
-        RecyclerViewAdapter myRecyclerAdapter = new RecyclerViewAdapter(context, modelComponent.getItem());
+        NewsComponentRecycler newsComponentRecycler = new NewsComponentRecycler(context, modelComponent.getItem());
 
         LinearLayout.LayoutParams NewsRecyclerLayoutParams = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT);
         NewsRecyclerLayoutParams.gravity = Gravity.CENTER_VERTICAL;
@@ -88,7 +94,7 @@ public class Component {
         NewsRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, true));
         NewsRecycler.addItemDecoration(new EqualSpacingItemDecoration(10, EqualSpacingItemDecoration.HORIZONTAL));
         NewsRecycler.setItemAnimator(new DefaultItemAnimator());
-        NewsRecycler.setAdapter(myRecyclerAdapter);
+        NewsRecycler.setAdapter(newsComponentRecycler);
 
         return NewsRecycler;
     }
@@ -198,7 +204,7 @@ public class Component {
         return PollQuestionLayout;
     }
 
-    public RelativeLayout GalleryButton(int width, ModelComponent modelComponent, String Order, ArrayList<String> ButtonsText, ArrayList<String> ButtonsURLs) {
+    public RelativeLayout GalleryButton(int width, ModelComponent modelComponent, String Order) {
         RelativeLayout GalleryButtonRowLayout = new RelativeLayout(context);
         RelativeLayout.LayoutParams GalleryButtonRowLayoutParams = new RelativeLayout.LayoutParams(width, 2 * width / 3);
         GalleryButtonRowLayout.setLayoutParams(GalleryButtonRowLayoutParams);
@@ -226,6 +232,14 @@ public class Component {
         UpperButtonLayout.setId(View.generateViewId());
         UpperButtonLayout.setGravity(Gravity.CENTER);
         UpperButtonLayout.addView(upperChild);
+        upperChild.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent k = new Intent(context, FanBazar.class);
+                context.startActivity(k);
+            }
+        });
+
 
         View lowerChild = inflater.inflate(R.layout.item_button_row, null);
         lowerChild.setLayoutParams(ButtonParams);
@@ -252,6 +266,13 @@ public class Component {
         LowerButtonLayout.setId(View.generateViewId());
         LowerButtonLayout.setGravity(Gravity.CENTER);
         LowerButtonLayout.addView(lowerChild);
+        LowerButtonLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent k = new Intent(context, Companies.class);
+                context.startActivity(k);
+            }
+        });
 
 
         com.daimajia.slider.library.SliderLayout GalleryLayout = new SliderLayout(context);
@@ -274,8 +295,8 @@ public class Component {
                     .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                         @Override
                         public void onSliderClick(BaseSliderView slider) {
-                            Intent k = new Intent(context, FanBazar.class);
-                            context.startActivity(k);
+                            //Intent k = new Intent(context, FanBazar.class);
+                            //context.startActivity(k);
                         }
                     });
             GalleryLayout.addSlider(demoSlider);

@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -39,6 +38,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import ir.hezareh.park.Adapters.CompaniesRecycler;
+import ir.hezareh.park.Adapters.CompanyCategoryMenuAdapter;
 import ir.hezareh.park.models.CompanyList;
 
 public class Companies extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
@@ -87,7 +88,7 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), calculateNoOfColumns(getApplicationContext()));
-        companyRecyclerView.addItemDecoration(new GridSpacingItemDecoration(calculateNoOfColumns(getApplicationContext()), dpToPx(0), true));
+        companyRecyclerView.addItemDecoration(new GridSpacingItemDecoration(calculateNoOfColumns(getApplicationContext()), dpToPx(2), true));
         companyRecyclerView.setItemAnimator(new DefaultItemAnimator());
         companyRecyclerView.setLayoutManager(mLayoutManager);
         companyRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -114,12 +115,6 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
         CompanyListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                /*myRecyclerAdapter = new CompaniesRecycler(getApplicationContext(), CompanyList.get(position).getCompanyList() );
-                companyRecyclerView.setAdapter(myRecyclerAdapter);
-                companyCategory.setVisibility(View.VISIBLE);
-                companyCategory.setText(CompanyList.get(position).getType());
-                companyCategory.setTypeface(new Utils(getApplicationContext()).font_set("BHoma"));*/
                 Clicked = position;
                 getCompanyList();
                 menu.toggle();
@@ -129,13 +124,9 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
                                     @Override
                                     public void run() {
                                         swipeRefreshLayout.setRefreshing(true);
-
                                         getCompanyList();
                                     }
-                                }
-        );
-
-
+        });
     }
 
     @Override
@@ -160,22 +151,10 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
                     }.getType();
                     CompanyList = gson.fromJson(new String(jsonArray.toString().getBytes("ISO-8859-1")), collectionType);
 
-                    ArrayList<String> my = new ArrayList<>();
-                    my.add(Utils.URL_encode("https://i.ytimg.com/vi/IwxBAwobISo/maxresdefault.jpg"));
-                    my.add(Utils.URL_encode("https://ak9.picdn.net/shutterstock/videos/12871889/thumb/1.jpg"));
-                    my.add(Utils.URL_encode("https://i.pinimg.com/736x/2c/d6/85/2cd6857b8ae17c36e9e6dab2c11bf02c--earth-hd-florida-georgia.jpg"));
-
-
-                    ArrayList<String> text = new ArrayList<>();
-                    text.add("about");
-                    text.add("contact");
-                    text.add("اسلایدر");
-
 
                     Log.d(TAG, CompanyList.get(0).getCompanyList().get(1).getName() + "");
-
-                    CompanyListAdapter companyListAdapter = new CompanyListAdapter(getApplicationContext(), CompanyList);
-                    CompanyListView.setAdapter(companyListAdapter);
+                    CompanyCategoryMenuAdapter categoryMenuAdapter = new CompanyCategoryMenuAdapter(getApplicationContext(), CompanyList);
+                    CompanyListView.setAdapter(categoryMenuAdapter);
 
                     myRecyclerAdapter = new CompaniesRecycler(getApplicationContext(), CompanyList.get(Clicked).getCompanyList());
                     companyRecyclerView.setAdapter(myRecyclerAdapter);
@@ -204,8 +183,7 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d("TAG", "Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
                 swipeRefreshLayout.setRefreshing(false);
                 // hide the progress dialog
                 //hidepDialog();
