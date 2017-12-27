@@ -121,5 +121,6 @@
         <item>Child Level 01</item>
         <item>Child Level 02</item>
     </string-array>
+    <string name="title_activity_sign_in__sign_up">SignIn/SignUp</string>
 
 </resources>

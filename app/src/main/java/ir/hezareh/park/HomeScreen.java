@@ -82,6 +82,7 @@ public class HomeScreen extends AppCompatActivity {
 
         showComponents();
 
+
         my.add("https://i.ytimg.com/vi/IwxBAwobISo/maxresdefault.jpg");
         my.add("https://ak9.picdn.net/shutterstock/videos/12871889/thumb/1.jpg");
         my.add("https://i.pinimg.com/736x/2c/d6/85/2cd6857b8ae17c36e9e6dab2c11bf02c--earth-hd-florida-georgia.jpg");

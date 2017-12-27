@@ -9,9 +9,11 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 /**
  * Created by rf on 10/11/2017.
@@ -96,6 +98,21 @@ public class Utils {
                 return Typeface.createFromAsset(context.getAssets(), "fonts/irsans.ttf");
             default:
                 return Typeface.createFromAsset(context.getAssets(), "fonts/irsans.ttf");
+        }
+    }
+
+    public void overrideFonts(final View v) {
+        try {
+            if (v instanceof ViewGroup) {
+                ViewGroup vg = (ViewGroup) v;
+                for (int i = 0; i < vg.getChildCount(); i++) {
+                    View child = vg.getChildAt(i);
+                    overrideFonts(child);
+                }
+            } else if (v instanceof TextView) {
+                ((TextView) v).setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/BHoma.ttf"));
+            }
+        } catch (Exception e) {
         }
     }
 
