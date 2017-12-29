@@ -1,5 +1,6 @@
 package ir.hezareh.park;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -81,6 +82,12 @@ public class HomeScreen extends AppCompatActivity {
 
 
         showComponents();
+
+        try {
+            new AppUpdate(getApplicationContext()).check_Version();
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
 
         my.add("https://i.ytimg.com/vi/IwxBAwobISo/maxresdefault.jpg");

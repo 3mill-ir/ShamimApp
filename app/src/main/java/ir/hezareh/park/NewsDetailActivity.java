@@ -12,6 +12,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -20,12 +22,31 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.List;
+
+import ir.hezareh.park.Adapters.CommentRecycler;
 import ir.hezareh.park.Adapters.EqualSpacingItemDecoration;
 import ir.hezareh.park.Adapters.NewsComponentRecycler;
+import ir.hezareh.park.models.ModelComponent;
 
 
 public class NewsDetailActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
@@ -33,6 +54,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
     RecyclerView NewsRecycler;
     NewsComponentRecycler componentRecycler;
     int screenHeight;
+    int width;
     private String url = "https://www.digikala.com/";
     private WebView webView;
     private ProgressBar progressBar;
@@ -41,11 +63,13 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news_list);
+        setContentView(R.layout.activity_news_details);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         CollapsingToolbarLayout layout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         layout.setTitleEnabled(true);
         layout.setTitle("");
+
+        width = new Utils(getApplicationContext()).getDisplayMetrics().widthPixels;
         screenHeight = new Utils(getApplicationContext()).getDisplayMetrics().heightPixels;
 
         //View logo = getLayoutInflater().inflate(R.layout.custom_toolbar, null);
@@ -103,6 +127,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                 webView.loadUrl(url);
                 //((ImageView) findViewById(R.id.news_detail_header)).setBackgroundResource(R.drawable.shadow);
                 //renderPost()
+                showComponents();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -116,7 +141,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         webView.loadUrl(url);
         //((ImageView) findViewById(R.id.news_detail_header)).setBackgroundResource(R.drawable.shadow);
         //renderPost();
-
+        showComponents();
         swipeRefreshLayout.setRefreshing(false);
 
     }
@@ -124,6 +149,75 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
 
     private void renderPost() {
         //webView.loadUrl("https://www.google.com/");
+    }
+
+    public void showComponents() {
+
+        final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                "http://arefnaghshin.ir/components", null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    String jsonResponse = new String(response.toString().getBytes("ISO-8859-1"));
+                    Log.d("tag", jsonResponse);
+                    JSONArray jsonArray = response.getJSONArray("Root");
+                    Gson gson = new Gson();
+                    Type collectionType = new TypeToken<Collection<ModelComponent>>() {
+                    }.getType();
+                    List<ModelComponent> components = gson.fromJson(new String(jsonArray.toString().getBytes("ISO-8859-1")), collectionType);
+
+
+                    CommentRecycler newsComponentRecycler = new CommentRecycler(getApplicationContext(), components.get(0).getItem());
+
+                    LinearLayout.LayoutParams NewsRecyclerLayoutParams = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    NewsRecyclerLayoutParams.gravity = Gravity.CENTER_VERTICAL;
+                    NewsRecycler.setLayoutParams(NewsRecyclerLayoutParams);
+
+                    NewsRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, true));
+                    NewsRecycler.addItemDecoration(new EqualSpacingItemDecoration(10, EqualSpacingItemDecoration.VERTICAL));
+                    NewsRecycler.setItemAnimator(new DefaultItemAnimator());
+                    NewsRecycler.setAdapter(newsComponentRecycler);
+
+
+                    // Sets the Toolbar to act as the ActionBar for this Activity window.
+                    // Make sure the toolbar exists in the activity and is not null
+                    //setSupportActionBar(toolbar);
+
+                    //Root_Layout.addView(mTopToolbar);
+
+                    //for (ModelComponent component : components) {
+                    //for (ModelComponent.Item item : component.getItems()) {
+
+                    Log.d("tag", components.get(5).getQuestion() + "");
+                    //}
+                    //}
+
+
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("TAG", "Error: " + error.getMessage());
+                //Toast.makeText(getApplicationContext(),error.getMessage(), Toast.LENGTH_SHORT).show();
+                // hide the progress dialog
+                //hidepDialog();
+                //swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        jsonObjReq.setShouldCache(false);
+
+        // Adding request to request queue
+        App.getInstance().addToRequestQueue(jsonObjReq);
+
     }
 
 
