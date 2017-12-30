@@ -15,6 +15,7 @@ public class App extends Application {
     public static final String TAG = App.class
             .getSimpleName();
     private static App mInstance;
+    SharedPreferencesManager preferencesManager;
     private RequestQueue mRequestQueue;
 
     public static synchronized App getInstance() {
@@ -24,6 +25,8 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        preferencesManager = new SharedPreferencesManager(getApplicationContext());
+        preferencesManager.set_showUpdateDialog(true);
         mInstance = this;
     }
 

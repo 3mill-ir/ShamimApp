@@ -14,6 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service android:name=".DownloadService" />
         <activity
             android:name=".HomeScreen"
             android:theme="@style/AppTheme.NoActionBar">
@@ -41,7 +42,8 @@
         <activity
             android:name=".SignIn_SignUp"
             android:label="@string/title_activity_sign_in__sign_up"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustPan"></activity>
     </application>
 
 </manifest>

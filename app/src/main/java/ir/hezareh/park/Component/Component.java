@@ -37,6 +37,7 @@ import ir.hezareh.park.Adapters.EqualSpacingItemDecoration;
 import ir.hezareh.park.Adapters.NewsComponentRecycler;
 import ir.hezareh.park.Companies;
 import ir.hezareh.park.FanBazar;
+import ir.hezareh.park.OnLoadMoreListener;
 import ir.hezareh.park.R;
 import ir.hezareh.park.SignIn_SignUp;
 import ir.hezareh.park.Utils;
@@ -45,11 +46,12 @@ import ir.hezareh.park.models.ModelComponent;
 
 public class Component {
     Context context;
+    private OnLoadMoreListener onLoadMoreListener;
+
 
     public Component(Context _context) {
         this.context = _context;
     }
-
 
     public RelativeLayout Slider(int width, int height, List<ModelComponent.Item> Items) {
         RelativeLayout Slider = new RelativeLayout(context);
@@ -99,7 +101,6 @@ public class Component {
 
         return NewsRecycler;
     }
-
 
     public LinearLayout pollQuestion(int screenWidth, int height, ModelComponent modelComponent) {
         //ScrollView PollQuestionScrollView = new ScrollView(context);
@@ -204,6 +205,13 @@ public class Component {
 
         return PollQuestionLayout;
     }
+
+    public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
+        this.onLoadMoreListener = mOnLoadMoreListener;
+    }
+
+
+
 
     public RelativeLayout GalleryButton(int width, ModelComponent modelComponent, String Order) {
         RelativeLayout GalleryButtonRowLayout = new RelativeLayout(context);
