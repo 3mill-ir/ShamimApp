@@ -18,19 +18,15 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
@@ -40,13 +36,13 @@ import java.util.List;
 
 import ir.hezareh.park.Adapters.EqualSpacingItemDecoration;
 import ir.hezareh.park.Adapters.NewsCategoryAdapter;
-import ir.hezareh.park.models.News;
+import ir.hezareh.park.models.ModelComponent;
 
 
 public class NewsCategory extends AppCompatActivity {
 
-
     public static final String TAG = NewsCategory.class.getSimpleName();
+    ArrayList<ModelComponent> newsCategories;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -65,7 +61,7 @@ public class NewsCategory extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_category);
-
+        //new NewsCategory().makeJsonArrayRequest1(new );
 
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
@@ -74,15 +70,20 @@ public class NewsCategory extends AppCompatActivity {
         //getSupportActionBar().setDisplayShowHomeEnabled(true);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        new NewsCategory().makeJsonArrayRequest1(new VolleyCallback() {
+            @Override
+            public void onSuccessResponse(List<ModelComponent> result) {
+                mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), result);
+                // Set up the ViewPager with the sections adapter.
+                mViewPager = (ViewPager) findViewById(R.id.container);
+                mViewPager.setAdapter(mSectionsPagerAdapter);
+                TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+                tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+                tabLayout.setupWithViewPager(mViewPager);
 
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+            }
+        });
 
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -124,6 +125,56 @@ public class NewsCategory extends AppCompatActivity {
     }
 
     /**
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
+     */
+    private void makeJsonArrayRequest1(final VolleyCallback callback) {
+
+
+        JsonArrayRequest req = new JsonArrayRequest("http://arefnaghshin.ir/news",
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG, response.toString());
+                        try {
+                            Gson gson = new Gson();
+
+                            Type collectionType = new TypeToken<Collection<ModelComponent>>() {
+                            }.getType();
+
+                            newsCategories = gson.fromJson(new String(response.toString().getBytes("ISO-8859-1")), collectionType);
+
+                            Log.d(TAG, newsCategories.get(0).getCategory().toString());
+
+                            for (int i = 0; i < newsCategories.size(); i++) {
+                                Log.d(TAG, newsCategories.get(i).getCategory().toString());
+                            }
+
+                            callback.onSuccessResponse(newsCategories);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            //Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                        //hidepDialog();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                //Toast.makeText(getApplicationContext(),error.getMessage(), Toast.LENGTH_SHORT).show();
+                //hidepDialog();
+            }
+        });
+
+        // Adding request to request queue
+        req.setShouldCache(false);
+
+        // Adding request to request queue
+        App.getInstance().addToRequestQueue(req);
+    }
+
+    /**
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -135,7 +186,7 @@ public class NewsCategory extends AppCompatActivity {
         public RecyclerView NewsRecycler;
         public SwipeRefreshLayout swipeRefreshLayout;
         public NewsCategoryAdapter newsCategoryAdapter;
-        List<News> newslist;
+        List<ModelComponent> newslist;
 
         public PlaceholderFragment() {
 
@@ -155,45 +206,38 @@ public class NewsCategory extends AppCompatActivity {
 
         public void makeJsonObjectRequest() {
 
-            final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                    "http://arefnaghshin.ir/myjson.txt", null, new Response.Listener<JSONObject>() {
 
-                @Override
-                public void onResponse(JSONObject response) {
-                    String utf8string;
-                    try {
-                        utf8string = new String(response.toString().getBytes("ISO-8859-1"));
-                        Log.d(TAG, utf8string);
-                        JSONArray jsonArray = response.getJSONArray("Root");
-                        Gson gson = new Gson();
-                        Type collectionType = new TypeToken<Collection<News>>() {
-                        }.getType();
-                        List<News> news = gson.fromJson(String.valueOf(jsonArray), collectionType);
+            JsonArrayRequest req = new JsonArrayRequest("http://arefnaghshin.ir/news",
+                    new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            String utf8string;
+                            try {
+                                utf8string = new String(response.toString().getBytes("ISO-8859-1"));
+                                Log.d(TAG, utf8string);
+                                Gson gson = new Gson();
+                                Type collectionType = new TypeToken<Collection<ModelComponent>>() {
+                                }.getType();
 
-                        //List<News> news = Arrays.asList(gson.fromJson(response.toString(), News[].class));
-                        newslist = new ArrayList<>(news);
-                        Log.i("Post", news.size() + " posts loaded.");
-                        for (News news1 : newslist) {
-                            Log.i("Post", news1.toString());
+                                List<ModelComponent> news = gson.fromJson(String.valueOf(utf8string), collectionType);
+
+                                //List<News> news = Arrays.asList(gson.fromJson(response.toString(), News[].class));
+                                newslist = new ArrayList<>(news);
+                                Log.i("Post", news.size() + " posts loaded.");
+                                for (ModelComponent news1 : newslist) {
+                                    Log.i("Post", news1.toString());
+                                }
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            //hidepDialog();
+                            newsCategoryAdapter = new NewsCategoryAdapter(getActivity(), newslist, getArguments().getInt(ARG_SECTION_NUMBER) - 1);
+
+                            newsCategoryAdapter.notifyDataSetChanged();
+                            NewsRecycler.setAdapter(newsCategoryAdapter);
+                            swipeRefreshLayout.setRefreshing(false);
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Toast.makeText(getActivity(),
-                                "Error: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                    //hidepDialog();
-                    newsCategoryAdapter = new NewsCategoryAdapter(getActivity(), null, newslist);
-
-                    newsCategoryAdapter.notifyDataSetChanged();
-                    NewsRecycler.setAdapter(newsCategoryAdapter);
-                    swipeRefreshLayout.setRefreshing(false);
-
-                }
-            }, new Response.ErrorListener() {
-
+                    }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     VolleyLog.d(TAG, "Error: " + error.getMessage());
@@ -204,17 +248,31 @@ public class NewsCategory extends AppCompatActivity {
                     swipeRefreshLayout.setRefreshing(false);
                 }
             });
-            jsonObjReq.setShouldCache(false);
 
             // Adding request to request queue
-            App.getInstance().addToRequestQueue(jsonObjReq);
+            req.setShouldCache(false);
+
+            // Adding request to request queue
+            App.getInstance().addToRequestQueue(req);
+
+
+
+
+
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
             View rootView = inflater.inflate(R.layout.fragment_news_category, container, false);
-            if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
+            //if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
+
+            new NewsCategory().makeJsonArrayRequest1(new VolleyCallback() {
+                @Override
+                public void onSuccessResponse(List<ModelComponent> result) {
+                    Log.d("td", result.get(0).getCategory().toString());
+                }
+            });
 
                 NewsRecycler = rootView.findViewById(R.id.news_recycler);
                 swipeRefreshLayout = rootView.findViewById(R.id.refresh_layout);
@@ -237,7 +295,7 @@ public class NewsCategory extends AppCompatActivity {
                     }
                 });
                 //new Utils(getActivity()).showAlertDialog("ارسال","ارسال درخواست؟",true);
-            }
+            //}
             return rootView;
         }
 
@@ -245,43 +303,77 @@ public class NewsCategory extends AppCompatActivity {
         public void onRefresh() {
             makeJsonObjectRequest();
         }
+
+
     }
 
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
+        final List<Integer> s1 = new ArrayList<>();
+        ArrayList<String> components;
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        public SectionsPagerAdapter(FragmentManager fm, final List<ModelComponent> modelComponents) {
             super(fm);
+            components = new ArrayList<>();
+            /*new NewsCategory().makeJsonArrayRequest1(new VolleyCallback() {
+                @Override
+                public void onSuccessResponse(List<ModelComponent> result) {
+                    for(int i=0;i<result.size();i++)
+                    {
+                        s.add(result.get(i).getCategory().toString());
+                        Log.d("list", s.get(i));
+                    }
+                }
+            });*/
+
+
+            for (ModelComponent item : modelComponents) {
+                components.add(item.getCategory().toString());
+            }
+            //components=new ArrayList<>(modelComponents);
+            /*components.add(s.get(0).getCategory().toString());
+            components.add(s.get(1).getCategory().toString());*/
+            //mSectionsPagerAdapter.notifyDataSetChanged();
+
         }
 
         @Override
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
+
+
             return PlaceholderFragment.newInstance(position + 1);
         }
 
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+
+            return components.size();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            switch (position) {
+            /*switch (position) {
                 case 0:
                     return "فرهنگی";
                 case 1:
                     return "ورزشی";
                 case 2:
                     return "خارجی";
-            }
-            return null;
+            }*/
+
+
+            //s.add("dd");
+
+
+            //return s.get(position);
+
+
+            //Log.d(TAG,newsCategories.get(i).getCategory().toString());
+
+            return components.get(position);
+            //return null;
         }
 
     }

@@ -102,7 +102,7 @@ public class FanBazar extends AppCompatActivity {
                                 Root_Layout.addView(new Component(FanBazar.this).GalleryButton(width, component, "ButtonsGallery"));
                                 break;
                             case "Diagram":
-                                Root_Layout.addView(new MyPieChart(FanBazar.this, width, width / 2).getItem());
+                                Root_Layout.addView(new MyPieChart(FanBazar.this, width, width / 2, component).getItem());
                                 break;
                             case "PollQuestion":
                                 Root_Layout.addView(new Component(FanBazar.this).pollQuestion(width, 0, component));

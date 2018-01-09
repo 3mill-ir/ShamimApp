@@ -16,11 +16,11 @@ public class ModelComponent {
     @SerializedName("Component")
     @Expose
     private String component;
+
     @Nullable
     @SerializedName("Question")
     @Expose
     private String question;
-
 
     @SerializedName("Item")
     @Expose
@@ -34,12 +34,26 @@ public class ModelComponent {
     @Expose
     private List<GalleryItem> galleryItem = null;
 
+    @SerializedName("Category")
+    @Expose
+    private Object category = null;
+
+
+
     public int getID() {
         return iD;
     }
 
     public void setID(int iD) {
         this.iD = iD;
+    }
+
+    public Object getCategory() {
+        return category;
+    }
+
+    public void setCategory(Object category) {
+        this.category = category;
     }
 
     public String getComponent() {

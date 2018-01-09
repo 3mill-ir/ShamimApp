@@ -312,9 +312,9 @@ public class HomeScreen extends AppCompatActivity {
                                 Root_Layout.addView(new Component(HomeScreen.this).GalleryButton(width, component, "ButtonsGallery"));
                                 break;
                             case "Diagram":
-                                Root_Layout.addView(new MyPieChart(HomeScreen.this, width, width / 2).getItem());
+                                Root_Layout.addView(new MyPieChart(HomeScreen.this, width, width / 2, component).getItem());
                                 break;
-                            case "PollQuestion":
+                            case "Poll":
                                 Root_Layout.addView(new Component(HomeScreen.this).pollQuestion(width, 0, component));
                                 break;
                         }

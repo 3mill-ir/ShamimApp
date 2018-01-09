@@ -19,12 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ir.hezareh.park.R;
+import ir.hezareh.park.models.ModelComponent;
 
 public class MyPieChart {
     private PieChart chart;
     private RelativeLayout ChartLayout;
 
-    public MyPieChart(Context c, int width, int height) {
+    public MyPieChart(Context c, int width, int height, ModelComponent modelComponent) {
         ChartLayout = new RelativeLayout(c);
 
         LinearLayout.LayoutParams ChartLayoutParams = new LinearLayout.LayoutParams(width, height);
@@ -67,9 +68,17 @@ public class MyPieChart {
         // add a selection listener
         //chart.setOnChartValueSelectedListener(con);
 
-        float[] intArray = new float[]{799, 122, 909, 345, 787};
-        String[] StringArray = new String[]{"a", "b", "c", "d", "g"};
-        setData(intArray, StringArray);
+
+        ArrayList<Float> Votes = new ArrayList<>();
+        ArrayList<String> Answers = new ArrayList<>();
+
+
+        for (ModelComponent.Item item : modelComponent.getItem()) {
+            Votes.add((float) item.getVote());
+            Answers.add(item.getText());
+        }
+
+        setData(Votes, Answers);
 
 
         chart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
@@ -98,14 +107,14 @@ public class MyPieChart {
         return ChartLayout;
     }
 
-    private void setData(float[] Value, String[] Label) {
+    private void setData(ArrayList<Float> Value, ArrayList<String> Label) {
 
         List<PieEntry> entries = new ArrayList<>();
         int index = 0;
         for (float item : Value) {
-            entries.add(new PieEntry(item, Label[index++]));
+            entries.add(new PieEntry(item, Label.get(index++)));
         }
-        PieDataSet dataSet = new PieDataSet(entries, "Election Results");
+        PieDataSet dataSet = new PieDataSet(entries, "نتایج نظرسنجی");
 
         dataSet.setDrawIcons(false);
 

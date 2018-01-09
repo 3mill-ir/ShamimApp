@@ -98,7 +98,7 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
             RelativeLayout.LayoutParams ThumbnailLayout = new RelativeLayout.LayoutParams(5 * widthPixels / 10, 4 * widthPixels / 10);
             itemViewHolder.thumbnail.setLayoutParams(ThumbnailLayout);
 
-            itemViewHolder.title.setText(newItems.get(position).getText());
+            itemViewHolder.title.setText(newItems.get(position).getContent().toString());
             itemViewHolder.title.setTypeface(new Utils(context).font_set("irsans"));
 
             itemViewHolder.title.setBackgroundColor(Color.YELLOW);

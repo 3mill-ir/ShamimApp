@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import ir.hezareh.park.R;
 import ir.hezareh.park.Utils;
-import ir.hezareh.park.models.News;
+import ir.hezareh.park.models.ModelComponent;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 
@@ -42,13 +42,15 @@ public class NewsCategoryAdapter extends RecyclerView.Adapter<NewsCategoryAdapte
     private Context mContext;
     private ArrayList<HashMap<String, String>> RequestsList;
     private int lastPosition = -1;
-    private List<News> news;
+    private List<ModelComponent> news;
+    private int index;
 
 
-    public NewsCategoryAdapter(Context context, ArrayList<HashMap<String, String>> data, List<News> _news) {
+    public NewsCategoryAdapter(Context context, List<ModelComponent> _news, int _index) {
         //this.RequestsList = data;
         this.mContext = context;
         this.news = _news;
+        this.index = _index;
     }
 
     @Override
@@ -75,16 +77,18 @@ public class NewsCategoryAdapter extends RecyclerView.Adapter<NewsCategoryAdapte
         LinearLayout.LayoutParams ItemLayout = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         holder.item.setLayoutParams(ItemLayout);
 
+        holder.date.setText(this.news.get(index).getItem().get(position).getDate().toString());
+
 
         RelativeLayout.LayoutParams ThumbnailLayout = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 4 * height / 10);
         //holder.thumbnail.setLayoutParams(ThumbnailLayout);
 
 
-        holder.title.setText(this.news.get(position).getName());
+        holder.title.setText(this.news.get(index).getItem().get(position).getText());
         //holder.title.setBackgroundColor(Color.YELLOW);
         final AtomicBoolean playAnimation = new AtomicBoolean(true);
 
-        Picasso.with(this.mContext).load(Utils.URL_encode(news.get(position).getImage()))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
+        Picasso.with(this.mContext).load(Utils.URL_encode(news.get(index).getItem().get(position).getImage().toString()))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
                 .fit()
                 //.resize(5*height/10,5*height/10)
                 //.transform(new CropCircleTransformation())
@@ -125,7 +129,7 @@ public class NewsCategoryAdapter extends RecyclerView.Adapter<NewsCategoryAdapte
 
     @Override
     public int getItemCount() {
-        return news.size();
+        return news.get(index).getItem().size();
     }
 
     @Override
@@ -140,6 +144,7 @@ public class NewsCategoryAdapter extends RecyclerView.Adapter<NewsCategoryAdapte
         public ProgressBar img_progress;
         public CardView cardView;
         public LinearLayout item;
+        public TextView date;
 
         public MyViewHolder(View view) {
             super(view);
@@ -148,6 +153,7 @@ public class NewsCategoryAdapter extends RecyclerView.Adapter<NewsCategoryAdapte
             img_progress = view.findViewById(R.id.image_progressbar);
             cardView = view.findViewById(R.id.card_view);
             item = view.findViewById(R.id.list_item);
+            date = view.findViewById(R.id.date);
             view.setOnClickListener(this);
         }
 

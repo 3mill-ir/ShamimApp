@@ -7,12 +7,36 @@ import java.util.List;
 
 public class CompanyList {
 
+
+    @SerializedName("Functionality")
+    @Expose
+    private String functionality;
+    @SerializedName("Url")
+
+    @Expose
+    private String url;
     @SerializedName("Type")
     @Expose
     private String type;
     @SerializedName("CompanyList")
     @Expose
     private List<CompanyInfo> companyList = null;
+
+    public String getFunctionality() {
+        return functionality;
+    }
+
+    public void setFunctionality(String functionality) {
+        this.functionality = functionality;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public String getType() {
         return type;
@@ -44,6 +68,17 @@ public class CompanyList {
         @SerializedName("Website")
         @Expose
         private String website;
+        @SerializedName("Functionality")
+        @Expose
+        private String functionality;
+
+        public String getFunctionality() {
+            return functionality;
+        }
+
+        public void setFunctionality(String functionality) {
+            this.functionality = functionality;
+        }
 
         public String getLogo() {
             return logo;

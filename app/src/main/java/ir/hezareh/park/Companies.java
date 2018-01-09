@@ -152,7 +152,7 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
                     CompanyList = gson.fromJson(new String(jsonArray.toString().getBytes("ISO-8859-1")), collectionType);
 
 
-                    Log.d(TAG, CompanyList.get(0).getCompanyList().get(1).getName() + "");
+                    //Log.d(TAG, CompanyList.get(0).getCompanyList().get(1).getName() + "");
                     CompanyCategoryMenuAdapter categoryMenuAdapter = new CompanyCategoryMenuAdapter(getApplicationContext(), CompanyList);
                     CompanyListView.setAdapter(categoryMenuAdapter);
 

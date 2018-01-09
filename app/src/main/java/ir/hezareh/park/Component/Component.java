@@ -1,6 +1,5 @@
 package ir.hezareh.park.Component;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -26,8 +25,6 @@ import com.daimajia.slider.library.Indicators.PagerIndicator;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
-import com.mzelzoghbi.zgallery.ZGrid;
-import com.mzelzoghbi.zgallery.entities.ZColor;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -37,6 +34,7 @@ import ir.hezareh.park.Adapters.EqualSpacingItemDecoration;
 import ir.hezareh.park.Adapters.NewsComponentRecycler;
 import ir.hezareh.park.Companies;
 import ir.hezareh.park.FanBazar;
+import ir.hezareh.park.Gallery;
 import ir.hezareh.park.OnLoadMoreListener;
 import ir.hezareh.park.R;
 import ir.hezareh.park.SignIn_SignUp;
@@ -70,8 +68,8 @@ public class Component {
                     .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                         @Override
                         public void onSliderClick(BaseSliderView slider) {
-                            /*Intent k = new Intent(context, NewsDetailActivity.class);
-                            context.startActivity(k);*/
+                            Intent k = new Intent(context, Gallery.class);
+                            context.startActivity(k);
                         }
                     });
             ImageSlider.addSlider(demoSlider);
@@ -198,6 +196,7 @@ public class Component {
             Choice.setId(View.generateViewId());
             radioGroupAnswers.addView(Choice);
         }
+
         PollQuestionLayout.addView(questionText);
         PollQuestionLayout.addView(radioGroupAnswers);
 
@@ -388,6 +387,13 @@ public class Component {
         MiddleButtonLayout.setLayoutParams(ButtonParams);
         MiddleButtonLayout.setGravity(Gravity.CENTER);
         MiddleButtonLayout.addView(middleChild);
+        MiddleButtonLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent k = new Intent(context, Gallery.class);
+                context.startActivity(k);
+            }
+        });
 
 
         View rightChild = inflater.inflate(R.layout.item_button_row, null);
@@ -405,18 +411,6 @@ public class Component {
         RightButtonLayout.setGravity(Gravity.CENTER);
         RightButtonLayout.addView(rightChild);
 
-        rightChild.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ZGrid.with((Activity) context, urls)
-                        .setToolbarColorResId(R.color.colorPrimary) // toolbar color
-                        .setTitle("گالری تصاویر") // toolbar title
-                        .setToolbarTitleColor(ZColor.WHITE) // toolbar title color
-                        .setSpanCount(3) // colums count
-                        .setGridImgPlaceHolder(R.color.colorPrimary) // color placeholder for the grid image until it loads
-                        .show();
-            }
-        });
 
         ButtonsRow.addView(LeftButtonLayout);
         ButtonsRow.addView(MiddleButtonLayout);
