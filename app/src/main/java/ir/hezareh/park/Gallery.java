@@ -52,6 +52,7 @@ public class Gallery extends AppCompatActivity {
         final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                 "http://arefnaghshin.ir/gallery", null, new Response.Listener<JSONObject>() {
 
+
             @Override
             public void onResponse(JSONObject response) {
                 try {
