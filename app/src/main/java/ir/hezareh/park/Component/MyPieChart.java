@@ -29,7 +29,7 @@ public class MyPieChart {
         ChartLayout = new RelativeLayout(c);
 
         LinearLayout.LayoutParams ChartLayoutParams = new LinearLayout.LayoutParams(width, height);
-        ChartLayoutParams.setMargins(0, 20, 0, 0);
+        ChartLayoutParams.setMargins(0, 5, 0, 0);
         ChartLayout.setLayoutParams(ChartLayoutParams);
         ChartLayout.setBackgroundResource(R.drawable.item_background);
 

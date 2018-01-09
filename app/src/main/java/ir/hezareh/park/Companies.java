@@ -88,7 +88,7 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), calculateNoOfColumns(getApplicationContext()));
-        companyRecyclerView.addItemDecoration(new GridSpacingItemDecoration(calculateNoOfColumns(getApplicationContext()), dpToPx(2), true));
+        companyRecyclerView.addItemDecoration(new GridSpacingItemDecoration(calculateNoOfColumns(getApplicationContext()), dpToPx(5), true));
         companyRecyclerView.setItemAnimator(new DefaultItemAnimator());
         companyRecyclerView.setLayoutManager(mLayoutManager);
         companyRecyclerView.setItemAnimator(new DefaultItemAnimator());

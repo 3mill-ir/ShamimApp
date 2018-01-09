@@ -108,7 +108,7 @@ public class Component {
         PollQuestionLayout.setOrientation(LinearLayout.VERTICAL);
         PollQuestionLayout.setBackgroundResource(R.drawable.item_background);
         LinearLayout.LayoutParams PollQuestionLayoutParams = new LinearLayout.LayoutParams(screenWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
-        PollQuestionLayoutParams.setMargins(0, 20, 0, 20);
+        PollQuestionLayoutParams.setMargins(0, 5, 0, 5);
         //PollQuestionLayout.setMinimumHeight(screenWidth/2);
         ///PollQuestionLayout.setGravity(Gravity.CENTER);
         PollQuestionLayout.setLayoutParams(PollQuestionLayoutParams);

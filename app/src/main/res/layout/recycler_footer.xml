@@ -11,12 +11,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:duplicateParentState="true"
-        card_view:cardCornerRadius="10dp"
+        card_view:cardCornerRadius="0dp"
         card_view:cardElevation="7dp"
         card_view:cardUseCompatPadding="true">
 
         <TextView
             android:id="@+id/footerText"
+            android:background="@drawable/back"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
