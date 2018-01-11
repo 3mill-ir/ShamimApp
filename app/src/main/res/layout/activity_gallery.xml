@@ -10,7 +10,6 @@
         android:id="@+id/toolbar"
         layout="@layout/custom_toolbar" />
 
-
     <GridView
         android:id="@+id/grid_view"
         android:layout_width="match_parent"
@@ -21,6 +20,6 @@
         android:numColumns="auto_fit"
         android:padding="5dp"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="10dp"></GridView>
+        android:verticalSpacing="10dp" />
 
 </LinearLayout>

@@ -15,6 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service android:name=".DownloadService" />
+
         <activity
             android:name=".HomeScreen"
             android:theme="@style/AppTheme.NoActionBar">
@@ -43,7 +44,8 @@
             android:name=".SignIn_SignUp"
             android:label="@string/title_activity_sign_in__sign_up"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".WebviewActivity"></activity>
     </application>
 
 </manifest>

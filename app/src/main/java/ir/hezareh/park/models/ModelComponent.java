@@ -17,28 +17,33 @@ public class ModelComponent {
     @Expose
     private String component;
 
+    @SerializedName("Functionality")
+    @Expose
+    private String functionality;
     @Nullable
     @SerializedName("Question")
     @Expose
     private String question;
-
     @SerializedName("Item")
     @Expose
     private List<Item> item = null;
-
     @SerializedName("ButtonItem")
     @Expose
     private List<ButtonItem> buttonItem = null;
-
     @SerializedName("GalleryItem")
     @Expose
     private List<GalleryItem> galleryItem = null;
-
     @SerializedName("Category")
     @Expose
     private Object category = null;
 
+    public String getFunctionality() {
+        return functionality;
+    }
 
+    public void setFunctionality(String functionality) {
+        this.functionality = functionality;
+    }
 
     public int getID() {
         return iD;
@@ -121,6 +126,23 @@ public class ModelComponent {
         @Expose
         protected Object content;
 
+        @SerializedName("Functionality")
+        @Expose
+        protected String functionality;
+
+        @SerializedName("Url")
+        @Expose
+        protected String url;
+
+
+        public String getFunctionality() {
+            return functionality;
+        }
+
+        public void setFunctionality(String functionality) {
+            this.functionality = functionality;
+        }
+
         public int getID() {
             return iD;
         }
@@ -175,6 +197,14 @@ public class ModelComponent {
 
         public void setContent(Object content) {
             this.content = content;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
         }
 
     }

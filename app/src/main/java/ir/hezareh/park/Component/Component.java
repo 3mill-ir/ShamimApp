@@ -1,5 +1,6 @@
 package ir.hezareh.park.Component;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -35,10 +36,12 @@ import ir.hezareh.park.Adapters.NewsComponentRecycler;
 import ir.hezareh.park.Companies;
 import ir.hezareh.park.FanBazar;
 import ir.hezareh.park.Gallery;
+import ir.hezareh.park.NewsCategory;
+import ir.hezareh.park.NewsDetailActivity;
 import ir.hezareh.park.OnLoadMoreListener;
 import ir.hezareh.park.R;
-import ir.hezareh.park.SignIn_SignUp;
 import ir.hezareh.park.Utils;
+import ir.hezareh.park.WebviewActivity;
 import ir.hezareh.park.models.ModelComponent;
 
 
@@ -86,7 +89,7 @@ public class Component {
     public RecyclerView News(int width, int height, ModelComponent modelComponent) {
         RecyclerView NewsRecycler = new RecyclerView(context);
 
-        NewsComponentRecycler newsComponentRecycler = new NewsComponentRecycler(context, modelComponent.getItem());
+        NewsComponentRecycler newsComponentRecycler = new NewsComponentRecycler(context, modelComponent);
 
         LinearLayout.LayoutParams NewsRecyclerLayoutParams = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT);
         NewsRecyclerLayoutParams.gravity = Gravity.CENTER_VERTICAL;
@@ -210,9 +213,7 @@ public class Component {
     }
 
 
-
-
-    public RelativeLayout GalleryButton(int width, ModelComponent modelComponent, String Order) {
+    public RelativeLayout GalleryButton(int width, final ModelComponent modelComponent, String Order) {
         RelativeLayout GalleryButtonRowLayout = new RelativeLayout(context);
         RelativeLayout.LayoutParams GalleryButtonRowLayoutParams = new RelativeLayout.LayoutParams(width, 2 * width / 3);
         GalleryButtonRowLayout.setLayoutParams(GalleryButtonRowLayoutParams);
@@ -240,13 +241,8 @@ public class Component {
         UpperButtonLayout.setId(View.generateViewId());
         UpperButtonLayout.setGravity(Gravity.CENTER);
         UpperButtonLayout.addView(upperChild);
-        upperChild.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent k = new Intent(context, FanBazar.class);
-                context.startActivity(k);
-            }
-        });
+
+        setClickListener(upperChild, modelComponent.getButtonItem().get(0).getFunctionality(), modelComponent.getButtonItem().get(0).getUrl());
 
 
         View lowerChild = inflater.inflate(R.layout.item_button_row, null);
@@ -274,13 +270,8 @@ public class Component {
         LowerButtonLayout.setId(View.generateViewId());
         LowerButtonLayout.setGravity(Gravity.CENTER);
         LowerButtonLayout.addView(lowerChild);
-        LowerButtonLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent k = new Intent(context, Companies.class);
-                context.startActivity(k);
-            }
-        });
+
+        setClickListener(lowerChild, modelComponent.getButtonItem().get(1).getFunctionality(), modelComponent.getButtonItem().get(1).getUrl());
 
 
         com.daimajia.slider.library.SliderLayout GalleryLayout = new SliderLayout(context);
@@ -299,20 +290,22 @@ public class Component {
             DefaultSliderView demoSlider = new DefaultSliderView(context);
             demoSlider//.description()
                     .image(item.getImage().toString())
-                    .setScaleType(BaseSliderView.ScaleType.Fit)
-                    .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
+                    .setScaleType(BaseSliderView.ScaleType.Fit);
+                    /*.setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                         @Override
                         public void onSliderClick(BaseSliderView slider) {
-                            Intent k = new Intent(context, SignIn_SignUp.class);
-                            context.startActivity(k);
+                            setClickListener(s,modelComponent.getGalleryItem().get(0).getFunctionality());
                         }
-                    });
+                    });*/
+            setOnSliderClickListener(demoSlider, modelComponent.getGalleryItem().get(0).getFunctionality());
+
             GalleryLayout.addSlider(demoSlider);
             GalleryLayout.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
             GalleryLayout.setPresetTransformer(SliderLayout.Transformer.Background2Foreground);
             GalleryLayout.setCustomAnimation(new DescriptionAnimation());
 
         }
+
         TextView GalleryLayoutText = new TextView(context);
         RelativeLayout.LayoutParams GalleryLayoutTextParams = new RelativeLayout.LayoutParams(2 * width / 3, width / 12);
         GalleryLayoutTextParams.addRule(RelativeLayout.BELOW, GalleryLayout.getId());
@@ -336,7 +329,7 @@ public class Component {
         return GalleryButtonRowLayout;
     }
 
-    public LinearLayout ButtonsRow(int width, ModelComponent modelComponent, final ArrayList<String> urls) {
+    public LinearLayout ButtonsRow(int width, final ModelComponent modelComponent, final ArrayList<String> urls) {
         LinearLayout ButtonsRow = new LinearLayout(context);
         LinearLayout.LayoutParams ButtonRowLayout = new LinearLayout.LayoutParams(width, width / 3);
 
@@ -373,6 +366,7 @@ public class Component {
         LeftButtonLayout.setLayoutParams(ButtonParams);
         LeftButtonLayout.setGravity(Gravity.CENTER);
         LeftButtonLayout.addView(leftChild);
+        setClickListener(LeftButtonLayout, modelComponent.getItem().get(0).getFunctionality(), modelComponent.getItem().get(0).getUrl());
 
 
         View middleChild = inflater.inflate(R.layout.item_button_row, null);
@@ -387,13 +381,7 @@ public class Component {
         MiddleButtonLayout.setLayoutParams(ButtonParams);
         MiddleButtonLayout.setGravity(Gravity.CENTER);
         MiddleButtonLayout.addView(middleChild);
-        MiddleButtonLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent k = new Intent(context, Gallery.class);
-                context.startActivity(k);
-            }
-        });
+        setClickListener(MiddleButtonLayout, modelComponent.getItem().get(1).getFunctionality(), modelComponent.getItem().get(1).getUrl());
 
 
         View rightChild = inflater.inflate(R.layout.item_button_row, null);
@@ -410,13 +398,124 @@ public class Component {
         RightButtonLayout.setLayoutParams(ButtonParams);
         RightButtonLayout.setGravity(Gravity.CENTER);
         RightButtonLayout.addView(rightChild);
-
+        setClickListener(RightButtonLayout, modelComponent.getItem().get(2).getFunctionality(), modelComponent.getItem().get(2).getUrl());
 
         ButtonsRow.addView(LeftButtonLayout);
         ButtonsRow.addView(MiddleButtonLayout);
         ButtonsRow.addView(RightButtonLayout);
 
         return ButtonsRow;
+    }
+
+    public void setClickListener(View view, final String functionality, final String URL) {
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent;
+                switch (functionality) {
+                    case "Gallery":
+                        intent = new Intent(context, Gallery.class);
+                        intent.putExtra("URL", URL);
+                        context.startActivity(intent);
+                        ((Activity) context).overridePendingTransition(0, 0);
+                        //((Activity)context).finish();
+                        break;
+                    case "Fanbazar":
+                        intent = new Intent(context, FanBazar.class);
+                        intent.putExtra("URL", URL);
+                        context.startActivity(intent);
+                        ((Activity) context).overridePendingTransition(0, 0);
+                        //finish();
+                        break;
+                    case "CompanyList":
+                        intent = new Intent(context, Companies.class);
+                        intent.putExtra("URL", URL);
+                        context.startActivity(intent);
+                        ((Activity) context).overridePendingTransition(0, 0);
+                        //finish();
+                        break;
+                    case "NewsList":
+                        intent = new Intent(context, NewsCategory.class);
+                        intent.putExtra("URL", URL);
+                        context.startActivity(intent);
+                        ((Activity) context).overridePendingTransition(0, 0);
+                        //finish();
+                        break;
+                    case "NewsDetails":
+                        intent = new Intent(context, NewsDetailActivity.class);
+                        intent.putExtra("URL", URL);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
+                        ((Activity) context).overridePendingTransition(0, 0);
+                        //finish();
+                        break;
+                    case "WebView":
+                        intent = new Intent(context, WebviewActivity.class);
+                        intent.putExtra("URL", URL);
+                        context.startActivity(intent);
+                        ((Activity) context).overridePendingTransition(0, 0);
+                        //finish();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+
+    }
+
+    public void setOnSliderClickListener(DefaultSliderView view, final String functionality) {
+
+        view.setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
+            @Override
+            public void onSliderClick(BaseSliderView slider) {
+                Intent intent;
+                switch (functionality) {
+                    case "Gallery":
+                        intent = new Intent(context, Gallery.class);
+                        context.startActivity(intent);
+                        ((Activity) context).overridePendingTransition(0, 0);
+                        //((Activity)context).finish();
+                        break;
+                    case "Fanbazar":
+                        intent = new Intent(context, FanBazar.class);
+                        context.startActivity(intent);
+                        ((Activity) context).overridePendingTransition(0, 0);
+                        //finish();
+                        break;
+                    case "CompanyList":
+                        intent = new Intent(context, Companies.class);
+                        context.startActivity(intent);
+                        ((Activity) context).overridePendingTransition(0, 0);
+                        //finish();
+                        break;
+                    case "NewsList":
+                        intent = new Intent(context, NewsCategory.class);
+                        context.startActivity(intent);
+                        ((Activity) context).overridePendingTransition(0, 0);
+                        //finish();
+                        break;
+                    case "NewsDetails":
+                        intent = new Intent(context, NewsDetailActivity.class);
+                        context.startActivity(intent);
+                        ((Activity) context).overridePendingTransition(0, 0);
+                        //finish();
+                        break;
+                    case "WebView":
+                        intent = new Intent(context, WebviewActivity.class);
+                        context.startActivity(intent);
+                        ((Activity) context).overridePendingTransition(0, 0);
+                        //finish();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+
     }
 
 }

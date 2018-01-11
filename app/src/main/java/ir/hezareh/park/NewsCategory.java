@@ -37,6 +37,7 @@ import java.util.List;
 import ir.hezareh.park.Adapters.EqualSpacingItemDecoration;
 import ir.hezareh.park.Adapters.NewsCategoryAdapter;
 import ir.hezareh.park.models.ModelComponent;
+import ir.hezareh.park.models.NewsDetails;
 
 
 public class NewsCategory extends AppCompatActivity {
@@ -80,6 +81,10 @@ public class NewsCategory extends AppCompatActivity {
                 TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
                 tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
                 tabLayout.setupWithViewPager(mViewPager);
+            }
+
+            @Override
+            public void onSuccessResponseNewsDetails(NewsDetails newsDetails) {
 
             }
         });
@@ -106,7 +111,6 @@ public class NewsCategory extends AppCompatActivity {
         onBackPressed();
         return true;
     }
-
 
 
     @Override
@@ -255,10 +259,6 @@ public class NewsCategory extends AppCompatActivity {
             // Adding request to request queue
             App.getInstance().addToRequestQueue(req);
 
-
-
-
-
         }
 
         @Override
@@ -267,35 +267,28 @@ public class NewsCategory extends AppCompatActivity {
             View rootView = inflater.inflate(R.layout.fragment_news_category, container, false);
             //if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
 
-            new NewsCategory().makeJsonArrayRequest1(new VolleyCallback() {
+
+            NewsRecycler = rootView.findViewById(R.id.news_recycler);
+            swipeRefreshLayout = rootView.findViewById(R.id.refresh_layout);
+
+            NewsRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+            NewsRecycler.addItemDecoration(new EqualSpacingItemDecoration(5, EqualSpacingItemDecoration.VERTICAL));
+            NewsRecycler.setItemAnimator(new DefaultItemAnimator());
+
+
+            //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
+            swipeRefreshLayout.setOnRefreshListener(this);
+
+            swipeRefreshLayout.post(new Runnable() {
                 @Override
-                public void onSuccessResponse(List<ModelComponent> result) {
-                    Log.d("td", result.get(0).getCategory().toString());
+                public void run() {
+                    swipeRefreshLayout.setRefreshing(true);
+                    makeJsonObjectRequest();
                 }
             });
 
-                NewsRecycler = rootView.findViewById(R.id.news_recycler);
-                swipeRefreshLayout = rootView.findViewById(R.id.refresh_layout);
-
-                NewsRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-                NewsRecycler.addItemDecoration(new EqualSpacingItemDecoration(5, EqualSpacingItemDecoration.VERTICAL));
-                NewsRecycler.setItemAnimator(new DefaultItemAnimator());
-
-
-                //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-                //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-
-                swipeRefreshLayout.setOnRefreshListener(this);
-
-                swipeRefreshLayout.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeRefreshLayout.setRefreshing(true);
-                        makeJsonObjectRequest();
-                    }
-                });
-                //new Utils(getActivity()).showAlertDialog("ارسال","ارسال درخواست؟",true);
-            //}
             return rootView;
         }
 
@@ -314,16 +307,6 @@ public class NewsCategory extends AppCompatActivity {
         public SectionsPagerAdapter(FragmentManager fm, final List<ModelComponent> modelComponents) {
             super(fm);
             components = new ArrayList<>();
-            /*new NewsCategory().makeJsonArrayRequest1(new VolleyCallback() {
-                @Override
-                public void onSuccessResponse(List<ModelComponent> result) {
-                    for(int i=0;i<result.size();i++)
-                    {
-                        s.add(result.get(i).getCategory().toString());
-                        Log.d("list", s.get(i));
-                    }
-                }
-            });*/
 
 
             for (ModelComponent item : modelComponents) {
@@ -340,7 +323,6 @@ public class NewsCategory extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-
 
             return PlaceholderFragment.newInstance(position + 1);
         }
@@ -362,16 +344,6 @@ public class NewsCategory extends AppCompatActivity {
                 case 2:
                     return "خارجی";
             }*/
-
-
-            //s.add("dd");
-
-
-            //return s.get(position);
-
-
-            //Log.d(TAG,newsCategories.get(i).getCategory().toString());
-
             return components.get(position);
             //return null;
         }

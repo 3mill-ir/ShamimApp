@@ -24,6 +24,7 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -34,27 +35,28 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.List;
 
 import ir.hezareh.park.Adapters.CommentRecycler;
 import ir.hezareh.park.Adapters.EqualSpacingItemDecoration;
 import ir.hezareh.park.Adapters.NewsComponentRecycler;
 import ir.hezareh.park.models.ModelComponent;
+import ir.hezareh.park.models.NewsDetails;
 
 
 public class NewsDetailActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+    public static final String TAG = WebviewActivity.class
+            .getSimpleName();
     SwipeRefreshLayout swipeRefreshLayout;
-    RecyclerView NewsRecycler;
-    NewsComponentRecycler componentRecycler;
+    RecyclerView commentRecyclerView;
+    RecyclerView newsRecyclerView;
     int screenHeight;
     int width;
+    NewsDetails newsDetails;
     private String url = "https://www.digikala.com/";
     private WebView webView;
     private ProgressBar progressBar;
@@ -94,22 +96,14 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
 
         webView = (WebView) findViewById(R.id.webView);
-        //progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        NewsRecycler = (RecyclerView) findViewById(R.id.news_recycler);
+        commentRecyclerView = (RecyclerView) findViewById(R.id.comments_recycler);
+        newsRecyclerView = (RecyclerView) findViewById(R.id.news_recycler);
 
-        componentRecycler = new NewsComponentRecycler(getApplicationContext(), null);
-
-        NewsRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, true));
-        NewsRecycler.addItemDecoration(new EqualSpacingItemDecoration(10, EqualSpacingItemDecoration.HORIZONTAL));
-        NewsRecycler.setItemAnimator(new DefaultItemAnimator());
-
-        //LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,screenHeight/3);
-        //webView.setLayoutParams(params);
-        initWebView();
+        //initWebView();
         //webView.loadUrl(url);
 
         Picasso.with(getApplicationContext())
-                .load("https://www.planwallpaper.com/static/images/desktop-year-of-the-tiger-images-wallpaper.jpg")
+                .load("https://file.digi-kala.com/digikala/Image/Webstore/Banner/1396/10/11/c728f1bf.jpg")
                 .fit()
                 .into((ImageView) findViewById(R.id.news_detail_header));
 
@@ -124,11 +118,21 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
             @Override
             public void run() {
                 swipeRefreshLayout.setRefreshing(true);
-                webView.loadUrl(url);
-                //((ImageView) findViewById(R.id.news_detail_header)).setBackgroundResource(R.drawable.shadow);
+                //webView.loadUrl(url);
                 //renderPost()
-                showComponents();
-                swipeRefreshLayout.setRefreshing(false);
+                getNewsDetails(new VolleyCallback() {
+                    @Override
+                    public void onSuccessResponse(List<ModelComponent> result) {
+
+                    }
+
+                    @Override
+                    public void onSuccessResponseNewsDetails(NewsDetails newsDetails) {
+                        addNews();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
+
             }
         });
 
@@ -138,11 +142,75 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
     @Override
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
-        webView.loadUrl(url);
-        //((ImageView) findViewById(R.id.news_detail_header)).setBackgroundResource(R.drawable.shadow);
+        //webView.loadUrl(url);
         //renderPost();
-        showComponents();
-        swipeRefreshLayout.setRefreshing(false);
+        getNewsDetails(new VolleyCallback() {
+            @Override
+            public void onSuccessResponse(List<ModelComponent> result) {
+
+            }
+
+            @Override
+            public void onSuccessResponseNewsDetails(NewsDetails newsDetails) {
+                addNews();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+
+    }
+
+    private void addNews() {
+        CommentRecycler commentRecycler = new CommentRecycler(getApplicationContext(), newsDetails.getRelatedTopics().getItem());
+
+        LinearLayout.LayoutParams CommentsRecyclerLayoutParams = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT);
+        CommentsRecyclerLayoutParams.gravity = Gravity.CENTER_VERTICAL;
+        commentRecyclerView.setLayoutParams(CommentsRecyclerLayoutParams);
+
+        commentRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, true));
+        commentRecyclerView.addItemDecoration(new EqualSpacingItemDecoration(10, EqualSpacingItemDecoration.VERTICAL));
+        commentRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        commentRecyclerView.setAdapter(commentRecycler);
+
+
+        NewsComponentRecycler newsComponentRecycler = new NewsComponentRecycler(getApplicationContext(), newsDetails.getRelatedTopics());
+
+
+        LinearLayout.LayoutParams NewsRecyclerLayoutParams = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT);
+        NewsRecyclerLayoutParams.gravity = Gravity.CENTER_VERTICAL;
+        newsRecyclerView.setLayoutParams(NewsRecyclerLayoutParams);
+
+        newsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, true));
+        newsRecyclerView.addItemDecoration(new EqualSpacingItemDecoration(10, EqualSpacingItemDecoration.VERTICAL));
+        newsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        newsRecyclerView.setAdapter(newsComponentRecycler);
+
+        String text = "<html> <head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "<style type=\"text/css\">\n" +
+                "                /** Specify a font named \"MyFont\",\n" +
+                "                and specify the URL where it can be found: */\n" +
+                "                @font-face {\n" +
+                "                    font-family: \"MyFont\"; \n " +
+                "                    src: url('file:///android_asset/fonts/irsans.ttf');\n" +
+                "                }\n" +
+                "                p { font-family:\"MyFont\";  line-height: 30px; padding: 5px; font-size: 14px;}" +
+                "            </style>" +
+                "    <title>Title</title>\n" +
+                "</head>  <body>"
+                + "<p align=\"justify\"" +
+                "dir=\"rtl\">"
+                + newsDetails.getDescription()
+                + "</p> "
+                + "</body></html>";
+
+
+        webView.loadDataWithBaseURL(null, text, "text/html", "utf-8", null);
+
+        ((TextView) findViewById(R.id.date_time)).setText(newsDetails.getCreatedOnUTC());
+        ((TextView) findViewById(R.id.likes)).setText(String.valueOf(newsDetails.getNumberOfLikes()));
+        ((TextView) findViewById(R.id.dislikes)).setText(String.valueOf(newsDetails.getNumberOfDislikes()));
+        ((TextView) findViewById(R.id.comments)).setText(String.valueOf(newsDetails.getNumberOfComments()));
 
     }
 
@@ -151,33 +219,20 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         //webView.loadUrl("https://www.google.com/");
     }
 
-    public void showComponents() {
+    public void getNewsDetails(final VolleyCallback callback) {
 
         final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                "http://arefnaghshin.ir/components", null, new Response.Listener<JSONObject>() {
+                "http://arefnaghshin.ir/newsdetails", null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     String jsonResponse = new String(response.toString().getBytes("ISO-8859-1"));
-                    Log.d("tag", jsonResponse);
-                    JSONArray jsonArray = response.getJSONArray("Root");
+                    Log.d(TAG, jsonResponse);
                     Gson gson = new Gson();
-                    Type collectionType = new TypeToken<Collection<ModelComponent>>() {
+                    Type collectionType = new TypeToken<NewsDetails>() {
                     }.getType();
-                    List<ModelComponent> components = gson.fromJson(new String(jsonArray.toString().getBytes("ISO-8859-1")), collectionType);
-
-
-                    CommentRecycler newsComponentRecycler = new CommentRecycler(getApplicationContext(), components.get(0).getItem());
-
-                    LinearLayout.LayoutParams NewsRecyclerLayoutParams = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    NewsRecyclerLayoutParams.gravity = Gravity.CENTER_VERTICAL;
-                    NewsRecycler.setLayoutParams(NewsRecyclerLayoutParams);
-
-                    NewsRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, true));
-                    NewsRecycler.addItemDecoration(new EqualSpacingItemDecoration(10, EqualSpacingItemDecoration.VERTICAL));
-                    NewsRecycler.setItemAnimator(new DefaultItemAnimator());
-                    NewsRecycler.setAdapter(newsComponentRecycler);
+                    newsDetails = gson.fromJson(new String(response.toString().getBytes("ISO-8859-1")), collectionType);
 
 
                     // Sets the Toolbar to act as the ActionBar for this Activity window.
@@ -186,19 +241,15 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
 
                     //Root_Layout.addView(mTopToolbar);
 
-                    //for (ModelComponent component : components) {
-                    //for (ModelComponent.Item item : component.getItems()) {
 
-                    Log.d("tag", components.get(5).getQuestion() + "");
-                    //}
-                    //}
+                    Log.d(TAG, newsDetails.getDescription() + "");
+
 
 
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+                callback.onSuccessResponseNewsDetails(newsDetails);
             }
 
         }, new Response.ErrorListener() {

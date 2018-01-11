@@ -1,7 +1,6 @@
 package ir.hezareh.park.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -20,10 +19,7 @@ import android.widget.Toast;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
-
-import ir.hezareh.park.NewsCategory;
-import ir.hezareh.park.NewsDetailActivity;
+import ir.hezareh.park.Component.Component;
 import ir.hezareh.park.R;
 import ir.hezareh.park.Utils;
 import ir.hezareh.park.models.ModelComponent;
@@ -35,12 +31,12 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
     private static final int TYPE_FOOTER = 1;
     private static final int TYPE_ITEM = 2;
 
-    List<ModelComponent.Item> newItems;
+    ModelComponent newsModelComponent;
     private Context context;
 
-    public NewsComponentRecycler(Context _context, List<ModelComponent.Item> _newItems) {
+    public NewsComponentRecycler(Context _context, ModelComponent _newsModelComponent) {
         this.context = _context;
-        this.newItems = _newItems;
+        this.newsModelComponent = _newsModelComponent;
     }
 
     @Override
@@ -75,14 +71,10 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
             FooterViewHolder footerHolder = (FooterViewHolder) holder;
             footerHolder.footerText.setText("ادامه مطلب ...");
             footerHolder.footerText.setTypeface(new Utils(context).font_set("iransans"));
-            footerHolder.footerText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent k = new Intent(context, NewsCategory.class);
-                    context.startActivity(k);
-                    //Toast.makeText(context, "You clicked at Footer View", Toast.LENGTH_SHORT).show();
-                }
-            });
+
+            new Component(context).setClickListener(footerHolder.itemView, newsModelComponent.getFunctionality(), null);
+
+
         } else if (holder instanceof ItemViewHolder) {
             final ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
 
@@ -98,14 +90,14 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
             RelativeLayout.LayoutParams ThumbnailLayout = new RelativeLayout.LayoutParams(5 * widthPixels / 10, 4 * widthPixels / 10);
             itemViewHolder.thumbnail.setLayoutParams(ThumbnailLayout);
 
-            itemViewHolder.title.setText(newItems.get(position).getContent().toString());
+            itemViewHolder.title.setText(newsModelComponent.getItem().get(position).getContent().toString());
             itemViewHolder.title.setTypeface(new Utils(context).font_set("irsans"));
 
             itemViewHolder.title.setBackgroundColor(Color.YELLOW);
 
-            itemViewHolder.date.setText(newItems.get(position).getDate().toString());
+            itemViewHolder.date.setText(newsModelComponent.getItem().get(position).getDate().toString());
 
-            Picasso.with(context).load(Utils.URL_encode(newItems.get(position).getImage().toString()))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
+            Picasso.with(context).load(Utils.URL_encode(newsModelComponent.getItem().get(position).getImage().toString()))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
                     .fit()
                     //.resize(5*height/10,5*height/10)
                     //.transform(new CropCircleTransformation())
@@ -122,16 +114,8 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
                             itemViewHolder.thumbnail.setImageResource(R.drawable.corrupted);
                         }
                     });
-            itemViewHolder.title.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent k = new Intent(context, NewsDetailActivity.class);
-                    context.startActivity(k);
+            new Component(context).setClickListener(itemViewHolder.itemView, newsModelComponent.getItem().get(position).getFunctionality(), null);
 
-
-                    //Toast.makeText(context, "You clicked at item " + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
-                }
-            });
         }
     }
 
@@ -139,7 +123,7 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
     public int getItemViewType(int position) {
         if (position == 0) {
             return TYPE_ITEM;/*return TYPE_HEADER;*/
-        } else if (position == newItems.size()) {
+        } else if (position == newsModelComponent.getItem().size()) {
             return TYPE_FOOTER;
         }
         return TYPE_ITEM;
@@ -149,7 +133,7 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public int getItemCount() {
         // return stringArrayList.size() + 2;
-        return newItems.size() + 1;
+        return newsModelComponent.getItem().size() + 1;
     }
 
     @Override
