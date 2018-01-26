@@ -13,18 +13,10 @@ import android.os.ResultReceiver;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import java.io.File;
 
-/**
- * Created by rf on 03/12/2017.
- */
 
 public class AppUpdate {
     private Context _context;
@@ -41,55 +33,50 @@ public class AppUpdate {
         final SharedPreferencesManager preferencesManager = new SharedPreferencesManager(_context);
 
 
-        RequestQueue queue = Volley.newRequestQueue(_context);
-        String url = "http://3mill.ir/download/appcheck?path=mobile/android/park&secretKey=3mill186";
-
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        String availableVersion = response.replaceAll("^\"|\"$", "");
-                        Log.i("Response is ", availableVersion);
-
-                        Log.i("compare result", String.valueOf(compareVersionNames(version, availableVersion)));
-                        if (compareVersionNames(version, availableVersion) == -1) {
-
-                            Log.i("Version of Available", String.valueOf(availableVersion));
-                            Log.i("Version of current App ", String.valueOf(version));
-
-                            AlertDialog.Builder builder = new AlertDialog.Builder(_context);
-                            builder.setMessage("نسخه جدید اپلیکیشن موجود است \n تمایل به بروزرسانی دارید؟")
-                                    .setCancelable(false);
-                            builder.setPositiveButton("آره", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    Intent intent = new Intent(_context, DownloadService.class);
-                                    intent.putExtra("url", "http://3mill.ir/download/AppSend?path=mobile/android/park&secretkey=3mill186");
-                                    intent.putExtra("receiver", new DownloadReceiver(new Handler()));
-                                    _context.startService(intent);
-                                    preferencesManager.set_showUpdateDialog(false);
-                                }
-                            });
-                            builder.setNegativeButton("نه", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.dismiss();
-                                    preferencesManager.set_showUpdateDialog(false);
-                                }
-                            });
-                            AlertDialog dialog = builder.create();
-                            dialog.show();
-                        }
-                    }
-                }, new Response.ErrorListener() {
+        new networking().updateCheck(new networking.UpdateCheckResponseListener() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("error", "That didn't work!");
+            public void requestStarted() {
+
+            }
+
+            @Override
+            public void requestCompleted(String availableVersion) {
+
+                Log.i("compare result", String.valueOf(compareVersionNames(version, availableVersion)));
+                if (compareVersionNames(version, availableVersion) == -1) {
+
+                    Log.i("Version of Available", String.valueOf(availableVersion));
+                    Log.i("Version of current App ", String.valueOf(version));
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(_context);
+                    builder.setMessage("نسخه جدید اپلیکیشن موجود است \n تمایل به بروزرسانی دارید؟")
+                            .setCancelable(false);
+                    builder.setPositiveButton("آره", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent intent = new Intent(_context, DownloadService.class);
+                            intent.putExtra("url", "http://3mill.ir/download/AppSend?path=mobile/android/park&secretkey=3mill186");
+                            intent.putExtra("receiver", new DownloadReceiver(new Handler()));
+                            _context.startService(intent);
+                            preferencesManager.set_showUpdateDialog(false);
+                        }
+                    });
+                    builder.setNegativeButton("نه", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                            preferencesManager.set_showUpdateDialog(false);
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+            }
+
+            @Override
+            public void requestEndedWithError(VolleyError error) {
+
             }
         });
-        stringRequest.setShouldCache(false);
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+
     }
 
     private int compareVersionNames(String oldVersionName, String newVersionName) {
@@ -127,7 +114,7 @@ public class AppUpdate {
         return res;
     }
 
-    //reciver for downloading apk update
+    //receiver for downloading apk update
     private class DownloadReceiver extends ResultReceiver {
 
         public DownloadReceiver(Handler handler) {

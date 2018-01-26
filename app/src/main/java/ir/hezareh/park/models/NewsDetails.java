@@ -5,8 +5,12 @@ package ir.hezareh.park.models;
  */
 
 
+import android.support.annotation.Nullable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 
 public class NewsDetails {
@@ -71,9 +75,6 @@ public class NewsDetails {
     @SerializedName("Language")
     @Expose
     private String language;
-    @SerializedName("Comments1")
-    @Expose
-    private Object comments1;
     @SerializedName("Like")
     @Expose
     private String like;
@@ -83,9 +84,22 @@ public class NewsDetails {
     @SerializedName("addComment")
     @Expose
     private String addComment;
+    @Nullable
     @SerializedName("RelatedTopics")
     @Expose
     private RelatedTopics relatedTopics;
+
+    @SerializedName("Comments")
+    @Expose
+    private List<Comment> comments = null;
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
 
     public int getID() {
         return iD;
@@ -247,14 +261,6 @@ public class NewsDetails {
         this.language = language;
     }
 
-    public Object getComments1() {
-        return comments1;
-    }
-
-    public void setComments1(Object comments1) {
-        this.comments1 = comments1;
-    }
-
     public String getLike() {
         return like;
     }
@@ -288,6 +294,143 @@ public class NewsDetails {
     }
 
     public class RelatedTopics extends ModelComponent {
+
+    }
+
+    public class Comment {
+
+        @SerializedName("ID")
+        @Expose
+        private int iD;
+        @SerializedName("Text")
+        @Expose
+        private String text;
+        @SerializedName("CreatedDateOnUTC")
+        @Expose
+        private String createdDateOnUTC;
+        @SerializedName("Dispaly")
+        @Expose
+        private boolean dispaly;
+        @SerializedName("NumberOfReply")
+        @Expose
+        private Object numberOfReply;
+        @SerializedName("NumberOfLikes")
+        @Expose
+        private Object numberOfLikes;
+        @SerializedName("NumberOfDislikes")
+        @Expose
+        private Object numberOfDislikes;
+        @SerializedName("F_PostsID")
+        @Expose
+        private int fPostsID;
+        @SerializedName("F_CommentsID")
+        @Expose
+        private Object fCommentsID;
+        @SerializedName("F_UserID")
+        @Expose
+        private String fUserID;
+        @SerializedName("IPAddress")
+        @Expose
+        private String iPAddress;
+        @SerializedName("Comments1")
+        @Expose
+        private List<Object> comments1 = null;
+
+        public int getID() {
+            return iD;
+        }
+
+        public void setID(int iD) {
+            this.iD = iD;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public String getCreatedDateOnUTC() {
+            return createdDateOnUTC;
+        }
+
+        public void setCreatedDateOnUTC(String createdDateOnUTC) {
+            this.createdDateOnUTC = createdDateOnUTC;
+        }
+
+        public boolean isDispaly() {
+            return dispaly;
+        }
+
+        public void setDispaly(boolean dispaly) {
+            this.dispaly = dispaly;
+        }
+
+        public Object getNumberOfReply() {
+            return numberOfReply;
+        }
+
+        public void setNumberOfReply(Object numberOfReply) {
+            this.numberOfReply = numberOfReply;
+        }
+
+        public Object getNumberOfLikes() {
+            return numberOfLikes;
+        }
+
+        public void setNumberOfLikes(Object numberOfLikes) {
+            this.numberOfLikes = numberOfLikes;
+        }
+
+        public Object getNumberOfDislikes() {
+            return numberOfDislikes;
+        }
+
+        public void setNumberOfDislikes(Object numberOfDislikes) {
+            this.numberOfDislikes = numberOfDislikes;
+        }
+
+        public int getFPostsID() {
+            return fPostsID;
+        }
+
+        public void setFPostsID(int fPostsID) {
+            this.fPostsID = fPostsID;
+        }
+
+        public Object getFCommentsID() {
+            return fCommentsID;
+        }
+
+        public void setFCommentsID(Object fCommentsID) {
+            this.fCommentsID = fCommentsID;
+        }
+
+        public String getFUserID() {
+            return fUserID;
+        }
+
+        public void setFUserID(String fUserID) {
+            this.fUserID = fUserID;
+        }
+
+        public String getIPAddress() {
+            return iPAddress;
+        }
+
+        public void setIPAddress(String iPAddress) {
+            this.iPAddress = iPAddress;
+        }
+
+        public List<Object> getComments1() {
+            return comments1;
+        }
+
+        public void setComments1(List<Object> comments1) {
+            this.comments1 = comments1;
+        }
 
     }
 

@@ -3,88 +3,46 @@ package ir.hezareh.park.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
 /**
  * Created by rf on 03/01/2018.
  */
 
 public class GalleryModel {
 
-    @SerializedName("ID")
+    @SerializedName("FolderName")
     @Expose
-    private int iD;
-    @SerializedName("Folder")
+    private String folderName;
+
+    @SerializedName("ExistingImagesCount")
     @Expose
-    private String folder;
+    private int imagesCount;
 
-    @SerializedName("Item")
+    @SerializedName("Image")
     @Expose
-    private List<GalleryModel.Item> item = null;
+    private String image;
 
-
-    public int getID() {
-        return iD;
+    public String getFolderName() {
+        return folderName;
     }
 
-    public void setID(int iD) {
-        this.iD = iD;
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
     }
 
-    public String getFolder() {
-        return folder;
+    public int getImagesCount() {
+        return imagesCount;
     }
 
-    public void setFolder(String folder) {
-        this.folder = folder;
+    public void setImagesCount(int imagesCount) {
+        this.imagesCount = imagesCount;
     }
 
-    public List<GalleryModel.Item> getItem() {
-        return item;
+    public String getImage() {
+        return image;
     }
 
-    public void setItem(List<GalleryModel.Item> item) {
-        this.item = item;
+    public void setImage(String image) {
+        this.image = image;
     }
-
-
-    public class Item {
-
-        @SerializedName("ID")
-        @Expose
-        private int iD;
-        @SerializedName("Image")
-        @Expose
-        private String image;
-        @SerializedName("Text")
-        @Expose
-        private Object text;
-
-        public int getID() {
-            return iD;
-        }
-
-        public void setID(int iD) {
-            this.iD = iD;
-        }
-
-        public String getImage() {
-            return image;
-        }
-
-        public void setImage(String image) {
-            this.image = image;
-        }
-
-        public Object getText() {
-            return text;
-        }
-
-        public void setText(Object text) {
-            this.text = text;
-        }
-
-    }
-
 }
 

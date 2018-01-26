@@ -1,7 +1,6 @@
 package ir.hezareh.park.Adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -70,7 +69,6 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
         } else if (holder instanceof FooterViewHolder) {
             FooterViewHolder footerHolder = (FooterViewHolder) holder;
             footerHolder.footerText.setText("ادامه مطلب ...");
-            footerHolder.footerText.setTypeface(new Utils(context).font_set("iransans"));
 
             new Component(context).setClickListener(footerHolder.itemView, newsModelComponent.getFunctionality(), null);
 
@@ -85,15 +83,12 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
             int widthPixels = new Utils(context).getDisplayMetrics().widthPixels;
 
             LinearLayout.LayoutParams ItemLayout = new LinearLayout.LayoutParams(5 * widthPixels / 10, LinearLayout.LayoutParams.WRAP_CONTENT);
-            itemViewHolder.item.setLayoutParams(ItemLayout);
+            itemViewHolder.cardView.setLayoutParams(ItemLayout);
 
             RelativeLayout.LayoutParams ThumbnailLayout = new RelativeLayout.LayoutParams(5 * widthPixels / 10, 4 * widthPixels / 10);
             itemViewHolder.thumbnail.setLayoutParams(ThumbnailLayout);
 
             itemViewHolder.title.setText(newsModelComponent.getItem().get(position).getContent().toString());
-            itemViewHolder.title.setTypeface(new Utils(context).font_set("irsans"));
-
-            itemViewHolder.title.setBackgroundColor(Color.YELLOW);
 
             itemViewHolder.date.setText(newsModelComponent.getItem().get(position).getDate().toString());
 
@@ -115,7 +110,6 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
                         }
                     });
             new Component(context).setClickListener(itemViewHolder.itemView, newsModelComponent.getItem().get(position).getFunctionality(), null);
-
         }
     }
 
@@ -133,7 +127,12 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public int getItemCount() {
         // return stringArrayList.size() + 2;
-        return newsModelComponent.getItem().size() + 1;
+        if (!(newsModelComponent.getItem().isEmpty())) {
+            return newsModelComponent.getItem().size() + 1;
+        } else {
+            return 0;
+        }
+
     }
 
     @Override
@@ -161,6 +160,8 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
             footerText = view.findViewById(R.id.footerText);
             footerLayout = view.findViewById(R.id.footerLayout);
             cardView = view.findViewById(R.id.card_view);
+
+            new Utils(context).overrideFonts(view, "BYekan");
         }
     }
 
@@ -181,6 +182,8 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
             item = itemView.findViewById(R.id.list_item);
             date = itemView.findViewById(R.id.date);
             //itemView.setOnClickListener((View.OnClickListener) activity);
+
+            new Utils(context).overrideFonts(itemView, "BYekan");
         }
     }
 

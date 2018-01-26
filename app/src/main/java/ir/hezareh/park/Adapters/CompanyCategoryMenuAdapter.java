@@ -15,9 +15,6 @@ import ir.hezareh.park.R;
 import ir.hezareh.park.Utils;
 import ir.hezareh.park.models.CompanyList;
 
-/**
- * Created by rf on 24/12/2017.
- */
 
 public class CompanyCategoryMenuAdapter extends BaseAdapter {
 

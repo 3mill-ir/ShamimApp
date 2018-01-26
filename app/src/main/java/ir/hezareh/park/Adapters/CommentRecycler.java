@@ -1,7 +1,6 @@
 package ir.hezareh.park.Adapters;
 
 import android.content.Context;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,22 +19,19 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import ir.hezareh.park.R;
-import ir.hezareh.park.models.ModelComponent;
+import ir.hezareh.park.Utils;
+import ir.hezareh.park.models.NewsDetails;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
-/**
- * Created by rf on 28/12/2017.
- */
 
 public class CommentRecycler extends RecyclerView.Adapter<ir.hezareh.park.Adapters.CommentRecycler.MyViewHolder> {
 
     private Context mContext;
     private int lastPosition = -1;
-    private List<ModelComponent.Item> news;
+    private List<NewsDetails.Comment> news;
 
 
-    public CommentRecycler(Context context, List<ModelComponent.Item> _news) {
-        //this.RequestsList = data;
+    public CommentRecycler(Context context, List<NewsDetails.Comment> _news) {
         this.mContext = context;
         this.news = _news;
     }
@@ -45,7 +41,7 @@ public class CommentRecycler extends RecyclerView.Adapter<ir.hezareh.park.Adapte
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.comment_layout, parent, false);
 
-        return new ir.hezareh.park.Adapters.CommentRecycler.MyViewHolder(itemView);
+        return new CommentRecycler.MyViewHolder(itemView);
     }
 
     @Override
@@ -59,8 +55,6 @@ public class CommentRecycler extends RecyclerView.Adapter<ir.hezareh.park.Adapte
         anim.setDuration(500);
         holder.itemView.startAnimation(anim);
 
-
-
         Picasso.with(this.mContext).load(R.drawable.person)//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
                 .fit()
                 //.resize(5*height/10,5*height/10)
@@ -71,6 +65,10 @@ public class CommentRecycler extends RecyclerView.Adapter<ir.hezareh.park.Adapte
 
         holder.title.setText(this.news.get(position).getText());
         //holder.title.setBackgroundColor(Color.YELLOW);
+        holder.date.setText(this.news.get(position).getCreatedDateOnUTC());
+
+        new Utils(mContext).overrideFonts(holder.item, "BHoma");
+
         final AtomicBoolean playAnimation = new AtomicBoolean(true);
 
     }
@@ -87,17 +85,17 @@ public class CommentRecycler extends RecyclerView.Adapter<ir.hezareh.park.Adapte
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView title;
-        public CardView cardView;
-        public LinearLayout item;
-        public ImageView profile_img;
+        private TextView title;
+        private LinearLayout item;
+        private ImageView profile_img;
+        private TextView date;
 
-        public MyViewHolder(View view) {
+        private MyViewHolder(View view) {
             super(view);
             title = view.findViewById(R.id.title);
-            cardView = view.findViewById(R.id.card_view);
             item = view.findViewById(R.id.list_item);
             profile_img = view.findViewById(R.id.person);
+            date = view.findViewById(R.id.date);
             view.setOnClickListener(this);
         }
 

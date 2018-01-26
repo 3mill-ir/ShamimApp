@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/list_item"
-    android:background="@drawable/back"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center">
@@ -12,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:duplicateParentState="true"
-        card_view:cardCornerRadius="0dp"
+        card_view:cardCornerRadius="5dp"
         card_view:cardElevation="7dp"
         card_view:cardUseCompatPadding="true">
 

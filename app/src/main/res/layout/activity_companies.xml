@@ -62,6 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:duplicateParentState="true"
+                android:visibility="invisible"
                 card_view:cardCornerRadius="2dp"
                 card_view:cardElevation="5dp">
 
@@ -70,11 +71,10 @@
                     android:id="@+id/company_category"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/background_gradient"
+
                     android:gravity="center"
                     android:padding="5dp"
-                    android:textSize="18dp"
-                    android:visibility="gone" />
+                    android:textSize="18dp" />
 
 
             </android.support.v7.widget.CardView>

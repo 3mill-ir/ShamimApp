@@ -40,7 +40,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="10dp">
+                android:padding="5dp">
 
                 <ProgressBar
                     android:id="@+id/image_progressbar"
@@ -52,8 +52,8 @@
 
                 <ImageView
                     android:id="@+id/thumbnail"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerInParent="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
@@ -62,41 +62,84 @@
                 <TextView
                     android:id="@+id/title"
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:layout_centerInParent="true"
+                    android:layout_height="wrap_content"
                     android:layout_toStartOf="@+id/thumbnail"
-                    android:gravity="center"
-                    android:lineSpacingExtra="3dp"
+                    android:ellipsize="end"
+                    android:lineSpacingExtra="2dp"
+                    android:lines="2"
                     android:padding="5dp"
-                    android:paddingTop="2dp"
                     android:textColor="#4c4c4c"
-                    android:textSize="15dp" />
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/title"
+                    android:layout_toStartOf="@+id/thumbnail"
+                    android:ellipsize="end"
+                    android:lineSpacingExtra="3dp"
+                    android:lines="5"
+                    android:padding="5dp"
+                    android:textColor="#4c4c4c"
+                    android:textSize="13dp" />
 
             </RelativeLayout>
 
 
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/bottom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_gravity="bottom"
+                android:background="#D4D4D4">
 
-                <ImageView
-                    android:id="@+id/date_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_access_time_black_24dp" />
 
                 <TextView
                     android:id="@+id/date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="95/10/3"
-                    android:textColor="#4c4c4c"
-                    android:textSize="15dp" />
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="5dp"
+                    android:drawablePadding="3dp"
+                    android:drawableStart="@drawable/ic_access_time_white_24dp"
+                    android:gravity="center" />
 
-            </LinearLayout>
+                <TextView
+                    android:id="@+id/likes"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@+id/date"
+                    android:drawableStart="@drawable/ic_thumb_up_black_24dp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/dislikes"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@+id/likes"
+                    android:drawableStart="@drawable/ic_thumb_down_black_24dp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/comments"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@+id/dislikes"
+                    android:drawableStart="@drawable/ic_comment_black_24dp"
+                    android:gravity="center" />
+
+
+            </RelativeLayout>
+
         </LinearLayout>
 
     </android.support.v7.widget.CardView>

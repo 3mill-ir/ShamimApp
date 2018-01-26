@@ -2,8 +2,6 @@ package ir.hezareh.park.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -36,11 +34,11 @@ import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 public class CompaniesRecycler extends RecyclerView.Adapter<CompaniesRecycler.MyViewHolder> {
 
     private Context mContext;
-    private List<CompanyList.CompanyInfo> _listcompany;
+    private List<CompanyList.CompanyInfo> _companyList;
     private int lastPosition = -1;
 
-    public CompaniesRecycler(Context context, List<CompanyList.CompanyInfo> listcompany) {
-        this._listcompany = listcompany;
+    public CompaniesRecycler(Context context, List<CompanyList.CompanyInfo> companyList) {
+        this._companyList = companyList;
         this.mContext = context;
     }
 
@@ -63,40 +61,29 @@ public class CompaniesRecycler extends RecyclerView.Adapter<CompaniesRecycler.My
         anim.setDuration(500);
         holder.itemView.startAnimation(anim);
 
-        int height = new Utils(mContext).getDisplayMetrics().widthPixels;
+        holder.company_name.setText(_companyList.get(position).getName());
 
-        //LinearLayout.LayoutParams ItemLayout = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        //holder.item.setLayoutParams(ItemLayout);
+        holder.CEO.setText(_companyList.get(position).getCEO());
 
+        holder.website.setText(_companyList.get(position).getWebsite());
 
-        //RelativeLayout.LayoutParams ThumbnailLayout = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 4 * height / 10);
-        //holder.thumbnail.setLayoutParams(ThumbnailLayout);
+        //holder.website.setTypeface(new Utils(mContext).font_set("BYekan"), Typeface.ITALIC);
 
-
-        holder.title.setText(_listcompany.get(position).getName());
-        holder.title.setTypeface(new Utils(mContext).font_set("BYekan"), Typeface.BOLD);
-        //holder.title.setBackgroundColor(Color.YELLOW);
-
-        holder.CEO.setText(_listcompany.get(position).getCEO());
-        holder.CEO.setTypeface(new Utils(mContext).font_set("BYekan"), Typeface.BOLD_ITALIC);
-
-        holder.website.setText(_listcompany.get(position).getWebsite());
-        holder.website.setTypeface(new Utils(mContext).font_set("BYekan"), Typeface.ITALIC);
         holder.website.setMovementMethod(new LinkMovementMethod());
 
         holder.website.setClickable(true);
         holder.website.setMovementMethod(LinkMovementMethod.getInstance());
-        String text = "<a href='" + _listcompany.get(position).getWebsite() + "'>" + _listcompany.get(position).getWebsite() + " </a>";
+        String text = "<a href='" + _companyList.get(position).getWebsite() + "'>" + _companyList.get(position).getWebsite() + " </a>";
         holder.website.setText(Html.fromHtml(text));
 
         final AtomicBoolean playAnimation = new AtomicBoolean(true);
 
-        Picasso.with(this.mContext).load(Utils.URL_encode(_listcompany.get(position).getLogo()))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
+        Picasso.with(this.mContext).load(Utils.URL_encode(_companyList.get(position).getLogo()))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
                 .fit()
                 //.resize(5*height/10,5*height/10)
                 //.transform(new CropCircleTransformation())
                 .transform(new RoundedCornersTransformation(20, 0))
-                .into(holder.thumbnail, new Callback() {
+                .into(holder.company_logo, new Callback() {
                     @Override
                     public void onSuccess() {
                         if (playAnimation.get()) {
@@ -104,7 +91,7 @@ public class CompaniesRecycler extends RecyclerView.Adapter<CompaniesRecycler.My
                             Animation fadeOut = new AlphaAnimation(0, 1);
                             fadeOut.setInterpolator(new AccelerateInterpolator());
                             fadeOut.setDuration(1000);
-                            holder.thumbnail.startAnimation(fadeOut);
+                            holder.company_logo.startAnimation(fadeOut);
                             playAnimation.set(false);
                         }
                         /*Animation fadeOutPlaceholder = new AlphaAnimation(1, 0);
@@ -120,17 +107,19 @@ public class CompaniesRecycler extends RecyclerView.Adapter<CompaniesRecycler.My
                             Animation fadeOutPlaceholder = new AlphaAnimation(1, 0);
                             fadeOutPlaceholder.setInterpolator(new AccelerateInterpolator());
                             fadeOutPlaceholder.setDuration(1000);
-                            holder.thumbnail.setImageResource(R.drawable.corrupted);
-                            holder.thumbnail.startAnimation(fadeOutPlaceholder);
+                            holder.company_logo.setImageResource(R.drawable.corrupted);
+                            holder.company_logo.startAnimation(fadeOutPlaceholder);
                             playAnimation.set(false);
                         }
                     }
                 });
+
+        new Utils(mContext).overrideFonts(holder.itemView, "BYekan");
     }
 
     @Override
     public int getItemCount() {
-        return _listcompany.size();
+        return _companyList.size();
     }
 
     @Override
@@ -140,27 +129,23 @@ public class CompaniesRecycler extends RecyclerView.Adapter<CompaniesRecycler.My
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView title;
-        public ImageView thumbnail;
-        public TextView website;
-        public TextView CEO;
-        public ProgressBar img_progress;
-        public Typeface BYekan;
-        public CardView cardView;
         public LinearLayout item;
+        private TextView company_name;
+        private ImageView company_logo;
+        private TextView website;
+        private TextView CEO;
+        private ProgressBar img_progress;
 
         public MyViewHolder(View view) {
             super(view);
-            title = view.findViewById(R.id.title);
-            thumbnail = view.findViewById(R.id.thumbnail);
+            company_name = view.findViewById(R.id.company_name);
+            company_logo = view.findViewById(R.id.company_logo);
             website = view.findViewById(R.id.website);
             CEO = view.findViewById(R.id.CEO);
             img_progress = view.findViewById(R.id.image_progressbar);
-            cardView = view.findViewById(R.id.card_view);
             item = view.findViewById(R.id.list_item);
             view.setOnClickListener(this);
 
-            BYekan = Typeface.createFromAsset(mContext.getAssets(), "fonts/BYekan.ttf");
         }
 
         @Override

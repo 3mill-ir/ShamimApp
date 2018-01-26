@@ -118,11 +118,12 @@ public class SignIn_SignUp extends AppCompatActivity {
                 rootView = inflater.inflate(R.layout.fragment_sign_in, container, false);
                 /*TextView textView =  rootView.findViewById(R.id.section_label);
                 textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));*/
-                new Utils(getActivity()).overrideFonts(rootView);
+
             } else {
                 rootView = inflater.inflate(R.layout.fragment_sign_up, container, false);
-                new Utils(getActivity()).overrideFonts(rootView);
+
             }
+            new Utils(getActivity()).overrideFonts(rootView, "BYekan");
             return rootView;
         }
     }

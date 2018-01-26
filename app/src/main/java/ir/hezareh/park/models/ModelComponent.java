@@ -122,6 +122,7 @@ public class ModelComponent {
         @SerializedName("Type")
         @Expose
         protected Object type;
+
         @SerializedName("Content")
         @Expose
         protected Object content;
@@ -134,6 +135,41 @@ public class ModelComponent {
         @Expose
         protected String url;
 
+        @SerializedName("Likes")
+        @Expose
+        protected String likes;
+
+        @SerializedName("Dislikes")
+        @Expose
+        protected String dislikes;
+
+        @SerializedName("Comment")
+        @Expose
+        protected String comment;
+
+        public String getLikes() {
+            return likes;
+        }
+
+        public void setLikes(String likes) {
+            this.likes = likes;
+        }
+
+        public String getDislikes() {
+            return dislikes;
+        }
+
+        public void setDislikes(String dislikes) {
+            this.dislikes = dislikes;
+        }
+
+        public String getComment() {
+            return comment;
+        }
+
+        public void setComment(String comment) {
+            this.comment = comment;
+        }
 
         public String getFunctionality() {
             return functionality;

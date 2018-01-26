@@ -14,24 +14,21 @@
         card_view:cardElevation="5dp">
 
         <RelativeLayout
-
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/item_company_border"
-            android:padding="5dp">
+            android:padding="10dp">
 
 
             <TextView
-                android:id="@+id/title"
-                android:layout_width="match_parent"
+                android:id="@+id/company_name"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:drawableEnd="@drawable/briefcase"
+                android:drawablePadding="5dp"
                 android:gravity="center"
-                android:paddingBottom="6dp"
-                android:paddingEnd="3dp"
-                android:paddingStart="3dp"
-                android:paddingTop="6dp"
+                android:text="business"
                 android:textColor="#4c4c4c"
                 android:textSize="16dp" />
 
@@ -39,7 +36,7 @@
                 android:id="@+id/ImageLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/title">
+                android:layout_below="@+id/company_name">
 
                 <ProgressBar
                     android:id="@+id/image_progressbar"
@@ -50,9 +47,9 @@
                     android:visibility="visible" />
 
                 <ImageView
-                    android:id="@+id/thumbnail"
+                    android:id="@+id/company_logo"
                     android:layout_width="match_parent"
-                    android:layout_height="160dp"
+                    android:layout_height="130dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:scaleType="fitXY" />
 
@@ -61,9 +58,12 @@
 
             <TextView
                 android:id="@+id/CEO"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/ImageLayout"
+                android:layout_centerInParent="true"
+                android:drawableEnd="@drawable/boss"
+                android:drawablePadding="5dp"
                 android:gravity="center"
                 android:padding="3dp"
                 android:text="CEO"
@@ -71,9 +71,12 @@
 
             <TextView
                 android:id="@+id/website"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/CEO"
+                android:layout_centerInParent="true"
+                android:drawableEnd="@drawable/browser"
+                android:drawablePadding="5dp"
                 android:gravity="center"
                 android:text="www.3mill.ir"
                 android:textSize="14dp" />

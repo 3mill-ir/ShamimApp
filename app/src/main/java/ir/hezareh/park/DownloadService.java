@@ -28,9 +28,8 @@ public class DownloadService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         String urlToDownload = intent.getStringExtra("url");
-        ResultReceiver receiver = (ResultReceiver) intent.getParcelableExtra("receiver");
+        ResultReceiver receiver = intent.getParcelableExtra("receiver");
         try {
-
             //make a notification for progress download
             NotificationCompat.Builder mBuilder;
 

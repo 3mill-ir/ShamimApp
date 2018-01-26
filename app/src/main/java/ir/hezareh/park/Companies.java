@@ -2,40 +2,23 @@ package ir.hezareh.park;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 import ir.hezareh.park.Adapters.CompaniesRecycler;
@@ -45,13 +28,12 @@ import ir.hezareh.park.models.CompanyList;
 public class Companies extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = Companies.class
             .getSimpleName();
-    ArrayList<HashMap<String, String>> Shoura_List;
     ProgressDialog progressDialog;
-    CompaniesRecycler myRecyclerAdapter;
-    CompaniesRecycler myRecyclerAdapter1;
+    CompaniesRecycler companiesRecycler;
+    CompanyCategoryMenuAdapter categoryMenuAdapter;
     SlidingMenu menu;
     ListView CompanyListView;
-    List<CompanyList> CompanyList;
+    CardView companyHeaderCardView;
     TextView companyCategory;
     int Clicked = 0;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -86,12 +68,17 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
         companyCategory = ((TextView) findViewById(R.id.company_category));
         companyRecyclerView = (RecyclerView) findViewById(R.id.fanavar_recycler);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        companyHeaderCardView = (CardView) findViewById(R.id.card_view);
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), calculateNoOfColumns(getApplicationContext()));
-        companyRecyclerView.addItemDecoration(new GridSpacingItemDecoration(calculateNoOfColumns(getApplicationContext()), dpToPx(5), true));
+        companyRecyclerView.addItemDecoration(new GridSpacingItemDecoration(calculateNoOfColumns(getApplicationContext()), new Utils(getApplicationContext()).dpToPx(5), true));
         companyRecyclerView.setItemAnimator(new DefaultItemAnimator());
         companyRecyclerView.setLayoutManager(mLayoutManager);
         companyRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+
+        companyCategory.setTypeface(new Utils(getApplicationContext()).font_set("BHoma"));
+
 
 
         findViewById(R.id.drawer_icon).setOnClickListener(new View.OnClickListener() {
@@ -116,7 +103,32 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Clicked = position;
-                getCompanyList();
+                new networking().getCompanyList(new networking.CompanyListResponseListener() {
+                    @Override
+                    public void requestStarted() {
+
+                    }
+
+                    @Override
+                    public void requestCompleted(List<CompanyList> companyLists) {
+                        companiesRecycler = new CompaniesRecycler(getApplicationContext(), companyLists.get(Clicked).getCompanyList());
+                        companyRecyclerView.setAdapter(companiesRecycler);
+
+                        companyHeaderCardView.setVisibility(View.VISIBLE);
+                        companyCategory.setText(companyLists.get(Clicked).getType());
+
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void requestEndedWithError(VolleyError error) {
+                        //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                        swipeRefreshLayout.setRefreshing(false);
+                        // hide the progress dialog
+                        //hidepDialog();
+                        //swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
                 menu.toggle();
             }
         });
@@ -124,86 +136,70 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
                                     @Override
                                     public void run() {
                                         swipeRefreshLayout.setRefreshing(true);
-                                        getCompanyList();
+                                        new networking().getCompanyList(new networking.CompanyListResponseListener() {
+                                            @Override
+                                            public void requestStarted() {
+
+                                            }
+
+                                            @Override
+                                            public void requestCompleted(List<CompanyList> companyLists) {
+                                                categoryMenuAdapter = new CompanyCategoryMenuAdapter(getApplicationContext(), companyLists);
+                                                CompanyListView.setAdapter(categoryMenuAdapter);
+
+                                                companiesRecycler = new CompaniesRecycler(getApplicationContext(), companyLists.get(Clicked).getCompanyList());
+                                                companyRecyclerView.setAdapter(companiesRecycler);
+
+                                                companyHeaderCardView.setVisibility(View.VISIBLE);
+                                                companyCategory.setText(companyLists.get(Clicked).getType());
+
+                                                swipeRefreshLayout.setRefreshing(false);
+                                            }
+
+                                            @Override
+                                            public void requestEndedWithError(VolleyError error) {
+                                                //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                                                swipeRefreshLayout.setRefreshing(false);
+                                                // hide the progress dialog
+                                                //hidepDialog();
+                                                //swipeRefreshLayout.setRefreshing(false);
+                                            }
+                                        });
                                     }
         });
     }
 
     @Override
     public void onRefresh() {
-        getCompanyList();
-    }
-
-    public void getCompanyList() {
-
-        final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                "http://arefnaghshin.ir/companylist", null, new Response.Listener<JSONObject>() {
-
+        new networking().getCompanyList(new networking.CompanyListResponseListener() {
             @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    swipeRefreshLayout.setRefreshing(true);
-                    String jsonResponse = new String(response.toString().getBytes("ISO-8859-1"));
-                    Log.d(TAG, jsonResponse);
-                    JSONArray jsonArray = response.getJSONArray("Root");
-                    Gson gson = new Gson();
-                    Type collectionType = new TypeToken<Collection<CompanyList>>() {
-                    }.getType();
-                    CompanyList = gson.fromJson(new String(jsonArray.toString().getBytes("ISO-8859-1")), collectionType);
+            public void requestStarted() {
 
-
-                    //Log.d(TAG, CompanyList.get(0).getCompanyList().get(1).getName() + "");
-                    CompanyCategoryMenuAdapter categoryMenuAdapter = new CompanyCategoryMenuAdapter(getApplicationContext(), CompanyList);
-                    CompanyListView.setAdapter(categoryMenuAdapter);
-
-                    myRecyclerAdapter = new CompaniesRecycler(getApplicationContext(), CompanyList.get(Clicked).getCompanyList());
-                    companyRecyclerView.setAdapter(myRecyclerAdapter);
-
-                    companyCategory.setVisibility(View.VISIBLE);
-                    companyCategory.setText(CompanyList.get(Clicked).getType());
-                    companyCategory.setTypeface(new Utils(getApplicationContext()).font_set("BHoma"));
-
-
-                    // Sets the Toolbar to act as the ActionBar for this Activity window.
-                    // Make sure the toolbar exists in the activity and is not null
-                    //setSupportActionBar(toolbar);
-                    swipeRefreshLayout.setRefreshing(false);
-
-                    //Root_Layout.addView(mTopToolbar);
-
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
             }
 
-        }, new Response.ErrorListener() {
+            @Override
+            public void requestCompleted(List<CompanyList> companyLists) {
+
+                categoryMenuAdapter.notifyDataSetChanged();
+
+                companiesRecycler.notifyDataSetChanged();
+
+                companyHeaderCardView.setVisibility(View.VISIBLE);
+                companyCategory.setText(companyLists.get(Clicked).getType());
+
+                swipeRefreshLayout.setRefreshing(false);
+            }
 
             @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d("TAG", "Error: " + error.getMessage());
+            public void requestEndedWithError(VolleyError error) {
                 //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
                 swipeRefreshLayout.setRefreshing(false);
                 // hide the progress dialog
-                //hidepDialog();
+                //hideDialog();
                 //swipeRefreshLayout.setRefreshing(false);
             }
         });
-
-
-        jsonObjReq.setShouldCache(false);
-
-        // Adding request to request queue
-        App.getInstance().addToRequestQueue(jsonObjReq);
-
     }
-
-    private int dpToPx(int dp) {
-        Resources r = getResources();
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
-    }
-
 
     private class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
 

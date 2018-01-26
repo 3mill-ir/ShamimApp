@@ -13,37 +13,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
-
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import ir.hezareh.park.Adapters.EqualSpacingItemDecoration;
 import ir.hezareh.park.Adapters.NewsCategoryAdapter;
 import ir.hezareh.park.models.ModelComponent;
-import ir.hezareh.park.models.NewsDetails;
 
 
 public class NewsCategory extends AppCompatActivity {
 
     public static final String TAG = NewsCategory.class.getSimpleName();
-    ArrayList<ModelComponent> newsCategories;
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -62,7 +51,6 @@ public class NewsCategory extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_category);
-        //new NewsCategory().makeJsonArrayRequest1(new );
 
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
@@ -71,21 +59,32 @@ public class NewsCategory extends AppCompatActivity {
         //getSupportActionBar().setDisplayShowHomeEnabled(true);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        new NewsCategory().makeJsonArrayRequest1(new VolleyCallback() {
+
+        new networking().getNewsCategory(new networking.NewsCategoryResponseListener() {
             @Override
-            public void onSuccessResponse(List<ModelComponent> result) {
-                mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), result);
+            public void requestStarted() {
+
+            }
+
+            @Override
+            public void requestCompleted(ArrayList<ModelComponent> response) {
+                //hideDialog();
+
+                mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), response);
                 // Set up the ViewPager with the sections adapter.
                 mViewPager = (ViewPager) findViewById(R.id.container);
                 mViewPager.setAdapter(mSectionsPagerAdapter);
                 TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
                 tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
                 tabLayout.setupWithViewPager(mViewPager);
+
+                new Utils(getApplicationContext()).overrideFonts(tabLayout, "BHoma");
             }
 
             @Override
-            public void onSuccessResponseNewsDetails(NewsDetails newsDetails) {
-
+            public void requestEndedWithError(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                //hideDialog();
             }
         });
 
@@ -98,6 +97,8 @@ public class NewsCategory extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        new Utils(getApplicationContext()).overrideFonts(findViewById(R.id.header_text), "BYekan");
 
     }
 
@@ -132,51 +133,7 @@ public class NewsCategory extends AppCompatActivity {
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    private void makeJsonArrayRequest1(final VolleyCallback callback) {
 
-
-        JsonArrayRequest req = new JsonArrayRequest("http://arefnaghshin.ir/news",
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.d(TAG, response.toString());
-                        try {
-                            Gson gson = new Gson();
-
-                            Type collectionType = new TypeToken<Collection<ModelComponent>>() {
-                            }.getType();
-
-                            newsCategories = gson.fromJson(new String(response.toString().getBytes("ISO-8859-1")), collectionType);
-
-                            Log.d(TAG, newsCategories.get(0).getCategory().toString());
-
-                            for (int i = 0; i < newsCategories.size(); i++) {
-                                Log.d(TAG, newsCategories.get(i).getCategory().toString());
-                            }
-
-                            callback.onSuccessResponse(newsCategories);
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            //Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                        //hidepDialog();
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
-                //Toast.makeText(getApplicationContext(),error.getMessage(), Toast.LENGTH_SHORT).show();
-                //hidepDialog();
-            }
-        });
-
-        // Adding request to request queue
-        req.setShouldCache(false);
-
-        // Adding request to request queue
-        App.getInstance().addToRequestQueue(req);
-    }
 
     /**
      * A placeholder fragment containing a simple view.
@@ -190,7 +147,6 @@ public class NewsCategory extends AppCompatActivity {
         public RecyclerView NewsRecycler;
         public SwipeRefreshLayout swipeRefreshLayout;
         public NewsCategoryAdapter newsCategoryAdapter;
-        List<ModelComponent> newslist;
 
         public PlaceholderFragment() {
 
@@ -208,58 +164,7 @@ public class NewsCategory extends AppCompatActivity {
             return fragment;
         }
 
-        public void makeJsonObjectRequest() {
 
-
-            JsonArrayRequest req = new JsonArrayRequest("http://arefnaghshin.ir/news",
-                    new Response.Listener<JSONArray>() {
-                        @Override
-                        public void onResponse(JSONArray response) {
-                            String utf8string;
-                            try {
-                                utf8string = new String(response.toString().getBytes("ISO-8859-1"));
-                                Log.d(TAG, utf8string);
-                                Gson gson = new Gson();
-                                Type collectionType = new TypeToken<Collection<ModelComponent>>() {
-                                }.getType();
-
-                                List<ModelComponent> news = gson.fromJson(String.valueOf(utf8string), collectionType);
-
-                                //List<News> news = Arrays.asList(gson.fromJson(response.toString(), News[].class));
-                                newslist = new ArrayList<>(news);
-                                Log.i("Post", news.size() + " posts loaded.");
-                                for (ModelComponent news1 : newslist) {
-                                    Log.i("Post", news1.toString());
-                                }
-                            } catch (UnsupportedEncodingException e) {
-                                e.printStackTrace();
-                            }
-                            //hidepDialog();
-                            newsCategoryAdapter = new NewsCategoryAdapter(getActivity(), newslist, getArguments().getInt(ARG_SECTION_NUMBER) - 1);
-
-                            newsCategoryAdapter.notifyDataSetChanged();
-                            NewsRecycler.setAdapter(newsCategoryAdapter);
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    VolleyLog.d(TAG, "Error: " + error.getMessage());
-                    //Toast.makeText(getApplicationContext(),
-                    //       error.getMessage(), Toast.LENGTH_SHORT).show();
-                    // hide the progress dialog
-                    //hidepDialog();
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-            });
-
-            // Adding request to request queue
-            req.setShouldCache(false);
-
-            // Adding request to request queue
-            App.getInstance().addToRequestQueue(req);
-
-        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -270,7 +175,6 @@ public class NewsCategory extends AppCompatActivity {
 
             NewsRecycler = rootView.findViewById(R.id.news_recycler);
             swipeRefreshLayout = rootView.findViewById(R.id.refresh_layout);
-
             NewsRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
             NewsRecycler.addItemDecoration(new EqualSpacingItemDecoration(5, EqualSpacingItemDecoration.VERTICAL));
             NewsRecycler.setItemAnimator(new DefaultItemAnimator());
@@ -285,7 +189,24 @@ public class NewsCategory extends AppCompatActivity {
                 @Override
                 public void run() {
                     swipeRefreshLayout.setRefreshing(true);
-                    makeJsonObjectRequest();
+                    new networking().getNewsCategory(new networking.NewsCategoryResponseListener() {
+                        @Override
+                        public void requestStarted() {
+
+                        }
+
+                        @Override
+                        public void requestCompleted(ArrayList<ModelComponent> response) {
+                            newsCategoryAdapter = new NewsCategoryAdapter(getActivity(), response, getArguments().getInt(ARG_SECTION_NUMBER) - 1);
+                            NewsRecycler.setAdapter(newsCategoryAdapter);
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+
+                        @Override
+                        public void requestEndedWithError(VolleyError error) {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                    });
                 }
             });
 
@@ -294,29 +215,41 @@ public class NewsCategory extends AppCompatActivity {
 
         @Override
         public void onRefresh() {
-            makeJsonObjectRequest();
+            new networking().getNewsCategory(new networking.NewsCategoryResponseListener() {
+                @Override
+                public void requestStarted() {
+
+                }
+
+                @Override
+                public void requestCompleted(ArrayList<ModelComponent> response) {
+                    newsCategoryAdapter = new NewsCategoryAdapter(getActivity(), response, getArguments().getInt(ARG_SECTION_NUMBER) - 1);
+                    NewsRecycler.setAdapter(newsCategoryAdapter);
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+
+                @Override
+                public void requestEndedWithError(VolleyError error) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            });
         }
 
 
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
-        final List<Integer> s1 = new ArrayList<>();
-        ArrayList<String> components;
+        ArrayList<String> categoryName;
 
         public SectionsPagerAdapter(FragmentManager fm, final List<ModelComponent> modelComponents) {
             super(fm);
-            components = new ArrayList<>();
-
+            categoryName = new ArrayList<>();
 
             for (ModelComponent item : modelComponents) {
-                components.add(item.getCategory().toString());
+                categoryName.add(item.getCategory().toString());
             }
-            //components=new ArrayList<>(modelComponents);
-            /*components.add(s.get(0).getCategory().toString());
-            components.add(s.get(1).getCategory().toString());*/
-            //mSectionsPagerAdapter.notifyDataSetChanged();
 
+            //mSectionsPagerAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -329,9 +262,7 @@ public class NewsCategory extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-
-            return components.size();
+            return categoryName.size();
         }
 
         @Override
@@ -344,7 +275,7 @@ public class NewsCategory extends AppCompatActivity {
                 case 2:
                     return "خارجی";
             }*/
-            return components.get(position);
+            return categoryName.get(position);
             //return null;
         }
 

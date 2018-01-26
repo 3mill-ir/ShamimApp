@@ -2,8 +2,11 @@ package ir.hezareh.park.Component;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
@@ -19,23 +22,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ir.hezareh.park.R;
+import ir.hezareh.park.Utils;
 import ir.hezareh.park.models.ModelComponent;
 
 public class MyPieChart {
     private PieChart chart;
-    private RelativeLayout ChartLayout;
+    private TextView questionText;
+    private View pollDiagramLayout;
 
     public MyPieChart(Context c, int width, int height, ModelComponent modelComponent) {
-        ChartLayout = new RelativeLayout(c);
 
-        LinearLayout.LayoutParams ChartLayoutParams = new LinearLayout.LayoutParams(width, height);
-        ChartLayoutParams.setMargins(0, 5, 0, 0);
-        ChartLayout.setLayoutParams(ChartLayoutParams);
-        ChartLayout.setBackgroundResource(R.drawable.item_background);
+        LayoutInflater inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        pollDiagramLayout = inflater.inflate(R.layout.diagram_item, null);
 
-        chart = new PieChart(c);
+        //cardView=pollDiagramLayout.findViewById(R.id.card_view);
+        //cardView=new CardView(c);
+        //pollDiagramLayout=new LinearLayout(c);
+
+        chart = pollDiagramLayout.findViewById(R.id.pollDiagram);
+        questionText = pollDiagramLayout.findViewById(R.id.question_text);
+
+        LinearLayout.LayoutParams ChartLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width / 2 + 100);
         chart.setLayoutParams(ChartLayoutParams);
-        ChartLayout.addView(chart);
+
+        questionText.setText("نظرسنجی در مورد اپلیکیشن پارک علم و فناوری");
+
 
         chart.setUsePercentValues(true);
         chart.getDescription().setEnabled(false);
@@ -61,6 +72,8 @@ public class MyPieChart {
         // enable rotation of the chart by touch
         chart.setRotationEnabled(true);
         chart.setHighlightPerTapEnabled(true);
+        chart.setEntryLabelTypeface(new Utils(c).font_set("BYekan"));
+        chart.setNoDataTextTypeface(new Utils(c).font_set("BYekan"));
 
         // chart.setUnit(" €");
         // chart.setDrawUnitsInChart(true);
@@ -68,10 +81,8 @@ public class MyPieChart {
         // add a selection listener
         //chart.setOnChartValueSelectedListener(con);
 
-
         ArrayList<Float> Votes = new ArrayList<>();
         ArrayList<String> Answers = new ArrayList<>();
-
 
         for (ModelComponent.Item item : modelComponent.getItem()) {
             Votes.add((float) item.getVote());
@@ -79,7 +90,6 @@ public class MyPieChart {
         }
 
         setData(Votes, Answers);
-
 
         chart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
         chart.spin(2000, 0, 360, Easing.EasingOption.EaseInExpo);
@@ -89,22 +99,26 @@ public class MyPieChart {
 
         Legend l = chart.getLegend();
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         l.setOrientation(Legend.LegendOrientation.VERTICAL);
         l.setDrawInside(false);
         l.setXEntrySpace(7f);
         l.setYEntrySpace(0f);
         l.setYOffset(0f);
+        l.setTypeface(new Utils(c).font_set("BYekan"));
 
         // entry label styling
         chart.setEntryLabelColor(Color.BLACK);
         //chart.setEntryLabelTypeface(mTfRegular);
         chart.setEntryLabelTextSize(12f);
 
+        //pollDiagramLayout.addView(chart);
+        //cardView.addView(pollDiagramLayout);
+
     }
 
-    public RelativeLayout getItem() {
-        return ChartLayout;
+    public View getItem() {
+        return pollDiagramLayout;
     }
 
     private void setData(ArrayList<Float> Value, ArrayList<String> Label) {
@@ -149,7 +163,7 @@ public class MyPieChart {
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(12);
-        data.setValueTextColor(Color.WHITE);
+        data.setValueTextColor(Color.BLACK);
         //data.setValueTypeface(mTfLight);
         // undo all highlights
         chart.highlightValues(null);

@@ -1,18 +1,24 @@
 package ir.hezareh.park;
 
+import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.Transformation;
-import android.widget.RelativeLayout;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 
 /**
@@ -32,56 +38,45 @@ public class Utils {
         return Uri.encode(URL, ALLOWED_URI_CHARS);
     }
 
-    public static void expand(final View v) {
-        v.measure(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        final int targetHeight = v.getMeasuredHeight();
-
-        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
-        v.getLayoutParams().height = 1;
+    public static void expand(final View v, int targetHeight) {
+        int prevHeight = v.getHeight();
+        Log.d("height", prevHeight + "");
         v.setVisibility(View.VISIBLE);
-        Animation a = new Animation() {
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(prevHeight, targetHeight);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1
-                        ? RelativeLayout.LayoutParams.WRAP_CONTENT
-                        : (int) (targetHeight * interpolatedTime);
+            public void onAnimationUpdate(ValueAnimator animation) {
+                v.getLayoutParams().height = (int) animation.getAnimatedValue();
                 v.requestLayout();
             }
+        });
+        valueAnimator.setInterpolator(new DecelerateInterpolator());
 
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        // 1dp/ms
-        a.setDuration((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
+        int duration = (int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density);
+        valueAnimator.setDuration(duration);
+        valueAnimator.start();
     }
 
-    public static void collapse(final View v) {
-        final int initialHeight = v.getMeasuredHeight();
-
-        Animation a = new Animation() {
+    public static void collapse(final View v, int targetHeight) {
+        int prevHeight = v.getHeight();
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(prevHeight, targetHeight);
+        valueAnimator.setInterpolator(new DecelerateInterpolator());
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                if (interpolatedTime == 1) {
-                    v.setVisibility(View.GONE);
-                } else {
-                    v.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
-                    v.requestLayout();
-                }
+            public void onAnimationUpdate(ValueAnimator animation) {
+                v.getLayoutParams().height = (int) animation.getAnimatedValue();
+                v.requestLayout();
             }
+        });
+        valueAnimator.setInterpolator(new DecelerateInterpolator());
+        int duration = (int) (prevHeight / v.getContext().getResources().getDisplayMetrics().density);
+        valueAnimator.setDuration(duration);
+        valueAnimator.start();
+    }
 
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        // 1dp/ms
-        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
+    public int dpToPx(int dp) {
+        Resources r = context.getResources();
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
 
     public DisplayMetrics getDisplayMetrics() {
@@ -101,22 +96,29 @@ public class Utils {
         }
     }
 
-    public void overrideFonts(final View v) {
+    public void overrideFonts(final View v, String font) {
         try {
             if (v instanceof ViewGroup) {
                 ViewGroup vg = (ViewGroup) v;
                 for (int i = 0; i < vg.getChildCount(); i++) {
                     View child = vg.getChildAt(i);
-                    overrideFonts(child);
+                    overrideFonts(child, font);
                 }
             } else if (v instanceof TextView) {
-                ((TextView) v).setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/BHoma.ttf"));
+                if (font.equals("BYekan")) {
+                    ((TextView) v).setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/BYekan.ttf"));
+
+                } else if (font.equals("BHoma")) {
+                    ((TextView) v).setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/BHoma.ttf"));
+                } else if (font.equals("iransans")) {
+                    ((TextView) v).setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/irsans.ttf"));
+                }
             }
         } catch (Exception e) {
         }
     }
 
-    public boolean isConnectingToInternet() {
+    public boolean isConnectedToInternet() {
         ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity != null) {
             NetworkInfo[] info = connectivity.getAllNetworkInfo();
@@ -130,8 +132,36 @@ public class Utils {
         return false;
     }
 
-    public void showAlertDialog(String title, String message,
-                                Boolean status) {
+    public void animateText(TextView textView, int screenWidth) {
+        //this function animates Text if does not fit on the Screen
+
+        Paint textPaint = textView.getPaint();
+        String text = textView.getText().toString();//get text
+        int textWidth = Math.round(textPaint.measureText(text));//measure the text size
+        ViewGroup.LayoutParams params = textView.getLayoutParams();
+        params.width = textWidth;
+
+        textView.setLayoutParams(params); //refine
+
+        //this is optional. do not scroll if text is shorter than screen width
+        //remove this won't effect the scroll
+
+        if (textWidth <= screenWidth) {
+            //All text can fit in screen.
+            //return;
+        } else {
+            //set the animation
+
+            TranslateAnimation slide = new TranslateAnimation(-textWidth, screenWidth, 0, 0);
+            slide.setDuration(textWidth * 5 + screenWidth);
+            slide.setRepeatCount(Animation.INFINITE);
+            slide.setRepeatMode(Animation.RESTART);
+            slide.setInterpolator(new LinearInterpolator());
+            textView.startAnimation(slide);
+        }
+    }
+
+    public void showAlertDialog(String title, String message, Boolean status) {
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
 
         // Setting Dialog Title
@@ -147,6 +177,7 @@ public class Utils {
         // Setting OK Button
         alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
+
             }
         });
 

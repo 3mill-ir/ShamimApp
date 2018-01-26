@@ -1,7 +1,6 @@
 package ir.hezareh.park.Adapters;
 
 import android.content.Context;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,8 +20,6 @@ import android.widget.Toast;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -32,22 +29,15 @@ import ir.hezareh.park.models.ModelComponent;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 
-/**
- * Created by rf on 27/08/2017.
- */
-
-
 public class NewsCategoryAdapter extends RecyclerView.Adapter<NewsCategoryAdapter.MyViewHolder> {
 
     private Context mContext;
-    private ArrayList<HashMap<String, String>> RequestsList;
     private int lastPosition = -1;
     private List<ModelComponent> news;
     private int index;
 
 
     public NewsCategoryAdapter(Context context, List<ModelComponent> _news, int _index) {
-        //this.RequestsList = data;
         this.mContext = context;
         this.news = _news;
         this.index = _index;
@@ -72,20 +62,27 @@ public class NewsCategoryAdapter extends RecyclerView.Adapter<NewsCategoryAdapte
         anim.setDuration(500);
         holder.itemView.startAnimation(anim);
 
-        int height = new Utils(mContext).getDisplayMetrics().widthPixels;
+        int widthPixels = new Utils(mContext).getDisplayMetrics().widthPixels;
 
         LinearLayout.LayoutParams ItemLayout = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         holder.item.setLayoutParams(ItemLayout);
 
         holder.date.setText(this.news.get(index).getItem().get(position).getDate().toString());
 
+        holder.likes.setText(this.news.get(index).getItem().get(position).getLikes());
 
-        RelativeLayout.LayoutParams ThumbnailLayout = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 4 * height / 10);
+        holder.dislikes.setText(this.news.get(index).getItem().get(position).getDislikes());
+
+        holder.comments.setText(this.news.get(index).getItem().get(position).getComment());
+
+        //RelativeLayout.LayoutParams ThumbnailLayout = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 4 * widthPixels / 10);
         //holder.thumbnail.setLayoutParams(ThumbnailLayout);
 
 
         holder.title.setText(this.news.get(index).getItem().get(position).getText());
-        //holder.title.setBackgroundColor(Color.YELLOW);
+
+        holder.content.setText(this.news.get(index).getItem().get(position).getContent().toString());
+
         final AtomicBoolean playAnimation = new AtomicBoolean(true);
 
         Picasso.with(this.mContext).load(Utils.URL_encode(news.get(index).getItem().get(position).getImage().toString()))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
@@ -125,6 +122,7 @@ public class NewsCategoryAdapter extends RecyclerView.Adapter<NewsCategoryAdapte
 
                 });
 
+
     }
 
     @Override
@@ -139,21 +137,32 @@ public class NewsCategoryAdapter extends RecyclerView.Adapter<NewsCategoryAdapte
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView title;
-        public ImageView thumbnail;
-        public ProgressBar img_progress;
-        public CardView cardView;
-        public LinearLayout item;
-        public TextView date;
+        private TextView title;
+        private TextView content;
+        private ImageView thumbnail;
+        private ProgressBar img_progress;
+        private LinearLayout item;
+        private TextView date;
+        private TextView likes;
+        private TextView dislikes;
+        private TextView comments;
 
-        public MyViewHolder(View view) {
+        private MyViewHolder(View view) {
             super(view);
             title = view.findViewById(R.id.title);
             thumbnail = view.findViewById(R.id.thumbnail);
             img_progress = view.findViewById(R.id.image_progressbar);
-            cardView = view.findViewById(R.id.card_view);
             item = view.findViewById(R.id.list_item);
             date = view.findViewById(R.id.date);
+            likes = view.findViewById(R.id.likes);
+            dislikes = view.findViewById(R.id.dislikes);
+            comments = view.findViewById(R.id.comments);
+            content = view.findViewById(R.id.content);
+
+            new Utils(mContext).overrideFonts(item, "BYekan");
+            new Utils(mContext).overrideFonts(content, "iransans");
+
+
             view.setOnClickListener(this);
         }
 

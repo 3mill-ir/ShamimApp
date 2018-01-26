@@ -5,15 +5,12 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -21,30 +18,18 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
-
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
-import java.util.List;
 
 import ir.hezareh.park.Adapters.CommentRecycler;
 import ir.hezareh.park.Adapters.EqualSpacingItemDecoration;
 import ir.hezareh.park.Adapters.NewsComponentRecycler;
-import ir.hezareh.park.models.ModelComponent;
 import ir.hezareh.park.models.NewsDetails;
 
 
@@ -56,7 +41,14 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
     RecyclerView newsRecyclerView;
     int screenHeight;
     int width;
-    NewsDetails newsDetails;
+    TextView likesCount;
+    TextView commentsCount;
+    TextView dislikesCount;
+    TextView date;
+    Button show_more;
+    CommentRecycler commentRecycler;
+    NewsComponentRecycler relatedNewsComponentRecycler;
+    int ID;
     private String url = "https://www.digikala.com/";
     private WebView webView;
     private ProgressBar progressBar;
@@ -70,26 +62,31 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         CollapsingToolbarLayout layout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         layout.setTitleEnabled(true);
         layout.setTitle("");
-
+        new Utils(getApplicationContext()).overrideFonts(findViewById(R.id.news), "BYekan");
         width = new Utils(getApplicationContext()).getDisplayMetrics().widthPixels;
         screenHeight = new Utils(getApplicationContext()).getDisplayMetrics().heightPixels;
 
-        //View logo = getLayoutInflater().inflate(R.layout.custom_toolbar, null);
+        likesCount = (TextView) findViewById(R.id.likes);
+        date = (TextView) findViewById(R.id.date_time);
+        commentsCount = (TextView) findViewById(R.id.comments);
+        dislikesCount = (TextView) findViewById(R.id.dislikes);
+        show_more = (Button) findViewById(R.id.show_more);
 
-        //Root_Layout = (LinearLayout) findViewById(R.id.main_layout);
 
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Utils.expand(webView);
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                CommentDialog dialogClass = new CommentDialog(NewsDetailActivity.this, ID);
+                dialogClass.show();
+
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                //        .setAction("Action", null).show();
             }
         });
 
@@ -99,14 +96,18 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         commentRecyclerView = (RecyclerView) findViewById(R.id.comments_recycler);
         newsRecyclerView = (RecyclerView) findViewById(R.id.news_recycler);
 
-        //initWebView();
+
+        newsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, true));
+        newsRecyclerView.addItemDecoration(new EqualSpacingItemDecoration(10, EqualSpacingItemDecoration.HORIZONTAL));
+        newsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        commentRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, true));
+        commentRecyclerView.addItemDecoration(new EqualSpacingItemDecoration(10, EqualSpacingItemDecoration.VERTICAL));
+        commentRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+
+        initWebView();
         //webView.loadUrl(url);
-
-        Picasso.with(getApplicationContext())
-                .load("https://file.digi-kala.com/digikala/Image/Webstore/Banner/1396/10/11/c728f1bf.jpg")
-                .fit()
-                .into((ImageView) findViewById(R.id.news_detail_header));
-
 
         swipeRefreshLayout.setOnRefreshListener(this);
 
@@ -118,17 +119,23 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
             @Override
             public void run() {
                 swipeRefreshLayout.setRefreshing(true);
-                //webView.loadUrl(url);
-                //renderPost()
-                getNewsDetails(new VolleyCallback() {
+                new networking().getNewsDetails(new networking.NewsDetailsResponseListener() {
                     @Override
-                    public void onSuccessResponse(List<ModelComponent> result) {
+                    public void requestStarted() {
 
                     }
 
                     @Override
-                    public void onSuccessResponseNewsDetails(NewsDetails newsDetails) {
-                        addNews();
+                    public void requestCompleted(NewsDetails newsDetails) {
+                        addNews(newsDetails);
+                        swipeRefreshLayout.setRefreshing(false);
+                        ID = newsDetails.getID();
+                        fab.setVisibility(View.VISIBLE);
+
+                    }
+
+                    @Override
+                    public void requestEndedWithError(VolleyError error) {
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 });
@@ -144,46 +151,37 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         swipeRefreshLayout.setRefreshing(true);
         //webView.loadUrl(url);
         //renderPost();
-        getNewsDetails(new VolleyCallback() {
+
+        new networking().getNewsDetails(new networking.NewsDetailsResponseListener() {
             @Override
-            public void onSuccessResponse(List<ModelComponent> result) {
+            public void requestStarted() {
 
             }
 
             @Override
-            public void onSuccessResponseNewsDetails(NewsDetails newsDetails) {
-                addNews();
+            public void requestCompleted(NewsDetails newsDetails) {
+                addNews(newsDetails);
+                swipeRefreshLayout.setRefreshing(false);
+                ID = newsDetails.getID();
+                findViewById(R.id.fab).setVisibility(View.VISIBLE);
+
+                //Log.e("can",webView.canScrollVertically(0)+"");
+            }
+
+            @Override
+            public void requestEndedWithError(VolleyError error) {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-
-
     }
 
-    private void addNews() {
-        CommentRecycler commentRecycler = new CommentRecycler(getApplicationContext(), newsDetails.getRelatedTopics().getItem());
+    private void addNews(NewsDetails newsDetails) {
 
-        LinearLayout.LayoutParams CommentsRecyclerLayoutParams = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT);
-        CommentsRecyclerLayoutParams.gravity = Gravity.CENTER_VERTICAL;
-        commentRecyclerView.setLayoutParams(CommentsRecyclerLayoutParams);
-
-        commentRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, true));
-        commentRecyclerView.addItemDecoration(new EqualSpacingItemDecoration(10, EqualSpacingItemDecoration.VERTICAL));
-        commentRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        commentRecycler = new CommentRecycler(getApplicationContext(), newsDetails.getComments());
         commentRecyclerView.setAdapter(commentRecycler);
 
-
-        NewsComponentRecycler newsComponentRecycler = new NewsComponentRecycler(getApplicationContext(), newsDetails.getRelatedTopics());
-
-
-        LinearLayout.LayoutParams NewsRecyclerLayoutParams = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT);
-        NewsRecyclerLayoutParams.gravity = Gravity.CENTER_VERTICAL;
-        newsRecyclerView.setLayoutParams(NewsRecyclerLayoutParams);
-
-        newsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, true));
-        newsRecyclerView.addItemDecoration(new EqualSpacingItemDecoration(10, EqualSpacingItemDecoration.VERTICAL));
-        newsRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        newsRecyclerView.setAdapter(newsComponentRecycler);
+        relatedNewsComponentRecycler = new NewsComponentRecycler(getApplicationContext(), newsDetails.getRelatedTopics());
+        newsRecyclerView.setAdapter(relatedNewsComponentRecycler);
 
         String text = "<html> <head>\n" +
                 "    <meta charset=\"UTF-8\">\n" +
@@ -194,86 +192,53 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                 "                    font-family: \"MyFont\"; \n " +
                 "                    src: url('file:///android_asset/fonts/irsans.ttf');\n" +
                 "                }\n" +
-                "                p { font-family:\"MyFont\";  line-height: 30px; padding: 5px; font-size: 14px;}" +
+                "               @font-face {\n" +
+                "               font-family: \"BYekan\"; \n" +
+                "               src: url('file:///android_asset/fonts/BYekan.ttf'); \n" +
+                "               }\n" +
+                "               .text { font-family:\"MyFont\";  line-height: 30px; padding: 5px; font-size: 14px;}  \n" +
+                "               .header { font-family:\"BYekan\";  line-height: 25px; padding: 5px; font-size: 18px;}" +
                 "            </style>" +
                 "    <title>Title</title>\n" +
-                "</head>  <body>"
-                + "<p align=\"justify\"" +
+                "</head> " +
+                " <p class=\"header\"  align=\"justify\"" +
+                " dir=\"rtl\" >" +
+                newsDetails.getTittle() +
+                " </p> " +
+                " <body>"
+                + "<p class=\"text\" align=\"justify\"" +
                 "dir=\"rtl\">"
                 + newsDetails.getDescription()
                 + "</p> "
                 + "</body></html>";
 
-
         webView.loadDataWithBaseURL(null, text, "text/html", "utf-8", null);
 
-        ((TextView) findViewById(R.id.date_time)).setText(newsDetails.getCreatedOnUTC());
-        ((TextView) findViewById(R.id.likes)).setText(String.valueOf(newsDetails.getNumberOfLikes()));
-        ((TextView) findViewById(R.id.dislikes)).setText(String.valueOf(newsDetails.getNumberOfDislikes()));
-        ((TextView) findViewById(R.id.comments)).setText(String.valueOf(newsDetails.getNumberOfComments()));
+        date.setVisibility(View.VISIBLE);
+        likesCount.setVisibility(View.VISIBLE);
+        dislikesCount.setVisibility(View.VISIBLE);
+        commentsCount.setVisibility(View.VISIBLE);
 
+        date.setText(newsDetails.getCreatedOnUTC());
+        likesCount.setText(String.valueOf(newsDetails.getNumberOfLikes()));
+        dislikesCount.setText(String.valueOf(newsDetails.getNumberOfDislikes()));
+        commentsCount.setText(String.valueOf(newsDetails.getNumberOfComments()));
+
+        Picasso.with(getApplicationContext())
+                .load("https://file.digi-kala.com/digikala/Image/Webstore/Banner/1396/11/1/3cde18e7.jpg")
+                .fit()
+                .into((ImageView) findViewById(R.id.news_detail_header));
     }
-
 
     private void renderPost() {
         //webView.loadUrl("https://www.google.com/");
     }
 
-    public void getNewsDetails(final VolleyCallback callback) {
-
-        final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                "http://arefnaghshin.ir/newsdetails", null, new Response.Listener<JSONObject>() {
-
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    String jsonResponse = new String(response.toString().getBytes("ISO-8859-1"));
-                    Log.d(TAG, jsonResponse);
-                    Gson gson = new Gson();
-                    Type collectionType = new TypeToken<NewsDetails>() {
-                    }.getType();
-                    newsDetails = gson.fromJson(new String(response.toString().getBytes("ISO-8859-1")), collectionType);
-
-
-                    // Sets the Toolbar to act as the ActionBar for this Activity window.
-                    // Make sure the toolbar exists in the activity and is not null
-                    //setSupportActionBar(toolbar);
-
-                    //Root_Layout.addView(mTopToolbar);
-
-
-                    Log.d(TAG, newsDetails.getDescription() + "");
-
-
-
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                callback.onSuccessResponseNewsDetails(newsDetails);
-            }
-
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d("TAG", "Error: " + error.getMessage());
-                //Toast.makeText(getApplicationContext(),error.getMessage(), Toast.LENGTH_SHORT).show();
-                // hide the progress dialog
-                //hidepDialog();
-                //swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-
-        jsonObjReq.setShouldCache(false);
-
-        // Adding request to request queue
-        App.getInstance().addToRequestQueue(jsonObjReq);
-
-    }
-
 
     private void initWebView() {
         webView.setWebChromeClient(new MyWebChromeClient(this));
+
+
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -285,9 +250,10 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                webView.loadUrl(url);
+                //webView.loadUrl(url);
                 return true;
             }
+
 
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -295,6 +261,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                 //progressBar.setVisibility(View.GONE);
                 //NewsRecycler.setAdapter(myRecyclerAdapter);
                 swipeRefreshLayout.setRefreshing(false);
+                //Log.e("can",webView.canScrollVertically(0)+"");
                 invalidateOptionsMenu();
             }
 
@@ -339,6 +306,19 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         });
     }
 
+    public void onShowMoreClicked(View view) {
+
+        if (webView.getMeasuredHeight() == new Utils(getApplicationContext()).dpToPx(250)) {
+            webView.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            int height = webView.getMeasuredHeight();
+            Utils.expand(webView, height);
+            show_more.setText("نمایش کمتر");
+        } else {
+            //initial height is 250dp
+            Utils.collapse(webView, new Utils(getApplicationContext()).dpToPx(250));
+            show_more.setText("نمایش بیشتر");
+        }
+    }
 
     private class MyWebChromeClient extends WebChromeClient {
         Context context;
@@ -346,9 +326,9 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         public MyWebChromeClient(Context context) {
             super();
             this.context = context;
+
         }
-
-
     }
-
 }
+
+

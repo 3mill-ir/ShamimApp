@@ -12,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ExpandableListView;
 import android.widget.ListView;
 
 import java.util.HashMap;
@@ -52,24 +51,12 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
         /*findViewById(R.id.opendrawer).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
         });*/
-        // get the listview
-        expListView = (ExpandableListView) findViewById(R.id.expanded_menu);
-
-        // preparing list data
-        //prepareListData();
-
-        //listAdapter = new ListAdapter(this, listDataHeader);
-
-        // setting list adapter
-        //expListView.setAdapter(listAdapter);
 
 
     }

@@ -3,17 +3,15 @@ package ir.hezareh.park.Component;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Paint;
+import android.graphics.Color;
+import android.support.annotation.IdRes;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -28,7 +26,6 @@ import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ir.hezareh.park.Adapters.EqualSpacingItemDecoration;
@@ -38,7 +35,6 @@ import ir.hezareh.park.FanBazar;
 import ir.hezareh.park.Gallery;
 import ir.hezareh.park.NewsCategory;
 import ir.hezareh.park.NewsDetailActivity;
-import ir.hezareh.park.OnLoadMoreListener;
 import ir.hezareh.park.R;
 import ir.hezareh.park.Utils;
 import ir.hezareh.park.WebviewActivity;
@@ -47,8 +43,6 @@ import ir.hezareh.park.models.ModelComponent;
 
 public class Component {
     Context context;
-    private OnLoadMoreListener onLoadMoreListener;
-
 
     public Component(Context _context) {
         this.context = _context;
@@ -82,6 +76,7 @@ public class Component {
             ImageSlider.setCustomAnimation(new DescriptionAnimation());
 
         }
+        Slider.setBackgroundResource(R.drawable.back);
         Slider.addView(child);
         return Slider;
     }
@@ -103,27 +98,14 @@ public class Component {
         return NewsRecycler;
     }
 
-    public LinearLayout pollQuestion(int screenWidth, int height, ModelComponent modelComponent) {
-        //ScrollView PollQuestionScrollView = new ScrollView(context);
-        //PollQuestionScrollView.setVerticalScrollBarEnabled(true);
-        LinearLayout PollQuestionLayout = new LinearLayout(context);
+    public View pollQuestion(int screenWidth, int height, final ModelComponent modelComponent) {
 
-        PollQuestionLayout.setOrientation(LinearLayout.VERTICAL);
-        PollQuestionLayout.setBackgroundResource(R.drawable.item_background);
-        LinearLayout.LayoutParams PollQuestionLayoutParams = new LinearLayout.LayoutParams(screenWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
-        PollQuestionLayoutParams.setMargins(0, 5, 0, 5);
-        //PollQuestionLayout.setMinimumHeight(screenWidth/2);
-        ///PollQuestionLayout.setGravity(Gravity.CENTER);
-        PollQuestionLayout.setLayoutParams(PollQuestionLayoutParams);
-        //PollQuestionScrollView.setLayoutParams(PollQuestionLayoutParams);
-
-        TextView questionText = new TextView(context);
-        LinearLayout.LayoutParams questionTextLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100);
-        questionTextLayoutParams.gravity = Gravity.CENTER;
-        questionText.setLayoutParams(questionTextLayoutParams);
-
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View pollQuestionLayout = inflater.inflate(R.layout.poll_question_item, null);
+        TextView questionText = pollQuestionLayout.findViewById(R.id.question_text);
         questionText.setText(modelComponent.getQuestion());
-        questionText.setGravity(Gravity.CENTER);
+
+
         /*questionText.setSingleLine(true);
         //questionText.setEllipsize(TextUtils.TruncateAt.END);
         questionText.setEllipsize(TextUtils.TruncateAt.MARQUEE);
@@ -146,70 +128,51 @@ public class Component {
         questionText.setHorizontallyScrolling(true);
         questionText.setSelected(true);*/
 
-        questionText.setTypeface(new Utils(context).font_set("irsans"));
-        Paint textPaint = questionText.getPaint();
-        String text = questionText.getText().toString();//get text
-        int textWidth = Math.round(textPaint.measureText(text));//measure the text size
-        ViewGroup.LayoutParams params = questionText.getLayoutParams();
-        params.width = textWidth;
-        //questionText.setTextDirection();
-
-        questionText.setLayoutParams(params); //refine
-
-        /*DisplayMetrics displaymetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getRealMetrics(displaymetrics);
-        int screenWidth = displaymetrics.widthPixels;*/
-
-        //this is optional. do not scroll if text is shorter than screen width
-        //remove this won't effect the scroll
-        if (textWidth <= screenWidth /*screenWidth*/) {
-            //All text can fit in screen.
-            //return;
-        } else {
-            //set the animation
-
-            TranslateAnimation slide = new TranslateAnimation(-textWidth, screenWidth, 0, 0);
-            slide.setDuration(textWidth * 5 + screenWidth);
-            slide.setRepeatCount(Animation.INFINITE);
-            slide.setRepeatMode(Animation.RESTART);
-            slide.setInterpolator(new LinearInterpolator());
-            questionText.startAnimation(slide);
-        }
+        new Utils(context).animateText(questionText, screenWidth);
 
 
-        RadioGroup radioGroupAnswers = new RadioGroup(context);
+        RadioGroup radioGroupAnswers = pollQuestionLayout.findViewById(R.id.radio_group_answers);
         radioGroupAnswers.setOrientation(LinearLayout.VERTICAL);
         radioGroupAnswers.setGravity(Gravity.END);
         //radioGroupAnswers.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-        LinearLayout.LayoutParams answerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        radioGroupAnswers.setLayoutParams(answerParams);
 
-        //radioGroupAnswers.setGravity(Gravity.START);
-        //radioGroupAnswers.setBackgroundColor(Color.YELLOW);
-        radioGroupAnswers.setPadding(0, 0, 20, 20);
 
         for (ModelComponent.Item item : modelComponent.getItem()) {
             RadioButton Choice = new RadioButton(context);
             Choice.setText(item.getText());
             Choice.setTypeface(new Utils(context).font_set("BYekan"));
             //Choice.setLeft(100);
-            //Choice.setLayoutParams(params11);
             Choice.setGravity(Gravity.CENTER);
             //Choice.setHighlightColor(Color.YELLOW);
             Choice.setId(View.generateViewId());
             radioGroupAnswers.addView(Choice);
         }
 
-        PollQuestionLayout.addView(questionText);
-        PollQuestionLayout.addView(radioGroupAnswers);
 
-        //PollQuestionScrollView.addView(PollQuestionLayout);
+        radioGroupAnswers.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
 
-        return PollQuestionLayout;
-    }
+                RadioButton Choice = pollQuestionLayout.findViewById(checkedId);
+                Choice.setTextColor(Color.parseColor("#fe9c02"));
 
-    public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
-        this.onLoadMoreListener = mOnLoadMoreListener;
+                int count = group.getChildCount();
+
+                for (int i = 0; i < count; i++) {
+                    View radioButton = group.getChildAt(i);
+                    if (radioButton instanceof RadioButton) {
+                        if (radioButton != Choice) {
+                            ((RadioButton) radioButton).setTextColor(Color.BLACK);
+                        }
+                    }
+                }
+            }
+        });
+
+        Button pollButton = pollQuestionLayout.findViewById(R.id.poll_btn);
+
+
+        return pollQuestionLayout;
     }
 
 
@@ -224,7 +187,7 @@ public class Component {
         LinearLayout.LayoutParams ButtonParams = new LinearLayout.LayoutParams(width / 3, width / 3);
         upperChild.setLayoutParams(ButtonParams);
         ((TextView) upperChild.findViewById(R.id.TextButton)).setText(modelComponent.getButtonItem().get(0).getText());
-        ((TextView) upperChild.findViewById(R.id.TextButton)).setTypeface(new Utils(context).font_set("BHoma"));
+
         Picasso.with(context).load(modelComponent.getButtonItem().get(0).getImage().toString()).fit()
                 .into((ImageView) upperChild.findViewById(R.id.ButtonImage));
 
@@ -248,7 +211,7 @@ public class Component {
         View lowerChild = inflater.inflate(R.layout.item_button_row, null);
         lowerChild.setLayoutParams(ButtonParams);
         ((TextView) lowerChild.findViewById(R.id.TextButton)).setText(modelComponent.getButtonItem().get(1).getText());
-        ((TextView) lowerChild.findViewById(R.id.TextButton)).setTypeface(new Utils(context).font_set("BHoma"));
+
         Picasso.with(context.getApplicationContext())
                 .load(modelComponent.getButtonItem().get(1).getImage().toString())
                 .fit()
@@ -306,6 +269,8 @@ public class Component {
 
         }
 
+        GalleryLayout.setBackgroundResource(R.drawable.back);
+
         TextView GalleryLayoutText = new TextView(context);
         RelativeLayout.LayoutParams GalleryLayoutTextParams = new RelativeLayout.LayoutParams(2 * width / 3, width / 12);
         GalleryLayoutTextParams.addRule(RelativeLayout.BELOW, GalleryLayout.getId());
@@ -318,7 +283,6 @@ public class Component {
         GalleryLayoutText.setBackgroundResource(R.drawable.back);
         GalleryLayoutText.setGravity(Gravity.CENTER);
         GalleryLayoutText.setText("گالری تصاویر");
-        GalleryLayoutText.setTypeface(new Utils(context).font_set("BHoma"));
 
 
         GalleryButtonRowLayout.addView(UpperButtonLayout);
@@ -329,7 +293,7 @@ public class Component {
         return GalleryButtonRowLayout;
     }
 
-    public LinearLayout ButtonsRow(int width, final ModelComponent modelComponent, final ArrayList<String> urls) {
+    public LinearLayout ButtonsRow(int width, final ModelComponent modelComponent) {
         LinearLayout ButtonsRow = new LinearLayout(context);
         LinearLayout.LayoutParams ButtonRowLayout = new LinearLayout.LayoutParams(width, width / 3);
 
@@ -357,7 +321,6 @@ public class Component {
         LinearLayout.LayoutParams ButtonParams = new LinearLayout.LayoutParams(width / 3, width / 3);
         leftChild.setLayoutParams(ButtonParams);
         ((TextView) leftChild.findViewById(R.id.TextButton)).setText(modelComponent.getItem().get(0).getText());
-        ((TextView) leftChild.findViewById(R.id.TextButton)).setTypeface(new Utils(context).font_set("BHoma"));
         Picasso.with(context)
                 .load(modelComponent.getItem().get(0).getImage().toString())
                 .fit()
@@ -372,7 +335,6 @@ public class Component {
         View middleChild = inflater.inflate(R.layout.item_button_row, null);
         middleChild.setLayoutParams(ButtonParams);
         ((TextView) middleChild.findViewById(R.id.TextButton)).setText(modelComponent.getItem().get(1).getText());
-        ((TextView) middleChild.findViewById(R.id.TextButton)).setTypeface(new Utils(context).font_set("BHoma"));
         Picasso.with(context)
                 .load(modelComponent.getItem().get(1).getImage().toString())
                 .fit()
@@ -388,8 +350,10 @@ public class Component {
         rightChild.setLayoutParams(ButtonParams);
         rightChild.setId(View.generateViewId());
         ((TextView) rightChild.findViewById(R.id.TextButton)).setText(modelComponent.getItem().get(2).getText());
-        ((TextView) rightChild.findViewById(R.id.TextButton)).setTypeface(new Utils(context).font_set("BHoma"));
+        //((TextView) rightChild.findViewById(R.id.TextButton)).setTypeface(new Utils(context).font_set("BHoma"));
         //rightChild.findViewById(R.id.TextButton).setBackgroundResource(R.drawable.back2);
+
+
         Picasso.with(context)
                 .load(modelComponent.getItem().get(2).getImage().toString())
                 .fit()
@@ -403,6 +367,7 @@ public class Component {
         ButtonsRow.addView(LeftButtonLayout);
         ButtonsRow.addView(MiddleButtonLayout);
         ButtonsRow.addView(RightButtonLayout);
+
 
         return ButtonsRow;
     }

@@ -39,19 +39,25 @@ public class GalleryFolderAdapter extends BaseAdapter {
         return 0;
     }
 
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             LayoutInflater Inflater = (LayoutInflater) this.context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = Inflater.inflate(R.layout.item_folder_gallery, null);
+
         }
-        TextView folder_name = convertView.findViewById(R.id.folder_name);
+        TextView folderName = convertView.findViewById(R.id.folder_name);
+        TextView imagesCount = convertView.findViewById(R.id.images_count);
 
-        folder_name.setText(galleryList.get(position).getFolder());
-        folder_name.setTextColor(Color.WHITE);
-        folder_name.setTypeface(new Utils(context).font_set("irsans"));
+        folderName.setText(galleryList.get(position).getFolderName());
+        folderName.setTextColor(Color.WHITE);
 
+        imagesCount.setText(String.valueOf(galleryList.get(position).getImagesCount()));
+        imagesCount.setTextColor(Color.WHITE);
+
+        new Utils(context).overrideFonts(convertView, "BYekan");
 
         return convertView;
     }
