@@ -88,7 +88,11 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
             RelativeLayout.LayoutParams ThumbnailLayout = new RelativeLayout.LayoutParams(5 * widthPixels / 10, 4 * widthPixels / 10);
             itemViewHolder.thumbnail.setLayoutParams(ThumbnailLayout);
 
-            itemViewHolder.title.setText(newsModelComponent.getItem().get(position).getContent().toString());
+            if (newsModelComponent.getItem().get(position).getContent() != null) {
+                itemViewHolder.title.setText(newsModelComponent.getItem().get(position).getContent().toString());
+
+            }
+
 
             itemViewHolder.date.setText(newsModelComponent.getItem().get(position).getDate().toString());
 
@@ -109,7 +113,8 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
                             itemViewHolder.thumbnail.setImageResource(R.drawable.corrupted);
                         }
                     });
-            new Component(context).setClickListener(itemViewHolder.itemView, newsModelComponent.getItem().get(position).getFunctionality(), null);
+            new Component(context).setClickListener(itemViewHolder.itemView, newsModelComponent.getItem().get(position).getFunctionality(), newsModelComponent.getItem()
+                    .get(position).getUrl());
         }
     }
 

@@ -30,12 +30,87 @@ import ir.hezareh.park.models.ModelComponent;
 import ir.hezareh.park.models.NewsDetails;
 import ir.hezareh.park.models.sidemenu;
 
-import static ir.hezareh.park.NewsCategory.TAG;
-
 
 public class networking {
 
+    public static final String TAG = networking.class
+            .getSimpleName();
+
     public void postComment(final int ID, final String comment, final PostCommentResponseListener responseListener) {
+
+        responseListener.requestStarted();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://parkapi.3mill.ir/api/Comment/PostComment",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(TAG, "Comment Posted");
+                        responseListener.requestCompleted(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        responseListener.requestEndedWithError(error);
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("Text", comment);
+                params.put("F_PostsID", String.valueOf(ID));
+                return params;
+            }
+
+        };
+
+        App.getInstance().addToRequestQueue(stringRequest);
+    }
+
+    public void postLike(final int ID, final PostLikeResponseListener likeResponseListener) {
+
+        likeResponseListener.requestStarted();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://parkapi.3mill.ir/api/Post/GetLike?id=" + Utils.URL_encode(String.valueOf(ID)),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(TAG, "Liked");
+                        likeResponseListener.requestCompleted(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        likeResponseListener.requestEndedWithError(error);
+                    }
+                });
+
+
+        App.getInstance().addToRequestQueue(stringRequest);
+
+    }
+
+    public void postDislike(final int ID, final PostDislikeResponseListener responseListener) {
+
+        responseListener.requestStarted();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://parkapi.3mill.ir/api/Post/GetDisLike?id=" + Utils.URL_encode(String.valueOf(ID)),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(TAG, "disLiked");
+                        responseListener.requestCompleted(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        responseListener.requestEndedWithError(error);
+                    }
+                });
+        App.getInstance().addToRequestQueue(stringRequest);
+
+    }
+
+    public void postPoll(final int ID, final String comment, final PostCommentResponseListener responseListener) {
 
         responseListener.requestStarted();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://parkapi.3mill.ir/api/Comment/PostComment",
@@ -67,25 +142,23 @@ public class networking {
     public void getNewsCategory(final NewsCategoryResponseListener newsCategoryResponseListener) {
 
         newsCategoryResponseListener.requestStarted();
-        JsonArrayRequest req = new JsonArrayRequest("http://arefnaghshin.ir/news",
+        JsonArrayRequest req = new JsonArrayRequest("http://parkapi.3mill.ir/api/android/getNewsList?username=admin&id=5",
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-
-                        ArrayList<ModelComponent> newsCategoryList = null;
 
                         Log.d(TAG, response.toString());
                         try {
                             Gson gson = new Gson();
                             Type collectionType = new TypeToken<Collection<ModelComponent>>() {
                             }.getType();
-                            newsCategoryList = gson.fromJson(new String(response.toString().getBytes("ISO-8859-1")), collectionType);
-                            //newsCategoryList = gson.fromJson(response.toString(), collectionType);
+                            ArrayList<ModelComponent> newsCategoryList = gson.fromJson(response.toString(), collectionType);
                             //Log.d(TAG, newsCategoryList.get(0).getCategory().toString());
+                            newsCategoryResponseListener.requestCompleted(newsCategoryList);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        newsCategoryResponseListener.requestCompleted(newsCategoryList);
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -101,31 +174,29 @@ public class networking {
         App.getInstance().addToRequestQueue(req);
     }
 
-    public void getNewsDetails(final NewsDetailsResponseListener newsDetailsResponseListener) {
+    public void getNewsDetails(final NewsDetailsResponseListener newsDetailsResponseListener, String URL) {
 
         newsDetailsResponseListener.requestStarted();
 
         final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                "http://arefnaghshin.ir/newsdetails", null, new Response.Listener<JSONObject>() {
+                URL, null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
-                NewsDetails newsDetails = null;
 
                 try {
-                    String jsonResponse = new String(response.toString().getBytes("ISO-8859-1"));
-                    Log.d(TAG, jsonResponse);
+                    Log.d(TAG, response.toString());
                     Gson gson = new Gson();
                     Type collectionType = new TypeToken<NewsDetails>() {
                     }.getType();
-                    newsDetails = gson.fromJson(new String(response.toString().getBytes("ISO-8859-1")), collectionType);
-                    //newsDetails = gson.fromJson(response.toString(), collectionType);
 
-                } catch (UnsupportedEncodingException e) {
+                    NewsDetails newsDetails = gson.fromJson(response.toString(), collectionType);
+
+                    newsDetailsResponseListener.requestCompleted(newsDetails);
+
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-                newsDetailsResponseListener.requestCompleted(newsDetails);
-
             }
 
         }, new Response.ErrorListener() {
@@ -169,8 +240,10 @@ public class networking {
         App.getInstance().addToRequestQueue(stringRequest);
     }
 
-    public void getMainJson(String URL, final MainJsonResponseListener mainJsonResponseListener) {
+    public void getMainJson(final MainJsonResponseListener mainJsonResponseListener) {
         mainJsonResponseListener.requestStarted();
+
+        String URL = "http://parkapi.3mill.ir/api/Android/getFirstPage?username=admin";
 
         final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                 URL, null, new Response.Listener<JSONObject>() {
@@ -178,37 +251,30 @@ public class networking {
             @Override
             public void onResponse(JSONObject response) {
 
-                List<ModelComponent> components = null;
+
                 try {
-                    String jsonResponse = new String(response.toString().getBytes("ISO-8859-1"));
-                    Log.d(TAG, jsonResponse);
+                    Log.d(TAG, response.toString());
                     JSONArray jsonArray = response.getJSONArray("Root");
                     Gson gson = new Gson();
                     Type collectionType = new TypeToken<Collection<ModelComponent>>() {
                     }.getType();
-                    components = gson.fromJson(new String(jsonArray.toString().getBytes("ISO-8859-1")), collectionType);
 
-                    //for (ModelComponent component : components) {
-                    //for (ModelComponent.Item item : component.getItems()) {
+                    List<ModelComponent> components = gson.fromJson(jsonArray.toString(), collectionType);
 
-                    Log.d(TAG, components.get(5).getQuestion() + "");
-                    //}
-                    //}
+                    //Log.d(TAG, components.get(5).getQuestion() + "");
+                    mainJsonResponseListener.requestCompleted(components);
 
-
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-                mainJsonResponseListener.requestCompleted(components);
+
             }
 
         }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                VolleyLog.d("TAG", "Error: " + error.getMessage());
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
                 mainJsonResponseListener.requestEndedWithError(error);
 
             }
@@ -226,7 +292,6 @@ public class networking {
         sideMenuResponseListener.requestStarted();
         JsonArrayRequest req = new JsonArrayRequest("http://parkapi.3mill.ir/api/Menues/GetMenuAndroid?username=admin",
                 new Response.Listener<JSONArray>() {
-                    ArrayList<sidemenu> sidemenuList = null;
 
                     @Override
                     public void onResponse(JSONArray response) {
@@ -236,12 +301,12 @@ public class networking {
 
                             Type collectionType = new TypeToken<Collection<sidemenu>>() {
                             }.getType();
-                            sidemenuList = gson.fromJson(response.toString(), collectionType);
-
+                            ArrayList<sidemenu> sidemenuList = gson.fromJson(response.toString(), collectionType);
+                            sideMenuResponseListener.requestCompleted(sidemenuList);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        sideMenuResponseListener.requestCompleted(sidemenuList);
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -276,12 +341,11 @@ public class networking {
                     Type collectionType = new TypeToken<Collection<CompanyList>>() {
                     }.getType();
 
-                    CompanyList = gson.fromJson(new String(jsonArray.toString().getBytes("ISO-8859-1")), collectionType);
+                    CompanyList = gson.fromJson(jsonArray.toString(), collectionType);
 
                     //Log.d(TAG, CompanyList.get(0).getCompanyList().get(1).getName() + "");
 
                     companyListResponseListener.requestCompleted(CompanyList);
-
 
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
@@ -294,7 +358,7 @@ public class networking {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                VolleyLog.d("TAG", "Error: " + error.getMessage());
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
                 companyListResponseListener.requestEndedWithError(error);
             }
         });
@@ -309,104 +373,100 @@ public class networking {
     public void getFolderGallery(final FolderGalleryResponseListener folderGalleryResponseListener) {
 
         folderGalleryResponseListener.requestStarted();
-        final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                "http://137.shmim.ir/piranshahr/gallery/AndroidGalleryFolder", null, new Response.Listener<JSONObject>() {
+        JsonArrayRequest req = new JsonArrayRequest("http://parkapi.3mill.ir/api/android/GetGalleryFolder?username=admin",
+                new Response.Listener<JSONArray>() {
 
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            Log.d(TAG, response.toString());
 
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    String jsonResponse = new String(response.toString().getBytes("ISO-8859-1"));
-                    Log.d("tag", jsonResponse);
-                    JSONArray jsonArray = response.getJSONArray("Root");
-                    Gson gson = new Gson();
-                    Type collectionType = new TypeToken<Collection<GalleryModel>>() {
-                    }.getType();
+                            Gson gson = new Gson();
+                            Type collectionType = new TypeToken<Collection<GalleryModel>>() {
+                            }.getType();
 
-                    //List<GalleryModel> Gallery = gson.fromJson(new String(jsonArray.toString().getBytes("ISO-8859-1")), collectionType);
+                            List<GalleryModel> Gallery = gson.fromJson(response.toString(), collectionType);
+                            //Log.d(TAG, Gallery.get(0).getImagesCount() + "");
+                            folderGalleryResponseListener.requestCompleted(Gallery);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
-                    List<GalleryModel> Gallery = gson.fromJson(jsonArray.toString(), collectionType);
-
-                    Log.d("tag", Gallery.get(0).getImagesCount() + "");
-                    folderGalleryResponseListener.requestCompleted(Gallery);
-
-
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }, new Response.ErrorListener() {
-
+                    }
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                VolleyLog.d("TAG", "Error: " + error.getMessage());
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
                 folderGalleryResponseListener.requestEndedWithError(error);
-
             }
         });
 
-        jsonObjReq.setShouldCache(false);
+        // Adding request to request queue
+        req.setShouldCache(false);
 
         // Adding request to request queue
-        App.getInstance().addToRequestQueue(jsonObjReq);
+        App.getInstance().addToRequestQueue(req);
+
 
     }
 
     public void getImagesGallery(String folderName, final ImagesGalleryResponseListener imagesGalleryResponseListener) {
 
         imagesGalleryResponseListener.requestStarted();
+        JsonArrayRequest req = new JsonArrayRequest("http://parkapi.3mill.ir/api/android/GetGalleryImage?username=admin&Foldername=" + Utils.URL_encode(folderName),
+                new Response.Listener<JSONArray>() {
 
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            Log.d(TAG, response.toString());
 
-        final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                "http://137.shmim.ir/piranshahr/gallery/AndroidGalleryImage?FolderName=" + Utils.URL_encode(folderName), null, new Response.Listener<JSONObject>() {
+                            Gson gson = new Gson();
+                            Type collectionType = new TypeToken<Collection<GalleryModel>>() {
+                            }.getType();
 
-            @Override
-            public void onResponse(JSONObject response) {
+                            List<GalleryModel> Gallery = gson.fromJson(response.toString(), collectionType);
+                            //Log.d(TAG, Gallery.get(0).getImagesCount() + "");
+                            imagesGalleryResponseListener.requestCompleted(Gallery);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
-                try {
-                    String jsonResponse = new String(response.toString().getBytes("ISO-8859-1"));
-                    Log.d("tag", jsonResponse);
-                    JSONArray jsonArray = response.getJSONArray("Root");
-                    Gson gson = new Gson();
-                    Type collectionType = new TypeToken<Collection<GalleryModel>>() {
-                    }.getType();
-
-                    //List<GalleryModel> Gallery = gson.fromJson(new String(jsonArray.toString().getBytes("ISO-8859-1")), collectionType);
-
-                    List<GalleryModel> Gallery = gson.fromJson(jsonArray.toString(), collectionType);
-
-                    //Log.d("tag", Gallery.get(0).getImagesCount() + "");
-
-                    imagesGalleryResponseListener.requestCompleted(Gallery);
-
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }, new Response.ErrorListener() {
-
+                    }
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                VolleyLog.d("TAG", "Error: " + error.getMessage());
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
                 imagesGalleryResponseListener.requestEndedWithError(error);
             }
         });
 
-        jsonObjReq.setShouldCache(false);
+        // Adding request to request queue
+        req.setShouldCache(false);
 
         // Adding request to request queue
-        App.getInstance().addToRequestQueue(jsonObjReq);
+        App.getInstance().addToRequestQueue(req);
 
     }
 
 
     public interface PostCommentResponseListener {
+        void requestStarted();
+
+        void requestCompleted(String response);
+
+        void requestEndedWithError(VolleyError error);
+    }
+
+    public interface PostLikeResponseListener {
+        void requestStarted();
+
+        void requestCompleted(String response);
+
+        void requestEndedWithError(VolleyError error);
+    }
+
+    public interface PostDislikeResponseListener {
         void requestStarted();
 
         void requestCompleted(String response);
@@ -477,6 +537,5 @@ public class networking {
 
         void requestEndedWithError(VolleyError error);
     }
-
 
 }

@@ -1,6 +1,7 @@
 package ir.hezareh.park.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import ir.hezareh.park.NewsDetailActivity;
 import ir.hezareh.park.R;
 import ir.hezareh.park.Utils;
 import ir.hezareh.park.models.ModelComponent;
@@ -170,6 +172,9 @@ public class NewsCategoryAdapter extends RecyclerView.Adapter<NewsCategoryAdapte
         public void onClick(View v) {
             Log.i("Clicked", "position: " + String.valueOf(getAdapterPosition()));
             Toast.makeText(mContext, String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(mContext, NewsDetailActivity.class);
+            intent.putExtra("URL", news.get(index).getItem().get(getAdapterPosition()).getUrl());
+            mContext.startActivity(intent);
         }
     }
 

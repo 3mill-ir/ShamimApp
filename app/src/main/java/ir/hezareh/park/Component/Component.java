@@ -36,6 +36,7 @@ import ir.hezareh.park.Gallery;
 import ir.hezareh.park.NewsCategory;
 import ir.hezareh.park.NewsDetailActivity;
 import ir.hezareh.park.R;
+import ir.hezareh.park.SearchResults;
 import ir.hezareh.park.Utils;
 import ir.hezareh.park.WebviewActivity;
 import ir.hezareh.park.models.ModelComponent;
@@ -54,7 +55,7 @@ public class Component {
         Slider.setLayoutParams(Slider_Layout);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View child = inflater.inflate(R.layout.custom_slider_layout, null);
+        final View child = inflater.inflate(R.layout.custom_slider_layout, null);
 
 
         com.daimajia.slider.library.SliderLayout ImageSlider = child.findViewById(R.id.slider);
@@ -65,8 +66,34 @@ public class Component {
                     .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                         @Override
                         public void onSliderClick(BaseSliderView slider) {
-                            Intent k = new Intent(context, Gallery.class);
+                            Intent k = new Intent(context, SearchResults.class);
                             context.startActivity(k);
+
+                            //AlertDialog dialog = new AlertDialog.Builder(context).setMessage("دیالوگ در ارتباط").show();
+                            //TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+
+                            //textView.setTypeface(new Utils(context).font_set("BYekan"));
+
+                            /*SweetAlertDialog dialog=new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE);
+
+                            TextView textView = dialog.findViewById(android.R.id.message);
+                            new Utils(context).overrideFonts(textView,"BHoma");
+                            dialog
+                                    .setTitleText("آیا مطمعنید؟")
+                                    .setContentText("Won't be able to recover this file!")
+                                    .setConfirmText("Yes,delete it!")
+                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog
+                                                    .setTitleText("Deleted!")
+                                                    .setContentText("Your imaginary file has been deleted!")
+                                                    .setConfirmText("OK")
+                                                    .setConfirmClickListener(null)
+                                                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                                        }
+                                    })
+                                    .show();*/
                         }
                     });
             ImageSlider.addSlider(demoSlider);
@@ -412,7 +439,7 @@ public class Component {
                         intent.putExtra("URL", URL);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
-                        ((Activity) context).overridePendingTransition(0, 0);
+                        //((Activity) context).overridePendingTransition(0, 0);
                         //finish();
                         break;
                     case "WebView":

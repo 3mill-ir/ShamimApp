@@ -12,6 +12,7 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
 
 public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = WebviewActivity.class
@@ -29,6 +30,9 @@ public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLa
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
 
         webView = (WebView) findViewById(R.id.webView);
+
+        ((TextView) findViewById(R.id.header_text)).setTypeface(new Utils(getApplicationContext()).font_set("BYekan"));
+
 
         //progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
@@ -121,6 +125,7 @@ public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLa
         webView.clearCache(true);
         webView.clearHistory();
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDefaultTextEncodingName("UTF-8");
         webView.setHorizontalScrollBarEnabled(false);
         webView.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {

@@ -1,7 +1,12 @@
 package ir.hezareh.park;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -23,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.squareup.picasso.Picasso;
@@ -33,7 +39,7 @@ import ir.hezareh.park.Adapters.NewsComponentRecycler;
 import ir.hezareh.park.models.NewsDetails;
 
 
-public class NewsDetailActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class NewsDetailActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
     public static final String TAG = WebviewActivity.class
             .getSimpleName();
     SwipeRefreshLayout swipeRefreshLayout;
@@ -46,6 +52,9 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
     TextView dislikesCount;
     TextView date;
     Button show_more;
+    Button like_btn;
+    Button dislike_btn;
+
     CommentRecycler commentRecycler;
     NewsComponentRecycler relatedNewsComponentRecycler;
     int ID;
@@ -71,6 +80,9 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         commentsCount = (TextView) findViewById(R.id.comments);
         dislikesCount = (TextView) findViewById(R.id.dislikes);
         show_more = (Button) findViewById(R.id.show_more);
+        like_btn = (Button) findViewById(R.id.like_btn);
+        dislike_btn = (Button) findViewById(R.id.dislike_btn);
+
 
 
         setSupportActionBar(toolbar);
@@ -96,6 +108,10 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         commentRecyclerView = (RecyclerView) findViewById(R.id.comments_recycler);
         newsRecyclerView = (RecyclerView) findViewById(R.id.news_recycler);
 
+        like_btn.setOnClickListener(this);
+        dislike_btn.setOnClickListener(this);
+        show_more.setOnClickListener(this);
+
 
         newsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, true));
         newsRecyclerView.addItemDecoration(new EqualSpacingItemDecoration(10, EqualSpacingItemDecoration.HORIZONTAL));
@@ -110,6 +126,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         //webView.loadUrl(url);
 
         swipeRefreshLayout.setOnRefreshListener(this);
+
 
         /**
          * Showing Swipe Refresh animation on activity create
@@ -131,6 +148,8 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                         swipeRefreshLayout.setRefreshing(false);
                         ID = newsDetails.getID();
                         fab.setVisibility(View.VISIBLE);
+                        like_btn.setVisibility(View.VISIBLE);
+                        dislike_btn.setVisibility(View.VISIBLE);
 
                     }
 
@@ -138,7 +157,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                     public void requestEndedWithError(VolleyError error) {
                         swipeRefreshLayout.setRefreshing(false);
                     }
-                });
+                }, getIntent().getExtras().getString("URL"));
 
             }
         });
@@ -149,8 +168,8 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
     @Override
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
-        //webView.loadUrl(url);
-        //renderPost();
+
+        renderPost();
 
         new networking().getNewsDetails(new networking.NewsDetailsResponseListener() {
             @Override
@@ -172,7 +191,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
             public void requestEndedWithError(VolleyError error) {
                 swipeRefreshLayout.setRefreshing(false);
             }
-        });
+        }, getIntent().getExtras().getString("URL"));
     }
 
     private void addNews(NewsDetails newsDetails) {
@@ -185,7 +204,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
 
         String text = "<html> <head>\n" +
                 "    <meta charset=\"UTF-8\">\n" +
-                "<style type=\"text/css\">\n" +
+                " <style type=\"text/css\">\n" +
                 "                /** Specify a font named \"MyFont\",\n" +
                 "                and specify the URL where it can be found: */\n" +
                 "                @font-face {\n" +
@@ -212,7 +231,10 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                 + "</p> "
                 + "</body></html>";
 
-        webView.loadDataWithBaseURL(null, text, "text/html", "utf-8", null);
+        //webView.loadDataWithBaseURL(null, text, "text/html", "utf-8", null);
+
+        webView.loadUrl(newsDetails.getDetail());
+
 
         date.setVisibility(View.VISIBLE);
         likesCount.setVisibility(View.VISIBLE);
@@ -225,9 +247,11 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         commentsCount.setText(String.valueOf(newsDetails.getNumberOfComments()));
 
         Picasso.with(getApplicationContext())
-                .load("https://file.digi-kala.com/digikala/Image/Webstore/Banner/1396/11/1/3cde18e7.jpg")
+                .load(newsDetails.getImagePath())
                 .fit()
                 .into((ImageView) findViewById(R.id.news_detail_header));
+
+
     }
 
     private void renderPost() {
@@ -235,6 +259,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initWebView() {
         webView.setWebChromeClient(new MyWebChromeClient(this));
 
@@ -276,9 +301,12 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         webView.clearCache(true);
         webView.clearHistory();
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDefaultTextEncodingName("utf-8");
         webView.setHorizontalScrollBarEnabled(false);
+
         webView.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
+
 
                 if (event.getPointerCount() > 1) {
                     //Multi touch detected
@@ -303,20 +331,74 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
 
                 return false;
             }
+
         });
     }
 
-    public void onShowMoreClicked(View view) {
 
-        if (webView.getMeasuredHeight() == new Utils(getApplicationContext()).dpToPx(250)) {
-            webView.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            int height = webView.getMeasuredHeight();
-            Utils.expand(webView, height);
-            show_more.setText("نمایش کمتر");
-        } else {
-            //initial height is 250dp
-            Utils.collapse(webView, new Utils(getApplicationContext()).dpToPx(250));
-            show_more.setText("نمایش بیشتر");
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.show_more:
+                if (webView.getMeasuredHeight() == new Utils(getApplicationContext()).dpToPx(250)) {
+                    webView.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    int height = webView.getMeasuredHeight();
+                    Utils.expand(webView, height);
+                    show_more.setText("نمایش کمتر");
+                } else {
+                    //initial height is 250dp
+                    Utils.collapse(webView, new Utils(getApplicationContext()).dpToPx(250));
+                    show_more.setText("نمایش بیشتر");
+                }
+                break;
+
+            case R.id.like_btn:
+                new Utils(getApplicationContext()).scaleView(like_btn, 0.3f, 1f);
+
+                new networking().postLike(ID, new networking.PostLikeResponseListener() {
+                    @Override
+                    public void requestStarted() {
+
+                    }
+
+                    @Override
+                    public void requestCompleted(String response) {
+                        Drawable mDrawable = getResources().getDrawable(R.drawable.ic_thumb_up_green_24dp);
+                        mDrawable.setColorFilter(new
+                                PorterDuffColorFilter(Color.parseColor("#FF24DC00"), PorterDuff.Mode.MULTIPLY));
+                        Toast.makeText(getApplicationContext(), "نظر شما ثبت گردید!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void requestEndedWithError(VolleyError error) {
+
+                    }
+                });
+                break;
+
+            case R.id.dislike_btn:
+                new Utils(getApplicationContext()).scaleView(dislike_btn, 0.3f, 1f);
+                new networking().postDislike(ID, new networking.PostDislikeResponseListener() {
+                    @Override
+                    public void requestStarted() {
+
+                    }
+
+                    @Override
+                    public void requestCompleted(String response) {
+                        Drawable mDrawable = getResources().getDrawable(R.drawable.ic_thumb_down_red_24dp);
+                        mDrawable.setColorFilter(new
+                                PorterDuffColorFilter(Color.parseColor("#FFDE0000"), PorterDuff.Mode.MULTIPLY));
+                        Toast.makeText(getApplicationContext(), "نظر شما ثبت گردید!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void requestEndedWithError(VolleyError error) {
+
+                    }
+                });
+                break;
+
         }
     }
 

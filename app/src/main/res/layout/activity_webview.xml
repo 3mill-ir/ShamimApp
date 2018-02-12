@@ -5,10 +5,15 @@
     android:layout_height="match_parent"
     tools:context="ir.hezareh.park.WebviewActivity">
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/custom_toolbar" />
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar">
+
 
         <WebView
             android:id="@+id/webView"

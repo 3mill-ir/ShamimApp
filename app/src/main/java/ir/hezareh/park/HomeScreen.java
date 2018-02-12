@@ -66,9 +66,10 @@ public class HomeScreen extends AppCompatActivity {
         // Make sure the toolbar exists in the activity and is not null
         //setSupportActionBar(toolbar);
 
+
         width = new Utils(getApplicationContext()).getDisplayMetrics().widthPixels;
 
-        new networking().getMainJson("http://arefnaghshin.ir/components", new networking.MainJsonResponseListener() {
+        new networking().getMainJson(new networking.MainJsonResponseListener() {
             @Override
             public void requestStarted() {
 

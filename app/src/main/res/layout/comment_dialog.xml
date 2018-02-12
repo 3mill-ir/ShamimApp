@@ -33,7 +33,6 @@
         android:minLines="5"
         android:padding="3dp" />
 
-
     <Button
         android:id="@+id/confirm"
         android:layout_width="wrap_content"

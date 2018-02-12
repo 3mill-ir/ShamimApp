@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.android.volley.VolleyError;
 
@@ -22,22 +23,26 @@ public class CommentDialog extends Dialog implements android.view.View.OnClickLi
     EditText comment;
     EditText name;
     int _postID;
+    ImageView imageView;
 
     public CommentDialog(Activity activity, int postID) {
         super(activity);
         // TODO Auto-generated constructor stub
         this._activity = activity;
         this._postID = postID;
-
     }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.comment_dialog);
+
+
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
 
         comment = findViewById(R.id.comment_text);
         name = findViewById(R.id.name);

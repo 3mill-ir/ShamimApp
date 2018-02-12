@@ -27,7 +27,7 @@ public class FanBazar extends AppCompatActivity {
         ((TextView) findViewById(R.id.header_text)).setTypeface(new Utils(getApplicationContext()).font_set("BYekan"));
 
 
-        new networking().getMainJson("http://arefnaghshin.ir/components", new networking.MainJsonResponseListener() {
+        new networking().getMainJson(new networking.MainJsonResponseListener() {
             @Override
             public void requestStarted() {
 

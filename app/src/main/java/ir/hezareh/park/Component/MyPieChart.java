@@ -45,7 +45,7 @@ public class MyPieChart {
         LinearLayout.LayoutParams ChartLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width / 2 + 100);
         chart.setLayoutParams(ChartLayoutParams);
 
-        questionText.setText("نظرسنجی در مورد اپلیکیشن پارک علم و فناوری");
+        questionText.setText(modelComponent.getQuestion());
 
 
         chart.setUsePercentValues(true);
