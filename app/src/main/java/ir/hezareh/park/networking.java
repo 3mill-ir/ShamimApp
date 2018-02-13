@@ -43,13 +43,14 @@ public class networking {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d(TAG, "Comment Posted");
+                        Log.d(TAG, response);
                         responseListener.requestCompleted(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d(TAG, error);
                         responseListener.requestEndedWithError(error);
                     }
                 }) {
@@ -73,13 +74,14 @@ public class networking {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d(TAG, "Liked");
+                        Log.d(TAG, response);
                         likeResponseListener.requestCompleted(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d(TAG, error);
                         likeResponseListener.requestEndedWithError(error);
                     }
                 });
@@ -96,13 +98,14 @@ public class networking {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d(TAG, "disLiked");
+                        Log.d(TAG, response);
                         responseListener.requestCompleted(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d(TAG, error);
                         responseListener.requestEndedWithError(error);
                     }
                 });
@@ -110,32 +113,24 @@ public class networking {
 
     }
 
-    public void postPoll(final int ID, final String comment, final PostCommentResponseListener responseListener) {
+    public void postPoll(final int ID, final PostPollListener postPollListener) {
 
-        responseListener.requestStarted();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://parkapi.3mill.ir/api/Comment/PostComment",
+        postPollListener.requestStarted();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://parkapi.3mill.ir/api/PollLog/AddPollingUser?username=admin&IP=0&ansId=" + Utils.URL_encode(String.valueOf(ID)) + "&device=Android",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        responseListener.requestCompleted(response);
+                        Log.d(TAG, response);
+                        postPollListener.requestCompleted(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        responseListener.requestEndedWithError(error);
+                        VolleyLog.d(TAG, error);
+                        postPollListener.requestEndedWithError(error);
                     }
-                }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("Text", comment);
-                params.put("F_PostsID", String.valueOf(ID));
-                return params;
-            }
-
-        };
-
+                });
         App.getInstance().addToRequestQueue(stringRequest);
     }
 
@@ -163,6 +158,7 @@ public class networking {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, error);
                 newsCategoryResponseListener.requestEndedWithError(error);
             }
         });
@@ -467,6 +463,14 @@ public class networking {
     }
 
     public interface PostDislikeResponseListener {
+        void requestStarted();
+
+        void requestCompleted(String response);
+
+        void requestEndedWithError(VolleyError error);
+    }
+
+    public interface PostPollListener {
         void requestStarted();
 
         void requestCompleted(String response);

@@ -8,6 +8,7 @@ import android.support.annotation.IdRes;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +19,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.Indicators.PagerIndicator;
 import com.daimajia.slider.library.SliderLayout;
@@ -40,6 +43,7 @@ import ir.hezareh.park.SearchResults;
 import ir.hezareh.park.Utils;
 import ir.hezareh.park.WebviewActivity;
 import ir.hezareh.park.models.ModelComponent;
+import ir.hezareh.park.networking;
 
 
 public class Component {
@@ -158,7 +162,7 @@ public class Component {
         new Utils(context).animateText(questionText, screenWidth);
 
 
-        RadioGroup radioGroupAnswers = pollQuestionLayout.findViewById(R.id.radio_group_answers);
+        final RadioGroup radioGroupAnswers = pollQuestionLayout.findViewById(R.id.radio_group_answers);
         radioGroupAnswers.setOrientation(LinearLayout.VERTICAL);
         radioGroupAnswers.setGravity(Gravity.END);
         //radioGroupAnswers.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
@@ -175,12 +179,16 @@ public class Component {
             radioGroupAnswers.addView(Choice);
         }
 
-
         radioGroupAnswers.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
 
-                RadioButton Choice = pollQuestionLayout.findViewById(checkedId);
+                final RadioButton Choice = pollQuestionLayout.findViewById(checkedId);
+                Button pollButton = pollQuestionLayout.findViewById(R.id.poll_btn);
+                pollButton.setEnabled(false);
+
                 Choice.setTextColor(Color.parseColor("#fe9c02"));
 
                 int count = group.getChildCount();
@@ -192,11 +200,34 @@ public class Component {
                             ((RadioButton) radioButton).setTextColor(Color.BLACK);
                         }
                     }
+
                 }
+                Log.e("index", radioGroupAnswers.indexOfChild(Choice) + "");
+
+
+                pollButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new networking().postPoll(modelComponent.getItem().get(radioGroupAnswers.indexOfChild(Choice)).getID(), new networking.PostPollListener() {
+                            @Override
+                            public void requestStarted() {
+
+                            }
+
+                            @Override
+                            public void requestCompleted(String response) {
+                                Toast.makeText(context, "نظر شما ثبت گردید!", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void requestEndedWithError(VolleyError error) {
+
+                            }
+                        });
+                    }
+                });
             }
         });
-
-        Button pollButton = pollQuestionLayout.findViewById(R.id.poll_btn);
 
 
         return pollQuestionLayout;

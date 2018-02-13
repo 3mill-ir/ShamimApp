@@ -11,6 +11,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 
@@ -69,6 +70,7 @@ public class CommentDialog extends Dialog implements android.view.View.OnClickLi
                         @Override
                         public void requestCompleted(String response) {
                             Log.d("response", response + "");
+                            Toast.makeText(_activity, "نظر شما ثبت گردید!", Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
