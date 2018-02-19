@@ -72,7 +72,7 @@ public class FanBazar extends AppCompatActivity {
                 //hideDialog();
                 //swipeRefreshLayout.setRefreshing(false);
             }
-        });
+        }, getApplicationContext());
 
     }
 

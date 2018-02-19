@@ -2,9 +2,12 @@ package ir.hezareh.park;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -13,9 +16,13 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +36,7 @@ public class HomeScreen extends AppCompatActivity {
 
     public static final String TAG = HomeScreen.class
             .getSimpleName();
+    private static long back_pressed = 0L;
     int width;
     ListView firstLevelListView;
     ListView secondLevelListView;
@@ -52,76 +60,136 @@ public class HomeScreen extends AppCompatActivity {
         if (drawer.isDrawerOpen(GravityCompat.END)) {
             drawer.closeDrawer(GravityCompat.END);
         } else {
-            super.onBackPressed();
+            if (back_pressed + 2000 > System.currentTimeMillis()) super.onBackPressed();
+            else
+                Toast.makeText(getBaseContext(), "برای خروج از برنامه دوباره فشار دهید", Toast.LENGTH_SHORT).show();
+            back_pressed = System.currentTimeMillis();
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1001:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    File dir = new File(Environment.getExternalStorageDirectory(), "Telegram Desktop");
+                    if (!dir.exists()) {
+                        boolean iscreated = dir.mkdir();
+                        Log.d("Created1", iscreated + "");
+                    }
+
+
+                    File myExternalCacheFilepub = new File(dir, "myFile.txt");
+
+                    FileOutputStream fileOutputStreampub = null;
+
+                    try {
+
+                        fileOutputStreampub = new FileOutputStream(myExternalCacheFilepub);
+                        fileOutputStreampub.write("Hello external Cache Memory".getBytes());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (fileOutputStreampub != null) {
+                            try {
+                                fileOutputStreampub.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
+
+    public void addComponents(List<ModelComponent> modelComponents) {
+        LinearLayout Root_Layout = (LinearLayout) findViewById(R.id.main_layout);
+
+
+        if (modelComponents != null) {
+            for (ModelComponent component : modelComponents) {
+
+                switch (component.getComponent()) {
+                    case "slider":
+                        Root_Layout.addView(new Component(HomeScreen.this).Slider(width, 0, component.getItem()));
+                        break;
+                    case "ButtonGalleryRow":
+                        Root_Layout.addView(new Component(HomeScreen.this).GalleryButton(width, component, "GalleryButtons"));
+                        break;
+                    case "NewsList":
+                        Root_Layout.addView(new Component(HomeScreen.this).News(width, 0, component));
+                        break;
+                    case "RowButton":
+                        Root_Layout.addView(new Component(HomeScreen.this).ButtonsRow(width, component));
+                        break;
+                    case "GalleryButtonRow":
+                        Root_Layout.addView(new Component(HomeScreen.this).GalleryButton(width, component, "ButtonsGallery"));
+                        break;
+                    case "Diagram":
+                        Root_Layout.addView(new MyPieChart(HomeScreen.this, width, width / 2, component).getItem());
+                        break;
+                    case "Poll":
+                        Root_Layout.addView(new Component(HomeScreen.this).pollQuestion(width, 0, component));
+                        break;
+                }
+            }
+        }
+
+        new Utils(getApplicationContext()).overrideFonts(Root_Layout, "BYekan");
+
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
+        width = new Utils(getApplicationContext()).getDisplayMetrics().widthPixels;
+
+        //create a path for store offline reading later
+        new OfflineDataLoader(getApplicationContext()).createExternalStoragePath();
+
+        Log.i(TAG, "onCreate: " + new Utils(getApplicationContext()).isConnectedToInternet());
+
+        if (new Utils(getApplicationContext()).isConnectedToInternet()) {
+            new networking().getMainJson(new networking.MainJsonResponseListener() {
+                @Override
+                public void requestStarted() {
+
+                }
+
+                @Override
+                public void requestCompleted(List<ModelComponent> modelComponents) {
+
+                    addComponents(modelComponents);
+                }
+
+                @Override
+                public void requestEndedWithError(VolleyError error) {
+                    //Toast.makeText(getApplicationContext(),error.getMessage(), Toast.LENGTH_SHORT).show();
+                    // hide the progress dialog
+                    //hidepDialog();
+                    //swipeRefreshLayout.setRefreshing(false);
+                }
+            }, getApplicationContext());
+        } else {
+
+            addComponents(new OfflineDataLoader(getApplicationContext()).ReadOfflineMainJson());
+        }
 
         // Sets the Toolbar to act as the ActionBar for this Activity window.
         // Make sure the toolbar exists in the activity and is not null
         //setSupportActionBar(toolbar);
 
 
-        width = new Utils(getApplicationContext()).getDisplayMetrics().widthPixels;
-
-        new networking().getMainJson(new networking.MainJsonResponseListener() {
-            @Override
-            public void requestStarted() {
-
-            }
-
-            @Override
-            public void requestCompleted(List<ModelComponent> modelComponents) {
-                LinearLayout Root_Layout = (LinearLayout) findViewById(R.id.main_layout);
-
-                for (ModelComponent component : modelComponents) {
-                    switch (component.getComponent()) {
-                        case "slider":
-                            Root_Layout.addView(new Component(HomeScreen.this).Slider(width, 0, component.getItem()));
-                            break;
-                        case "ButtonGalleryRow":
-                            Root_Layout.addView(new Component(HomeScreen.this).GalleryButton(width, component, "GalleryButtons"));
-                            break;
-                        case "NewsList":
-                            Root_Layout.addView(new Component(HomeScreen.this).News(width, 0, component));
-                            break;
-                        case "RowButton":
-                            Root_Layout.addView(new Component(HomeScreen.this).ButtonsRow(width, component));
-                            break;
-                        case "GalleryButtonRow":
-                            Root_Layout.addView(new Component(HomeScreen.this).GalleryButton(width, component, "ButtonsGallery"));
-                            break;
-                        case "Diagram":
-                            Root_Layout.addView(new MyPieChart(HomeScreen.this, width, width / 2, component).getItem());
-                            break;
-                        case "Poll":
-                            Root_Layout.addView(new Component(HomeScreen.this).pollQuestion(width, 0, component));
-                            break;
-                    }
-                }
-                new Utils(getApplicationContext()).overrideFonts(Root_Layout, "BYekan");
-            }
-
-            @Override
-            public void requestEndedWithError(VolleyError error) {
-                //Toast.makeText(getApplicationContext(),error.getMessage(), Toast.LENGTH_SHORT).show();
-                // hide the progress dialog
-                //hidepDialog();
-                //swipeRefreshLayout.setRefreshing(false);
-            }
-        });
 
         try {
             new AppUpdate(getApplicationContext()).check_Version();
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-
 
 
         ((TextView) findViewById(R.id.header_text)).setTypeface(new Utils(getApplicationContext()).font_set("BYekan"));
@@ -200,7 +268,6 @@ public class HomeScreen extends AppCompatActivity {
         });
 
 
-
         firstLevelListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -225,7 +292,21 @@ public class HomeScreen extends AppCompatActivity {
             }
         });
 
+        DbHandler db = new DbHandler(this);
 
+
+        /**
+         * CRUD Operations
+         * */
+
+
+        //List<ModelComponent> allNews = db.getAllNews(0);
+
+        /*for (ModelComponent.Item cn : allNews) {
+            String log = "Id: " + cn.getID() + " ,Name: " + cn.getText() + " ,Likes: " + cn.getLikes() + " ,Path: " + cn.getImage();
+            // Writing Contacts to log
+            Log.d("Name: ", log);
+        }*/
     }
 
     public ArrayList<sidemenu> getChildListMenuName(ArrayList<sidemenu> list, int ID, boolean isRoot) {
@@ -249,5 +330,6 @@ public class HomeScreen extends AppCompatActivity {
         }
         return result;
     }
+
 
 }

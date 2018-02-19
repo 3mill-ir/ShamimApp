@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Park</string>
+    <string name="app_name">پارک علم و فناوری</string>
     <string name="title_activity_pie_chart">PieChartActivity</string>
     <string name="title_activity_news_list">NewsListActivity</string>
     <string name="large_text">
@@ -102,5 +102,6 @@
 
     <string name="title_activity_sign_in__sign_up">SignIn/SignUp</string>
     <string name="title_activity_search_results">SearchResults</string>
+    <string name="splash_text">شمیم پارک علم و فناوری \n آذربایجان غربی</string>
 
 </resources>

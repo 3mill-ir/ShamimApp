@@ -6,9 +6,7 @@ import android.content.SharedPreferences;
 
 import java.util.HashMap;
 
-/**
- * Created by rf on 28/12/2017.
- */
+
 
 public class SharedPreferencesManager {
     // User name (make variable public to access from outside)
@@ -17,7 +15,7 @@ public class SharedPreferencesManager {
     public static final String KEY_EMAIL = "email";
     public static final boolean KEY_SHOW = false;
     // Sharedpref file name
-    private static final String PREF_NAME = "AndroidHivePref";
+    private static final String PREF_NAME = "SharedPrefs";
     // All Shared Preferences Keys
     private static final String IS_LOGIN = "IsLoggedIn";
     // Shared Preferences

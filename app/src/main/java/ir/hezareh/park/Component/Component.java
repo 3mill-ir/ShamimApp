@@ -39,11 +39,11 @@ import ir.hezareh.park.Gallery;
 import ir.hezareh.park.NewsCategory;
 import ir.hezareh.park.NewsDetailActivity;
 import ir.hezareh.park.R;
-import ir.hezareh.park.SearchResults;
 import ir.hezareh.park.Utils;
 import ir.hezareh.park.WebviewActivity;
 import ir.hezareh.park.models.ModelComponent;
 import ir.hezareh.park.networking;
+import ir.hezareh.park.splash_screen;
 
 
 public class Component {
@@ -70,7 +70,7 @@ public class Component {
                     .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                         @Override
                         public void onSliderClick(BaseSliderView slider) {
-                            Intent k = new Intent(context, SearchResults.class);
+                            Intent k = new Intent(context, splash_screen.class);
                             context.startActivity(k);
 
                             //AlertDialog dialog = new AlertDialog.Builder(context).setMessage("دیالوگ در ارتباط").show();
@@ -178,7 +178,8 @@ public class Component {
             Choice.setId(View.generateViewId());
             radioGroupAnswers.addView(Choice);
         }
-
+        final Button pollButton = pollQuestionLayout.findViewById(R.id.poll_btn);
+        pollButton.setEnabled(false);
         radioGroupAnswers.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
 
@@ -186,8 +187,7 @@ public class Component {
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
 
                 final RadioButton Choice = pollQuestionLayout.findViewById(checkedId);
-                Button pollButton = pollQuestionLayout.findViewById(R.id.poll_btn);
-                pollButton.setEnabled(false);
+
 
                 Choice.setTextColor(Color.parseColor("#fe9c02"));
 
@@ -202,12 +202,16 @@ public class Component {
                     }
 
                 }
-                Log.e("index", radioGroupAnswers.indexOfChild(Choice) + "");
+                Log.e("index", modelComponent.getItem().get(radioGroupAnswers.indexOfChild(Choice)).getID() + "");
 
+                if (radioGroupAnswers.getCheckedRadioButtonId() != -1) {
+                    pollButton.setEnabled(true);
+                }
 
                 pollButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
                         new networking().postPoll(modelComponent.getItem().get(radioGroupAnswers.indexOfChild(Choice)).getID(), new networking.PostPollListener() {
                             @Override
                             public void requestStarted() {
@@ -225,6 +229,7 @@ public class Component {
                             }
                         });
                     }
+
                 });
             }
         });

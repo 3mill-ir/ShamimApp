@@ -10,6 +10,7 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
@@ -52,6 +53,7 @@ public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLa
          * As animation won't start on onCreate, post runnable is used
          */
 
+
         swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -59,10 +61,9 @@ public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLa
 
                 swipeRefreshLayout.setRefreshing(true);
 
-                if (getIntent().getStringExtra("URL") != null) {
+                if (getIntent().getExtras() != null) {
                     webView.loadUrl(getIntent().getExtras().getString("URL"));
                 }
-
 
                 //renderPost()
                 swipeRefreshLayout.setRefreshing(false);
@@ -86,6 +87,7 @@ public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLa
     private void renderPost() {
         //webView.loadUrl("https://www.google.com/");
     }
+
 
 
     private void initWebView() {
@@ -122,12 +124,26 @@ public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLa
                 invalidateOptionsMenu();
             }
         });
-        webView.clearCache(true);
-        webView.clearHistory();
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setDefaultTextEncodingName("UTF-8");
+        //webView.clearCache(true);
+        //webView.clearHistory();
+
         webView.setHorizontalScrollBarEnabled(false);
+
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDefaultTextEncodingName("utf-8");
+        webView.getSettings().setAppCacheMaxSize(5 * 1024 * 1024); // 5MB
+        webView.getSettings().setAppCachePath(getApplicationContext().getCacheDir().getAbsolutePath());
+        webView.getSettings().setAllowFileAccess(true);
+        webView.getSettings().setAppCacheEnabled(true);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT); // load online by default
+
+        if (!new Utils(getApplicationContext()).isConnectedToInternet()) { // loading offline
+            webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        }
+
         webView.setOnTouchListener(new View.OnTouchListener() {
+
+
             public boolean onTouch(View v, MotionEvent event) {
 
                 if (event.getPointerCount() > 1) {

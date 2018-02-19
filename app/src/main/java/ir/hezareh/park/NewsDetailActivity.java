@@ -1,6 +1,5 @@
 package ir.hezareh.park;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -21,6 +20,7 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -136,28 +136,39 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
             @Override
             public void run() {
                 swipeRefreshLayout.setRefreshing(true);
-                new networking().getNewsDetails(new networking.NewsDetailsResponseListener() {
-                    @Override
-                    public void requestStarted() {
+                if (getIntent().getExtras() != null) {
+                    if (new Utils(getApplicationContext()).isConnectedToInternet()) {
+                        new networking().getNewsDetails(new networking.NewsDetailsResponseListener() {
+                            @Override
+                            public void requestStarted() {
 
+                            }
+
+                            @Override
+                            public void requestCompleted(NewsDetails newsDetails) {
+                                addNews(newsDetails);
+                                swipeRefreshLayout.setRefreshing(false);
+                                ID = newsDetails.getID();
+
+                                fab.setVisibility(View.VISIBLE);
+                                like_btn.setVisibility(View.VISIBLE);
+                                dislike_btn.setVisibility(View.VISIBLE);
+
+                            }
+
+                            @Override
+                            public void requestEndedWithError(VolleyError error) {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                        }, getIntent().getExtras().getString("URL"), getApplicationContext());
                     }
+                } else {
+                    //addNews(new OfflineDataLoader(getApplicationContext()).ReadOfflineNewsDetails());
+                    //swipeRefreshLayout.setRefreshing(false);
+                    //ID = newsDetails.getID();
 
-                    @Override
-                    public void requestCompleted(NewsDetails newsDetails) {
-                        addNews(newsDetails);
-                        swipeRefreshLayout.setRefreshing(false);
-                        ID = newsDetails.getID();
-                        fab.setVisibility(View.VISIBLE);
-                        like_btn.setVisibility(View.VISIBLE);
-                        dislike_btn.setVisibility(View.VISIBLE);
+                }
 
-                    }
-
-                    @Override
-                    public void requestEndedWithError(VolleyError error) {
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }, getIntent().getExtras().getString("URL"));
 
             }
         });
@@ -170,28 +181,30 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         swipeRefreshLayout.setRefreshing(true);
 
         renderPost();
+        if (getIntent().getExtras() != null) {
+            new networking().getNewsDetails(new networking.NewsDetailsResponseListener() {
+                @Override
+                public void requestStarted() {
 
-        new networking().getNewsDetails(new networking.NewsDetailsResponseListener() {
-            @Override
-            public void requestStarted() {
+                }
 
-            }
+                @Override
+                public void requestCompleted(NewsDetails newsDetails) {
+                    addNews(newsDetails);
+                    swipeRefreshLayout.setRefreshing(false);
+                    ID = newsDetails.getID();
+                    findViewById(R.id.fab).setVisibility(View.VISIBLE);
 
-            @Override
-            public void requestCompleted(NewsDetails newsDetails) {
-                addNews(newsDetails);
-                swipeRefreshLayout.setRefreshing(false);
-                ID = newsDetails.getID();
-                findViewById(R.id.fab).setVisibility(View.VISIBLE);
+                    //Log.e("can",webView.canScrollVertically(0)+"");
+                }
 
-                //Log.e("can",webView.canScrollVertically(0)+"");
-            }
+                @Override
+                public void requestEndedWithError(VolleyError error) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }, getIntent().getExtras().getString("URL"), getApplicationContext());
+        }
 
-            @Override
-            public void requestEndedWithError(VolleyError error) {
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        }, getIntent().getExtras().getString("URL"));
     }
 
     private void addNews(NewsDetails newsDetails) {
@@ -259,7 +272,6 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
     }
 
 
-    @SuppressLint("ClickableViewAccessibility")
     private void initWebView() {
         webView.setWebChromeClient(new MyWebChromeClient(this));
 
@@ -298,11 +310,21 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                 invalidateOptionsMenu();
             }
         });
-        webView.clearCache(true);
-        webView.clearHistory();
+        //webView.clearCache(true);
+        //webView.clearHistory();
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setDefaultTextEncodingName("utf-8");
         webView.setHorizontalScrollBarEnabled(false);
+        webView.getSettings().setDefaultTextEncodingName("utf-8");
+
+        webView.getSettings().setAppCacheMaxSize(5 * 1024 * 1024); // 5MB
+        webView.getSettings().setAppCachePath(getApplicationContext().getCacheDir().getAbsolutePath());
+        webView.getSettings().setAllowFileAccess(true);
+        webView.getSettings().setAppCacheEnabled(true);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT); // load online by default
+
+        if (!new Utils(getApplicationContext()).isConnectedToInternet()) { // loading offline
+            webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        }
 
         webView.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {

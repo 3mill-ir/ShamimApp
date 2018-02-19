@@ -147,6 +147,7 @@ public class ModelComponent {
         @Expose
         protected String comment;
 
+
         public String getLikes() {
             return likes;
         }

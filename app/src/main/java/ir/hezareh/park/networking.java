@@ -1,5 +1,6 @@
 package ir.hezareh.park;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -36,6 +37,7 @@ public class networking {
     public static final String TAG = networking.class
             .getSimpleName();
 
+
     public void postComment(final int ID, final String comment, final PostCommentResponseListener responseListener) {
 
         responseListener.requestStarted();
@@ -50,7 +52,7 @@ public class networking {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        VolleyLog.d(TAG, error);
+                        VolleyLog.d(TAG, "Error: " + error.getMessage());
                         responseListener.requestEndedWithError(error);
                     }
                 }) {
@@ -81,7 +83,7 @@ public class networking {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        VolleyLog.d(TAG, error);
+                        VolleyLog.d(TAG, "Error: " + error.getMessage());
                         likeResponseListener.requestEndedWithError(error);
                     }
                 });
@@ -105,7 +107,7 @@ public class networking {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        VolleyLog.d(TAG, error);
+                        VolleyLog.d(TAG, "Error: " + error.getMessage());
                         responseListener.requestEndedWithError(error);
                     }
                 });
@@ -127,14 +129,14 @@ public class networking {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        VolleyLog.d(TAG, error);
+                        VolleyLog.d(TAG, "Error: " + error.getMessage());
                         postPollListener.requestEndedWithError(error);
                     }
                 });
         App.getInstance().addToRequestQueue(stringRequest);
     }
 
-    public void getNewsCategory(final NewsCategoryResponseListener newsCategoryResponseListener) {
+    public void getNewsCategory(final NewsCategoryResponseListener newsCategoryResponseListener, final Context mContext) {
 
         newsCategoryResponseListener.requestStarted();
         JsonArrayRequest req = new JsonArrayRequest("http://parkapi.3mill.ir/api/android/getNewsList?username=admin&id=5",
@@ -150,6 +152,9 @@ public class networking {
                             ArrayList<ModelComponent> newsCategoryList = gson.fromJson(response.toString(), collectionType);
                             //Log.d(TAG, newsCategoryList.get(0).getCategory().toString());
                             newsCategoryResponseListener.requestCompleted(newsCategoryList);
+
+
+                            new OfflineDataLoader(mContext).saveNewsCategoryToStorage(response);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -158,7 +163,7 @@ public class networking {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, error);
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
                 newsCategoryResponseListener.requestEndedWithError(error);
             }
         });
@@ -170,7 +175,7 @@ public class networking {
         App.getInstance().addToRequestQueue(req);
     }
 
-    public void getNewsDetails(final NewsDetailsResponseListener newsDetailsResponseListener, String URL) {
+    public void getNewsDetails(final NewsDetailsResponseListener newsDetailsResponseListener, String URL, final Context context) {
 
         newsDetailsResponseListener.requestStarted();
 
@@ -189,6 +194,7 @@ public class networking {
                     NewsDetails newsDetails = gson.fromJson(response.toString(), collectionType);
 
                     newsDetailsResponseListener.requestCompleted(newsDetails);
+                    new OfflineDataLoader(context).saveNewsDetailsToStorage(response, newsDetails.getID());
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -199,7 +205,7 @@ public class networking {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                VolleyLog.d("TAG", "Error: " + error.getMessage());
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
                 newsDetailsResponseListener.requestEndedWithError(error);
             }
         });
@@ -236,7 +242,7 @@ public class networking {
         App.getInstance().addToRequestQueue(stringRequest);
     }
 
-    public void getMainJson(final MainJsonResponseListener mainJsonResponseListener) {
+    public void getMainJson(final MainJsonResponseListener mainJsonResponseListener, final Context mContext) {
         mainJsonResponseListener.requestStarted();
 
         String URL = "http://parkapi.3mill.ir/api/Android/getFirstPage?username=admin";
@@ -246,7 +252,6 @@ public class networking {
 
             @Override
             public void onResponse(JSONObject response) {
-
 
                 try {
                     Log.d(TAG, response.toString());
@@ -259,6 +264,9 @@ public class networking {
 
                     //Log.d(TAG, components.get(5).getQuestion() + "");
                     mainJsonResponseListener.requestCompleted(components);
+
+                    new OfflineDataLoader(mContext).saveMainJsonToStorage(response);
+
 
                 } catch (Exception e) {
                     e.printStackTrace();
