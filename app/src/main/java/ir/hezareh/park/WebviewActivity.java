@@ -43,7 +43,6 @@ public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLa
             initWebView();
         }
 
-        //webView.loadUrl(url);
 
 
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -66,7 +65,6 @@ public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLa
                 }
 
                 //renderPost()
-                swipeRefreshLayout.setRefreshing(false);
             }
         });
 

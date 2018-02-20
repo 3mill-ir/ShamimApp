@@ -2,9 +2,6 @@ package ir.hezareh.park.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,11 +16,9 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -92,77 +87,6 @@ public class NewsCategoryAdapter extends RecyclerView.Adapter<NewsCategoryAdapte
         final AtomicBoolean playAnimation = new AtomicBoolean(true);
 
 
-        Target target = new Target() {
-            @Override
-            public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-
-
-                if (playAnimation.get()) {
-                    Drawable d = new BitmapDrawable(mContext.getResources(), bitmap);
-
-                    holder.thumbnail.setImageDrawable(d);
-                    holder.img_progress.setVisibility(View.GONE);
-                    Animation fadeOut = new AlphaAnimation(0, 1);
-                    fadeOut.setInterpolator(new AccelerateInterpolator());
-                    fadeOut.setDuration(1000);
-                    holder.thumbnail.startAnimation(fadeOut);
-                    playAnimation.set(false);
-                }
-
-                /*final DbHandler db = new DbHandler(mContext);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        try {
-                            File dir = new File(mContext.getExternalFilesDir(null), "Park");
-
-                            if (!dir.exists()) {
-                                boolean isCreated = dir.mkdir();
-                                Log.d("DirCreated", isCreated + "");
-                            }
-
-                            File file = new File(mContext.getExternalFilesDir(null) + "/Park/" + news.get(index).getItem().get(position).getID() + ".jpg");
-
-                            db.updatePath(news.get(index).getItem().get(position).getID(),file.getAbsolutePath());
-
-
-                            if (file.createNewFile()) {
-                                FileOutputStream ostream = new FileOutputStream(file);
-                                bitmap.compress(Bitmap.CompressFormat.JPEG, 75, ostream);
-                                ostream.close();
-                            }
-
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }).start();*/
-            }
-
-
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
-
-                if (playAnimation.get()) {
-                    holder.img_progress.setVisibility(View.GONE);
-                    Animation fadeOutPlaceholder = new AlphaAnimation(1, 0);
-                    fadeOutPlaceholder.setInterpolator(new AccelerateInterpolator());
-                    fadeOutPlaceholder.setDuration(1000);
-                    holder.thumbnail.setImageResource(R.drawable.corrupted);
-                    holder.thumbnail.startAnimation(fadeOutPlaceholder);
-                    playAnimation.set(false);
-                }
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                if (placeHolderDrawable != null) {
-                }
-            }
-        };
 
         Picasso.with(this.mContext).load(Utils.URL_encode(news.get(index).getItem().get(position).getImage().toString()))//HomeScreen.URL_encode("http://www.theappguruz.com/app/uploads/2015/12/grid-layout-manager.png"))//.placeholder(R.drawable.camera128)
                 //.fit()
@@ -249,9 +173,10 @@ public class NewsCategoryAdapter extends RecyclerView.Adapter<NewsCategoryAdapte
         @Override
         public void onClick(View v) {
             Log.i("Clicked", "position: " + String.valueOf(getAdapterPosition()));
-            Toast.makeText(mContext, String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
+
             Intent intent = new Intent(mContext, NewsDetailActivity.class);
             intent.putExtra("URL", news.get(index).getItem().get(getAdapterPosition()).getUrl());
+            intent.putExtra("NewsID", news.get(index).getItem().get(getAdapterPosition()).getID());
             mContext.startActivity(intent);
         }
     }

@@ -47,18 +47,13 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
     RecyclerView newsRecyclerView;
     int screenHeight;
     int width;
-    TextView likesCount;
-    TextView commentsCount;
-    TextView dislikesCount;
-    TextView date;
-    Button show_more;
-    Button like_btn;
-    Button dislike_btn;
+    TextView likesCount, commentsCount, dislikesCount, date;
+    Button show_more, like_btn, dislike_btn;
 
     CommentRecycler commentRecycler;
     NewsComponentRecycler relatedNewsComponentRecycler;
     int ID;
-    private String url = "https://www.digikala.com/";
+    DbHandler dbHandler = new DbHandler(this);
     private WebView webView;
     private ProgressBar progressBar;
     private float m_downX;
@@ -149,7 +144,6 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                                 addNews(newsDetails);
                                 swipeRefreshLayout.setRefreshing(false);
                                 ID = newsDetails.getID();
-
                                 fab.setVisibility(View.VISIBLE);
                                 like_btn.setVisibility(View.VISIBLE);
                                 dislike_btn.setVisibility(View.VISIBLE);
@@ -161,15 +155,15 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                                 swipeRefreshLayout.setRefreshing(false);
                             }
                         }, getIntent().getExtras().getString("URL"), getApplicationContext());
+
+
+                    } else {
+                        swipeRefreshLayout.setRefreshing(true);
+                        addNews(new OfflineDataLoader(getApplicationContext()).ReadOfflineNewsDetails(getIntent().getExtras().getInt("NewsID")));
+                        swipeRefreshLayout.setRefreshing(false);
+                        ID = getIntent().getExtras().getInt("NewsID");
                     }
-                } else {
-                    //addNews(new OfflineDataLoader(getApplicationContext()).ReadOfflineNewsDetails());
-                    //swipeRefreshLayout.setRefreshing(false);
-                    //ID = newsDetails.getID();
-
                 }
-
-
             }
         });
 
@@ -209,68 +203,69 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
 
     private void addNews(NewsDetails newsDetails) {
 
-        commentRecycler = new CommentRecycler(getApplicationContext(), newsDetails.getComments());
-        commentRecyclerView.setAdapter(commentRecycler);
+        if (newsDetails != null) {
 
-        relatedNewsComponentRecycler = new NewsComponentRecycler(getApplicationContext(), newsDetails.getRelatedTopics());
-        newsRecyclerView.setAdapter(relatedNewsComponentRecycler);
+            commentRecycler = new CommentRecycler(getApplicationContext(), newsDetails.getComments());
+            commentRecyclerView.setAdapter(commentRecycler);
 
-        String text = "<html> <head>\n" +
-                "    <meta charset=\"UTF-8\">\n" +
-                " <style type=\"text/css\">\n" +
-                "                /** Specify a font named \"MyFont\",\n" +
-                "                and specify the URL where it can be found: */\n" +
-                "                @font-face {\n" +
-                "                    font-family: \"MyFont\"; \n " +
-                "                    src: url('file:///android_asset/fonts/irsans.ttf');\n" +
-                "                }\n" +
-                "               @font-face {\n" +
-                "               font-family: \"BYekan\"; \n" +
-                "               src: url('file:///android_asset/fonts/BYekan.ttf'); \n" +
-                "               }\n" +
-                "               .text { font-family:\"MyFont\";  line-height: 30px; padding: 5px; font-size: 14px;}  \n" +
-                "               .header { font-family:\"BYekan\";  line-height: 25px; padding: 5px; font-size: 18px;}" +
-                "            </style>" +
-                "    <title>Title</title>\n" +
-                "</head> " +
-                " <p class=\"header\"  align=\"justify\"" +
-                " dir=\"rtl\" >" +
-                newsDetails.getTittle() +
-                " </p> " +
-                " <body>"
-                + "<p class=\"text\" align=\"justify\"" +
-                "dir=\"rtl\">"
-                + newsDetails.getDescription()
-                + "</p> "
-                + "</body></html>";
+            relatedNewsComponentRecycler = new NewsComponentRecycler(getApplicationContext(), newsDetails.getRelatedTopics());
+            newsRecyclerView.setAdapter(relatedNewsComponentRecycler);
 
-        //webView.loadDataWithBaseURL(null, text, "text/html", "utf-8", null);
+            String text = "<html> <head>\n" +
+                    "    <meta charset=\"UTF-8\">\n" +
+                    " <style type=\"text/css\">\n" +
+                    "                /** Specify a font named \"MyFont\",\n" +
+                    "                and specify the URL where it can be found: */\n" +
+                    "                @font-face {\n" +
+                    "                    font-family: \"MyFont\"; \n " +
+                    "                    src: url('file:///android_asset/fonts/irsans.ttf');\n" +
+                    "                }\n" +
+                    "               @font-face {\n" +
+                    "               font-family: \"BYekan\"; \n" +
+                    "               src: url('file:///android_asset/fonts/BYekan.ttf'); \n" +
+                    "               }\n" +
+                    "               .text { font-family:\"MyFont\";  line-height: 30px; padding: 5px; font-size: 14px;}  \n" +
+                    "               .header { font-family:\"BYekan\";  line-height: 25px; padding: 5px; font-size: 18px;}" +
+                    "            </style>" +
+                    "    <title>Title</title>\n" +
+                    "</head> " +
+                    " <p class=\"header\"  align=\"justify\"" +
+                    " dir=\"rtl\" >" +
+                    newsDetails.getTittle() +
+                    " </p> " +
+                    " <body>"
+                    + "<p class=\"text\" align=\"justify\"" +
+                    "dir=\"rtl\">"
+                    + newsDetails.getDescription()
+                    + "</p> "
+                    + "</body></html>";
 
-        webView.loadUrl(newsDetails.getDetail());
+            //webView.loadDataWithBaseURL(null, text, "text/html", "utf-8", null);
+
+            webView.loadUrl(newsDetails.getDetail());
 
 
-        date.setVisibility(View.VISIBLE);
-        likesCount.setVisibility(View.VISIBLE);
-        dislikesCount.setVisibility(View.VISIBLE);
-        commentsCount.setVisibility(View.VISIBLE);
+            date.setVisibility(View.VISIBLE);
+            likesCount.setVisibility(View.VISIBLE);
+            dislikesCount.setVisibility(View.VISIBLE);
+            commentsCount.setVisibility(View.VISIBLE);
 
-        date.setText(newsDetails.getCreatedOnUTC());
-        likesCount.setText(String.valueOf(newsDetails.getNumberOfLikes()));
-        dislikesCount.setText(String.valueOf(newsDetails.getNumberOfDislikes()));
-        commentsCount.setText(String.valueOf(newsDetails.getNumberOfComments()));
+            date.setText(newsDetails.getCreatedOnUTC());
+            likesCount.setText(String.valueOf(newsDetails.getNumberOfLikes()));
+            dislikesCount.setText(String.valueOf(newsDetails.getNumberOfDislikes()));
+            commentsCount.setText(String.valueOf(newsDetails.getNumberOfComments()));
 
-        Picasso.with(getApplicationContext())
-                .load(newsDetails.getImagePath())
-                .fit()
-                .into((ImageView) findViewById(R.id.news_detail_header));
-
+            Picasso.with(getApplicationContext())
+                    .load(newsDetails.getImagePath())
+                    .fit()
+                    .into((ImageView) findViewById(R.id.news_detail_header));
+        }
 
     }
 
     private void renderPost() {
         //webView.loadUrl("https://www.google.com/");
     }
-
 
     private void initWebView() {
         webView.setWebChromeClient(new MyWebChromeClient(this));
@@ -287,7 +282,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                //webView.loadUrl(url);
+                webView.loadUrl(url);
                 return true;
             }
 
@@ -357,7 +352,6 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         });
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -376,49 +370,61 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
 
             case R.id.like_btn:
                 new Utils(getApplicationContext()).scaleView(like_btn, 0.3f, 1f);
+                if (dbHandler.addVote(ID, 1)) {
+                    new networking().postLike(ID, new networking.PostLikeResponseListener() {
+                        @Override
+                        public void requestStarted() {
 
-                new networking().postLike(ID, new networking.PostLikeResponseListener() {
-                    @Override
-                    public void requestStarted() {
+                        }
 
-                    }
+                        @Override
+                        public void requestCompleted(String response) {
 
-                    @Override
-                    public void requestCompleted(String response) {
-                        Drawable mDrawable = getResources().getDrawable(R.drawable.ic_thumb_up_green_24dp);
-                        mDrawable.setColorFilter(new
-                                PorterDuffColorFilter(Color.parseColor("#FF24DC00"), PorterDuff.Mode.MULTIPLY));
-                        Toast.makeText(getApplicationContext(), "نظر شما ثبت گردید!", Toast.LENGTH_SHORT).show();
-                    }
 
-                    @Override
-                    public void requestEndedWithError(VolleyError error) {
+                            Drawable mDrawable = getResources().getDrawable(R.drawable.ic_thumb_up_green_24dp);
+                            mDrawable.setColorFilter(new
+                                    PorterDuffColorFilter(Color.parseColor("#FF24DC00"), PorterDuff.Mode.MULTIPLY));
+                            Toast.makeText(getApplicationContext(), "نظر شما ثبت گردید!", Toast.LENGTH_SHORT).show();
+                        }
 
-                    }
-                });
+                        @Override
+                        public void requestEndedWithError(VolleyError error) {
+
+                        }
+                    });
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "نظر شما قبلا ثبت شده!", Toast.LENGTH_SHORT).show();
+                }
+
                 break;
 
             case R.id.dislike_btn:
                 new Utils(getApplicationContext()).scaleView(dislike_btn, 0.3f, 1f);
-                new networking().postDislike(ID, new networking.PostDislikeResponseListener() {
-                    @Override
-                    public void requestStarted() {
+                if (dbHandler.addVote(ID, 1)) {
+                    new networking().postDislike(ID, new networking.PostDislikeResponseListener() {
+                        @Override
+                        public void requestStarted() {
 
-                    }
+                        }
 
-                    @Override
-                    public void requestCompleted(String response) {
-                        Drawable mDrawable = getResources().getDrawable(R.drawable.ic_thumb_down_red_24dp);
-                        mDrawable.setColorFilter(new
-                                PorterDuffColorFilter(Color.parseColor("#FFDE0000"), PorterDuff.Mode.MULTIPLY));
-                        Toast.makeText(getApplicationContext(), "نظر شما ثبت گردید!", Toast.LENGTH_SHORT).show();
-                    }
+                        @Override
+                        public void requestCompleted(String response) {
+                            dbHandler.addVote(ID, 1);
+                            Drawable mDrawable = getResources().getDrawable(R.drawable.ic_thumb_down_red_24dp);
+                            mDrawable.setColorFilter(new
+                                    PorterDuffColorFilter(Color.parseColor("#FFDE0000"), PorterDuff.Mode.MULTIPLY));
+                            Toast.makeText(getApplicationContext(), "نظر شما ثبت گردید!", Toast.LENGTH_SHORT).show();
+                        }
 
-                    @Override
-                    public void requestEndedWithError(VolleyError error) {
+                        @Override
+                        public void requestEndedWithError(VolleyError error) {
 
-                    }
-                });
+                        }
+                    });
+                } else {
+                    Toast.makeText(getApplicationContext(), "نظر شما قبلا ثبت شده!", Toast.LENGTH_SHORT).show();
+                }
                 break;
 
         }

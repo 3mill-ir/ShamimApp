@@ -175,7 +175,7 @@ public class networking {
         App.getInstance().addToRequestQueue(req);
     }
 
-    public void getNewsDetails(final NewsDetailsResponseListener newsDetailsResponseListener, String URL, final Context context) {
+    public void getNewsDetails(final NewsDetailsResponseListener newsDetailsResponseListener, final String URL, final Context context) {
 
         newsDetailsResponseListener.requestStarted();
 
@@ -432,6 +432,7 @@ public class networking {
                             List<GalleryModel> Gallery = gson.fromJson(response.toString(), collectionType);
                             //Log.d(TAG, Gallery.get(0).getImagesCount() + "");
                             imagesGalleryResponseListener.requestCompleted(Gallery);
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

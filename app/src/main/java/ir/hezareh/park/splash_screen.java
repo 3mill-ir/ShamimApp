@@ -53,7 +53,7 @@ public class splash_screen extends AppCompatActivity {
                 startActivity(new Intent(splash_screen.this, HomeScreen.class));
                 finish();
             }
-        }, 4000);//4000
+        }, 0);//4000
 
     }
 }

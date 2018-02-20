@@ -14,6 +14,7 @@ public class SharedPreferencesManager {
     // Email address (make variable public to access from outside)
     public static final String KEY_EMAIL = "email";
     public static final boolean KEY_SHOW = false;
+    public static final String KEY_POLL = "pollParticipated";
     // Sharedpref file name
     private static final String PREF_NAME = "SharedPrefs";
     // All Shared Preferences Keys
@@ -39,6 +40,16 @@ public class SharedPreferencesManager {
         editor.commit();
 
     }
+
+    public void set_ParticipatedInPoll(boolean value) {
+        editor.putBoolean(KEY_POLL, value);
+        editor.commit();
+    }
+
+    public boolean canParticipate() {
+        return !pref.getBoolean(KEY_POLL, false);
+    }
+
 
     /**
      * Create login session

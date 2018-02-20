@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import ir.hezareh.park.models.GalleryModel;
 import ir.hezareh.park.models.ModelComponent;
 import ir.hezareh.park.models.NewsDetails;
 
@@ -97,6 +98,73 @@ public class OfflineDataLoader {
         }
     }
 
+    public void saveFolderGalleryToStorage(JSONArray response) {
+        try {
+
+            File dirToFile = new File(mContext.getExternalFilesDir(null) + "/Park/GalleryFolder.json");
+
+            Writer output = new BufferedWriter(new FileWriter(dirToFile));
+            output.write(response.toString());
+
+            output.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<GalleryModel> ReadOfflineFolderGalleryToStorage() {
+        List<GalleryModel> Gallery = null;
+        JsonParser parser = new JsonParser();
+        try {
+            JsonArray jsonArray = (JsonArray) parser.parse(new FileReader(mContext.getExternalFilesDir(null) + "/Park/GalleryFolder.json"));
+
+            Log.d(TAG, jsonArray.toString());
+
+            Gson gson = new Gson();
+            Type collectionType = new TypeToken<Collection<GalleryModel>>() {
+            }.getType();
+
+            Gallery = gson.fromJson(jsonArray.toString(), collectionType);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return Gallery;
+    }
+
+    public void saveImageGalleryToStorage(JSONArray response, String Image) {
+        try {
+
+            File dirToFile = new File(mContext.getExternalFilesDir(null) + "/Park/" + Image + ".json");
+
+            Writer output = new BufferedWriter(new FileWriter(dirToFile));
+            output.write(response.toString());
+
+            output.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<GalleryModel> ReadOfflineImageGalleryToStorage() {
+        List<GalleryModel> Gallery = null;
+        JsonParser parser = new JsonParser();
+        try {
+            JsonArray jsonArray = (JsonArray) parser.parse(new FileReader(mContext.getExternalFilesDir(null) + "/Park/GalleryFolder.json"));
+
+            Log.d(TAG, jsonArray.toString());
+
+            Gson gson = new Gson();
+            Type collectionType = new TypeToken<Collection<GalleryModel>>() {
+            }.getType();
+
+            Gallery = gson.fromJson(jsonArray.toString(), collectionType);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return Gallery;
+    }
 
     public NewsDetails ReadOfflineNewsDetails(int ID) {
         NewsDetails NewsDetails = null;

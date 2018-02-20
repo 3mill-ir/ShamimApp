@@ -30,7 +30,7 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
     private static final int TYPE_FOOTER = 1;
     private static final int TYPE_ITEM = 2;
 
-    ModelComponent newsModelComponent;
+    private ModelComponent newsModelComponent;
     private Context context;
 
     public NewsComponentRecycler(Context _context, ModelComponent _newsModelComponent) {
@@ -70,7 +70,7 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
             FooterViewHolder footerHolder = (FooterViewHolder) holder;
             footerHolder.footerText.setText("ادامه مطلب ...");
 
-            new Component(context).setClickListener(footerHolder.itemView, newsModelComponent.getFunctionality(), null);
+            new Component(context).setClickListener(footerHolder.itemView, newsModelComponent.getFunctionality(), null, 0);
 
 
         } else if (holder instanceof ItemViewHolder) {
@@ -90,9 +90,7 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
 
             if (newsModelComponent.getItem().get(position).getContent() != null) {
                 itemViewHolder.title.setText(newsModelComponent.getItem().get(position).getContent().toString());
-
             }
-
 
             itemViewHolder.date.setText(newsModelComponent.getItem().get(position).getDate().toString());
 
@@ -113,8 +111,12 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
                             itemViewHolder.thumbnail.setImageResource(R.drawable.corrupted);
                         }
                     });
-            new Component(context).setClickListener(itemViewHolder.itemView, newsModelComponent.getItem().get(position).getFunctionality(), newsModelComponent.getItem()
-                    .get(position).getUrl());
+
+            new Component(context).setClickListener(itemViewHolder.itemView, newsModelComponent.getItem().get(position).getFunctionality(),
+                    newsModelComponent.getItem().get(position).getUrl(), newsModelComponent.getItem().get(position).getID());
+
+
+
         }
     }
 

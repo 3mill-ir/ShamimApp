@@ -39,6 +39,7 @@ import ir.hezareh.park.Gallery;
 import ir.hezareh.park.NewsCategory;
 import ir.hezareh.park.NewsDetailActivity;
 import ir.hezareh.park.R;
+import ir.hezareh.park.SharedPreferencesManager;
 import ir.hezareh.park.Utils;
 import ir.hezareh.park.WebviewActivity;
 import ir.hezareh.park.models.ModelComponent;
@@ -208,27 +209,38 @@ public class Component {
                     pollButton.setEnabled(true);
                 }
 
+
+                final SharedPreferencesManager preferencesManager = new SharedPreferencesManager(context);
                 pollButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
-                        new networking().postPoll(modelComponent.getItem().get(radioGroupAnswers.indexOfChild(Choice)).getID(), new networking.PostPollListener() {
-                            @Override
-                            public void requestStarted() {
+                        if (preferencesManager.canParticipate()) {
+                            new networking().postPoll(modelComponent.getItem().get(radioGroupAnswers.indexOfChild(Choice)).getID(), new networking.PostPollListener() {
+                                @Override
+                                public void requestStarted() {
 
-                            }
+                                }
 
-                            @Override
-                            public void requestCompleted(String response) {
-                                Toast.makeText(context, "نظر شما ثبت گردید!", Toast.LENGTH_SHORT).show();
-                            }
+                                @Override
+                                public void requestCompleted(String response) {
 
-                            @Override
-                            public void requestEndedWithError(VolleyError error) {
+                                    preferencesManager.set_ParticipatedInPoll(true);
 
-                            }
-                        });
+                                    Toast.makeText(context, "نظر شما ثبت گردید!", Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void requestEndedWithError(VolleyError error) {
+                                    Toast.makeText(context, "نظر شما ثبت نگردید!", Toast.LENGTH_SHORT).show();
+
+                                }
+                            });
+                        } else {
+                            Toast.makeText(context, "شما قبلا در نظرسنجی شرکت کرده اید!", Toast.LENGTH_SHORT).show();
+                        }
                     }
+
 
                 });
             }
@@ -268,7 +280,7 @@ public class Component {
         UpperButtonLayout.setGravity(Gravity.CENTER);
         UpperButtonLayout.addView(upperChild);
 
-        setClickListener(upperChild, modelComponent.getButtonItem().get(0).getFunctionality(), modelComponent.getButtonItem().get(0).getUrl());
+        setClickListener(upperChild, modelComponent.getButtonItem().get(0).getFunctionality(), modelComponent.getButtonItem().get(0).getUrl(), 0);
 
 
         View lowerChild = inflater.inflate(R.layout.item_button_row, null);
@@ -297,7 +309,7 @@ public class Component {
         LowerButtonLayout.setGravity(Gravity.CENTER);
         LowerButtonLayout.addView(lowerChild);
 
-        setClickListener(lowerChild, modelComponent.getButtonItem().get(1).getFunctionality(), modelComponent.getButtonItem().get(1).getUrl());
+        setClickListener(lowerChild, modelComponent.getButtonItem().get(1).getFunctionality(), modelComponent.getButtonItem().get(1).getUrl(), 0);
 
 
         com.daimajia.slider.library.SliderLayout GalleryLayout = new SliderLayout(context);
@@ -392,7 +404,7 @@ public class Component {
         LeftButtonLayout.setLayoutParams(ButtonParams);
         LeftButtonLayout.setGravity(Gravity.CENTER);
         LeftButtonLayout.addView(leftChild);
-        setClickListener(LeftButtonLayout, modelComponent.getItem().get(0).getFunctionality(), modelComponent.getItem().get(0).getUrl());
+        setClickListener(LeftButtonLayout, modelComponent.getItem().get(0).getFunctionality(), modelComponent.getItem().get(0).getUrl(), 0);
 
 
         View middleChild = inflater.inflate(R.layout.item_button_row, null);
@@ -406,7 +418,7 @@ public class Component {
         MiddleButtonLayout.setLayoutParams(ButtonParams);
         MiddleButtonLayout.setGravity(Gravity.CENTER);
         MiddleButtonLayout.addView(middleChild);
-        setClickListener(MiddleButtonLayout, modelComponent.getItem().get(1).getFunctionality(), modelComponent.getItem().get(1).getUrl());
+        setClickListener(MiddleButtonLayout, modelComponent.getItem().get(1).getFunctionality(), modelComponent.getItem().get(1).getUrl(), 0);
 
 
         View rightChild = inflater.inflate(R.layout.item_button_row, null);
@@ -425,7 +437,7 @@ public class Component {
         RightButtonLayout.setLayoutParams(ButtonParams);
         RightButtonLayout.setGravity(Gravity.CENTER);
         RightButtonLayout.addView(rightChild);
-        setClickListener(RightButtonLayout, modelComponent.getItem().get(2).getFunctionality(), modelComponent.getItem().get(2).getUrl());
+        setClickListener(RightButtonLayout, modelComponent.getItem().get(2).getFunctionality(), modelComponent.getItem().get(2).getUrl(), 0);
 
         ButtonsRow.addView(LeftButtonLayout);
         ButtonsRow.addView(MiddleButtonLayout);
@@ -435,7 +447,7 @@ public class Component {
         return ButtonsRow;
     }
 
-    public void setClickListener(View view, final String functionality, final String URL) {
+    public void setClickListener(View view, final String functionality, final String URL, final int ID) {
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -473,6 +485,7 @@ public class Component {
                     case "NewsDetails":
                         intent = new Intent(context, NewsDetailActivity.class);
                         intent.putExtra("URL", URL);
+                        intent.putExtra("NewsID", ID);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
                         //((Activity) context).overridePendingTransition(0, 0);
