@@ -15,6 +15,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 
+import ir.hezareh.park.Util.Utils;
+
 public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = WebviewActivity.class
             .getSimpleName();

@@ -1,4 +1,4 @@
-package ir.hezareh.park;
+package ir.hezareh.park.DataLoading;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,11 +7,6 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import ir.hezareh.park.models.ModelComponent;
 
 
 public class DbHandler extends SQLiteOpenHelper {
@@ -56,7 +51,7 @@ public class DbHandler extends SQLiteOpenHelper {
     }
 
     // Adding new contact
-    Boolean addVote(int ID, int Vote) {
+    public Boolean addVote(int ID, int Vote) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -90,41 +85,5 @@ public class DbHandler extends SQLiteOpenHelper {
         return cursor.getInt(2);
     }
 
-    // Getting All Contacts
-    public List<ModelComponent> getAllNews(int index) {
-        ArrayList<ModelComponent> components = new ArrayList<>();
-
-        ModelComponent modelComponent = new ModelComponent();
-        ModelComponent.Item newsItem = modelComponent.new Item();
-
-        // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_NEWSLIST + " WHERE index=" + String.valueOf(index);
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-
-                newsItem.setID(Integer.parseInt(cursor.getString(0)));
-                newsItem.setImage(cursor.getString(2));
-                newsItem.setText(cursor.getString(3));
-                newsItem.setDate(cursor.getString(4));
-                newsItem.setContent(cursor.getString(5));
-                newsItem.setUrl(cursor.getString(6));
-                newsItem.setLikes(cursor.getString(7));
-                newsItem.setDislikes(cursor.getString(8));
-                newsItem.setComment(cursor.getString(9));
-
-                components.add(modelComponent);
-
-            } while (cursor.moveToNext());
-        }
-        db.close();
-        cursor.close();
-
-        return components;
-    }
 
 }

@@ -12,6 +12,8 @@ import android.widget.TextView;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import ir.hezareh.park.Util.Utils;
+
 public class splash_screen extends AppCompatActivity {
 
     @Override

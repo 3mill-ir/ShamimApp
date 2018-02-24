@@ -3,11 +3,10 @@ package ir.hezareh.park.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by rf on 03/01/2018.
- */
+import java.io.Serializable;
 
-public class GalleryModel {
+
+public class GalleryModel implements Serializable {
 
     @SerializedName("FolderName")
     @Expose
@@ -20,6 +19,16 @@ public class GalleryModel {
     @SerializedName("Image")
     @Expose
     private String image;
+
+    public GalleryModel() {
+
+    }
+
+    public GalleryModel(String folderName, int imagesCount, String image) {
+        this.folderName = folderName;
+        this.imagesCount = imagesCount;
+        this.image = image;
+    }
 
     public String getFolderName() {
         return folderName;
@@ -44,5 +53,6 @@ public class GalleryModel {
     public void setImage(String image) {
         this.image = image;
     }
+
 }
 

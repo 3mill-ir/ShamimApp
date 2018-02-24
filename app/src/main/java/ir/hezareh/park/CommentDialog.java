@@ -15,6 +15,9 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 
+import ir.hezareh.park.DataLoading.networking;
+import ir.hezareh.park.Util.Utils;
+
 
 public class CommentDialog extends Dialog implements android.view.View.OnClickListener {
 
@@ -61,7 +64,7 @@ public class CommentDialog extends Dialog implements android.view.View.OnClickLi
         switch (v.getId()) {
             case R.id.confirm:
                 if (input_validation()) {
-                    new networking().postComment(_postID, comment.getText().toString(), new networking.PostCommentResponseListener() {
+                    new networking(getContext()).postComment(_postID, comment.getText().toString(), new networking.PostCommentResponseListener() {
                         @Override
                         public void requestStarted() {
 

@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
@@ -27,6 +28,9 @@ import java.util.List;
 
 import ir.hezareh.park.Adapters.EqualSpacingItemDecoration;
 import ir.hezareh.park.Adapters.NewsCategoryAdapter;
+import ir.hezareh.park.DataLoading.OfflineDataLoader;
+import ir.hezareh.park.DataLoading.networking;
+import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.ModelComponent;
 
 
@@ -69,7 +73,7 @@ public class NewsCategory extends AppCompatActivity {
 
 
         if (new Utils(getApplicationContext()).isConnectedToInternet()) {
-            new networking().getNewsCategory(new networking.NewsCategoryResponseListener() {
+            new networking(getApplicationContext()).getNewsCategory(new networking.NewsCategoryResponseListener() {
                 @Override
                 public void requestStarted() {
 
@@ -93,7 +97,7 @@ public class NewsCategory extends AppCompatActivity {
                     VolleyLog.d(TAG, "Error: " + error.getMessage());
                     //hideDialog();
                 }
-            }, getApplicationContext());
+            });
         } else {
             //DbHandler db = new DbHandler(getContext());
 
@@ -116,6 +120,7 @@ public class NewsCategory extends AppCompatActivity {
         });
 
         new Utils(getApplicationContext()).overrideFonts(findViewById(R.id.header_text), "BYekan");
+        ((TextView) findViewById(R.id.header_text)).setText("لیست اخبار");
 
     }
 
@@ -206,7 +211,7 @@ public class NewsCategory extends AppCompatActivity {
                     @Override
                     public void run() {
                         swipeRefreshLayout.setRefreshing(true);
-                        new networking().getNewsCategory(new networking.NewsCategoryResponseListener() {
+                        new networking(getContext()).getNewsCategory(new networking.NewsCategoryResponseListener() {
                             @Override
                             public void requestStarted() {
 
@@ -223,7 +228,7 @@ public class NewsCategory extends AppCompatActivity {
                             public void requestEndedWithError(VolleyError error) {
                                 swipeRefreshLayout.setRefreshing(false);
                             }
-                        }, getContext());
+                        });
                     }
                 });
             } else {
@@ -241,7 +246,7 @@ public class NewsCategory extends AppCompatActivity {
         @Override
         public void onRefresh() {
 
-            new networking().getNewsCategory(new networking.NewsCategoryResponseListener() {
+            new networking(getContext()).getNewsCategory(new networking.NewsCategoryResponseListener() {
                 @Override
                 public void requestStarted() {
 
@@ -259,7 +264,7 @@ public class NewsCategory extends AppCompatActivity {
                 public void requestEndedWithError(VolleyError error) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
-            }, getContext());
+            });
         }
     }
 

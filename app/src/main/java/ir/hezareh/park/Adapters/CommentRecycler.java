@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import ir.hezareh.park.R;
-import ir.hezareh.park.Utils;
+import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.NewsDetails;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 

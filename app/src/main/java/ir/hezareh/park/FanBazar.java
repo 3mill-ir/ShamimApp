@@ -11,6 +11,8 @@ import java.util.List;
 
 import ir.hezareh.park.Component.Component;
 import ir.hezareh.park.Component.MyPieChart;
+import ir.hezareh.park.DataLoading.networking;
+import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.ModelComponent;
 
 public class FanBazar extends AppCompatActivity {
@@ -27,7 +29,7 @@ public class FanBazar extends AppCompatActivity {
         ((TextView) findViewById(R.id.header_text)).setTypeface(new Utils(getApplicationContext()).font_set("BYekan"));
 
 
-        new networking().getMainJson(new networking.MainJsonResponseListener() {
+        new networking(getApplicationContext()).getMainJson(new networking.MainJsonResponseListener() {
             @Override
             public void requestStarted() {
 
@@ -72,7 +74,7 @@ public class FanBazar extends AppCompatActivity {
                 //hideDialog();
                 //swipeRefreshLayout.setRefreshing(false);
             }
-        }, getApplicationContext());
+        });
 
     }
 

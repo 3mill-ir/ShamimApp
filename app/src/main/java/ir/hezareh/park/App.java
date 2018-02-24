@@ -7,6 +7,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+import ir.hezareh.park.DataLoading.SharedPreferencesManager;
+
 /**
  * Created by rf on 07/12/2017.
  */

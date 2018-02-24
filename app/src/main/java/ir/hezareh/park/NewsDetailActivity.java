@@ -36,6 +36,10 @@ import com.squareup.picasso.Picasso;
 import ir.hezareh.park.Adapters.CommentRecycler;
 import ir.hezareh.park.Adapters.EqualSpacingItemDecoration;
 import ir.hezareh.park.Adapters.NewsComponentRecycler;
+import ir.hezareh.park.DataLoading.DbHandler;
+import ir.hezareh.park.DataLoading.OfflineDataLoader;
+import ir.hezareh.park.DataLoading.networking;
+import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.NewsDetails;
 
 
@@ -133,7 +137,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                 swipeRefreshLayout.setRefreshing(true);
                 if (getIntent().getExtras() != null) {
                     if (new Utils(getApplicationContext()).isConnectedToInternet()) {
-                        new networking().getNewsDetails(new networking.NewsDetailsResponseListener() {
+                        new networking(getApplicationContext()).getNewsDetails(new networking.NewsDetailsResponseListener() {
                             @Override
                             public void requestStarted() {
 
@@ -154,7 +158,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                             public void requestEndedWithError(VolleyError error) {
                                 swipeRefreshLayout.setRefreshing(false);
                             }
-                        }, getIntent().getExtras().getString("URL"), getApplicationContext());
+                        }, getIntent().getExtras().getString("URL"));
 
 
                     } else {
@@ -176,7 +180,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
 
         renderPost();
         if (getIntent().getExtras() != null) {
-            new networking().getNewsDetails(new networking.NewsDetailsResponseListener() {
+            new networking(getApplicationContext()).getNewsDetails(new networking.NewsDetailsResponseListener() {
                 @Override
                 public void requestStarted() {
 
@@ -196,7 +200,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                 public void requestEndedWithError(VolleyError error) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
-            }, getIntent().getExtras().getString("URL"), getApplicationContext());
+            }, getIntent().getExtras().getString("URL"));
         }
 
     }
@@ -371,7 +375,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
             case R.id.like_btn:
                 new Utils(getApplicationContext()).scaleView(like_btn, 0.3f, 1f);
                 if (dbHandler.addVote(ID, 1)) {
-                    new networking().postLike(ID, new networking.PostLikeResponseListener() {
+                    new networking(getApplicationContext()).postLike(ID, new networking.PostLikeResponseListener() {
                         @Override
                         public void requestStarted() {
 
@@ -402,7 +406,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
             case R.id.dislike_btn:
                 new Utils(getApplicationContext()).scaleView(dislike_btn, 0.3f, 1f);
                 if (dbHandler.addVote(ID, 1)) {
-                    new networking().postDislike(ID, new networking.PostDislikeResponseListener() {
+                    new networking(getApplicationContext()).postDislike(ID, new networking.PostDislikeResponseListener() {
                         @Override
                         public void requestStarted() {
 

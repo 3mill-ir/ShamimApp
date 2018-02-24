@@ -1,4 +1,4 @@
-package ir.hezareh.park;
+package ir.hezareh.park.DataLoading;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+
+import ir.hezareh.park.R;
 
 public class DownloadService extends IntentService {
     public static final int UPDATE_PROGRESS = 8344;

@@ -22,7 +22,7 @@
             android:name="android.app.default_searchable"
             android:value="ir.hezareh.park.SearchActivity" />
 
-        <service android:name=".DownloadService" />
+        <service android:name=".DataLoading.DownloadService" />
 
         <activity
             android:name=".HomeScreen"
@@ -44,7 +44,7 @@
             android:label="@string/title_activity_news_category"
             android:theme="@style/AppTheme" />
         <activity android:name=".Companies" />
-        <activity android:name=".Gallery" />
+        <activity android:name=".GalleryFolderActivity" />
         <activity android:name=".FanBazar" />
         <activity
             android:name=".SignIn_SignUp"
@@ -63,6 +63,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".GalleryImagesActivity"
+            android:label="@string/title_activity_gallery_scrolling"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

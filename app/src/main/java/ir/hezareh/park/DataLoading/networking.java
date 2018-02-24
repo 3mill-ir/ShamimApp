@@ -1,4 +1,4 @@
-package ir.hezareh.park;
+package ir.hezareh.park.DataLoading;
 
 import android.content.Context;
 import android.util.Log;
@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ir.hezareh.park.App;
+import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.CompanyList;
 import ir.hezareh.park.models.GalleryModel;
 import ir.hezareh.park.models.ModelComponent;
@@ -36,7 +38,11 @@ public class networking {
 
     public static final String TAG = networking.class
             .getSimpleName();
+    private Context mContext;
 
+    public networking(Context context) {
+        mContext = context;
+    }
 
     public void postComment(final int ID, final String comment, final PostCommentResponseListener responseListener) {
 
@@ -136,7 +142,7 @@ public class networking {
         App.getInstance().addToRequestQueue(stringRequest);
     }
 
-    public void getNewsCategory(final NewsCategoryResponseListener newsCategoryResponseListener, final Context mContext) {
+    public void getNewsCategory(final NewsCategoryResponseListener newsCategoryResponseListener) {
 
         newsCategoryResponseListener.requestStarted();
         JsonArrayRequest req = new JsonArrayRequest("http://parkapi.3mill.ir/api/android/getNewsList?username=admin&id=5",
@@ -175,7 +181,7 @@ public class networking {
         App.getInstance().addToRequestQueue(req);
     }
 
-    public void getNewsDetails(final NewsDetailsResponseListener newsDetailsResponseListener, final String URL, final Context context) {
+    public void getNewsDetails(final NewsDetailsResponseListener newsDetailsResponseListener, final String URL) {
 
         newsDetailsResponseListener.requestStarted();
 
@@ -194,7 +200,7 @@ public class networking {
                     NewsDetails newsDetails = gson.fromJson(response.toString(), collectionType);
 
                     newsDetailsResponseListener.requestCompleted(newsDetails);
-                    new OfflineDataLoader(context).saveNewsDetailsToStorage(response, newsDetails.getID());
+                    new OfflineDataLoader(mContext).saveNewsDetailsToStorage(response, newsDetails.getID());
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -242,7 +248,7 @@ public class networking {
         App.getInstance().addToRequestQueue(stringRequest);
     }
 
-    public void getMainJson(final MainJsonResponseListener mainJsonResponseListener, final Context mContext) {
+    public void getMainJson(final MainJsonResponseListener mainJsonResponseListener) {
         mainJsonResponseListener.requestStarted();
 
         String URL = "http://parkapi.3mill.ir/api/Android/getFirstPage?username=admin";
@@ -392,6 +398,7 @@ public class networking {
                             List<GalleryModel> Gallery = gson.fromJson(response.toString(), collectionType);
                             //Log.d(TAG, Gallery.get(0).getImagesCount() + "");
                             folderGalleryResponseListener.requestCompleted(Gallery);
+                            new OfflineDataLoader(mContext).saveFolderGalleryToStorage(response);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -414,7 +421,7 @@ public class networking {
 
     }
 
-    public void getImagesGallery(String folderName, final ImagesGalleryResponseListener imagesGalleryResponseListener) {
+    public void getImagesGallery(final ImagesGalleryResponseListener imagesGalleryResponseListener, final String folderName) {
 
         imagesGalleryResponseListener.requestStarted();
         JsonArrayRequest req = new JsonArrayRequest("http://parkapi.3mill.ir/api/android/GetGalleryImage?username=admin&Foldername=" + Utils.URL_encode(folderName),
@@ -432,6 +439,7 @@ public class networking {
                             List<GalleryModel> Gallery = gson.fromJson(response.toString(), collectionType);
                             //Log.d(TAG, Gallery.get(0).getImagesCount() + "");
                             imagesGalleryResponseListener.requestCompleted(Gallery);
+                            new OfflineDataLoader(mContext).saveImageGalleryToStorage(response, folderName);
 
                         } catch (Exception e) {
                             e.printStackTrace();

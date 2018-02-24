@@ -20,7 +20,7 @@ import com.squareup.picasso.Picasso;
 
 import ir.hezareh.park.Component.Component;
 import ir.hezareh.park.R;
-import ir.hezareh.park.Utils;
+import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.ModelComponent;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 

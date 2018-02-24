@@ -1,4 +1,4 @@
-package ir.hezareh.park;
+package ir.hezareh.park.DataLoading;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,7 +33,7 @@ public class AppUpdate {
         final SharedPreferencesManager preferencesManager = new SharedPreferencesManager(_context);
 
 
-        new networking().updateCheck(new networking.UpdateCheckResponseListener() {
+        new networking(_context).updateCheck(new networking.UpdateCheckResponseListener() {
             @Override
             public void requestStarted() {
 

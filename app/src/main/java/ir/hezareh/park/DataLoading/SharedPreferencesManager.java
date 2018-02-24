@@ -1,4 +1,4 @@
-package ir.hezareh.park;
+package ir.hezareh.park.DataLoading;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 
 import java.util.HashMap;
 
+import ir.hezareh.park.SignIn_SignUp;
 
 
 public class SharedPreferencesManager {

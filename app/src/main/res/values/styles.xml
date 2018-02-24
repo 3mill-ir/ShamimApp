@@ -8,7 +8,7 @@
         <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="lollipop">true</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/ColorAccent</item>
 
         <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/colorPrimary
         </item>
@@ -49,7 +49,7 @@
         <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="lollipop">true</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/ColorAccent</item>
 
         <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/colorPrimary
         </item>

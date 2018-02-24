@@ -103,5 +103,7 @@
     <string name="title_activity_sign_in__sign_up">SignIn/SignUp</string>
     <string name="title_activity_search_results">SearchResults</string>
     <string name="splash_text">شمیم پارک علم و فناوری \n آذربایجان غربی</string>
+    <string name="title_activity_gallery_scrolling">GalleryScrollingActivity</string>
+    <string name="gallery_image_count">%d از %d</string>
 
 </resources>

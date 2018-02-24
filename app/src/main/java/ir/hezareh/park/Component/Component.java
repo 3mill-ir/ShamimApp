@@ -34,16 +34,16 @@ import java.util.List;
 import ir.hezareh.park.Adapters.EqualSpacingItemDecoration;
 import ir.hezareh.park.Adapters.NewsComponentRecycler;
 import ir.hezareh.park.Companies;
+import ir.hezareh.park.DataLoading.SharedPreferencesManager;
+import ir.hezareh.park.DataLoading.networking;
 import ir.hezareh.park.FanBazar;
-import ir.hezareh.park.Gallery;
+import ir.hezareh.park.GalleryFolderActivity;
 import ir.hezareh.park.NewsCategory;
 import ir.hezareh.park.NewsDetailActivity;
 import ir.hezareh.park.R;
-import ir.hezareh.park.SharedPreferencesManager;
-import ir.hezareh.park.Utils;
+import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.WebviewActivity;
 import ir.hezareh.park.models.ModelComponent;
-import ir.hezareh.park.networking;
 import ir.hezareh.park.splash_screen;
 
 
@@ -216,7 +216,7 @@ public class Component {
                     public void onClick(View v) {
 
                         if (preferencesManager.canParticipate()) {
-                            new networking().postPoll(modelComponent.getItem().get(radioGroupAnswers.indexOfChild(Choice)).getID(), new networking.PostPollListener() {
+                            new networking(context).postPoll(modelComponent.getItem().get(radioGroupAnswers.indexOfChild(Choice)).getID(), new networking.PostPollListener() {
                                 @Override
                                 public void requestStarted() {
 
@@ -455,7 +455,7 @@ public class Component {
                 Intent intent;
                 switch (functionality) {
                     case "Gallery":
-                        intent = new Intent(context, Gallery.class);
+                        intent = new Intent(context, GalleryFolderActivity.class);
                         intent.putExtra("URL", URL);
                         context.startActivity(intent);
                         ((Activity) context).overridePendingTransition(0, 0);
@@ -515,7 +515,7 @@ public class Component {
                 Intent intent;
                 switch (functionality) {
                     case "Gallery":
-                        intent = new Intent(context, Gallery.class);
+                        intent = new Intent(context, GalleryFolderActivity.class);
                         context.startActivity(intent);
                         ((Activity) context).overridePendingTransition(0, 0);
                         //((Activity)context).finish();

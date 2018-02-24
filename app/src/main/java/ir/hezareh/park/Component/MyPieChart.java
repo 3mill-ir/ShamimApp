@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ir.hezareh.park.R;
-import ir.hezareh.park.Utils;
+import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.ModelComponent;
 
 public class MyPieChart {

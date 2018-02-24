@@ -29,6 +29,10 @@ import java.util.List;
 import ir.hezareh.park.Adapters.HomeSideMenuListAdapter;
 import ir.hezareh.park.Component.Component;
 import ir.hezareh.park.Component.MyPieChart;
+import ir.hezareh.park.DataLoading.AppUpdate;
+import ir.hezareh.park.DataLoading.OfflineDataLoader;
+import ir.hezareh.park.DataLoading.networking;
+import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.ModelComponent;
 import ir.hezareh.park.models.sidemenu;
 
@@ -56,7 +60,7 @@ public class HomeScreen extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.END)) {
             drawer.closeDrawer(GravityCompat.END);
         } else {
@@ -104,7 +108,7 @@ public class HomeScreen extends AppCompatActivity {
 
 
     public void addComponents(List<ModelComponent> modelComponents) {
-        LinearLayout Root_Layout = (LinearLayout) findViewById(R.id.main_layout);
+        LinearLayout Root_Layout = findViewById(R.id.main_layout);
 
 
         if (modelComponents != null) {
@@ -151,10 +155,8 @@ public class HomeScreen extends AppCompatActivity {
         //create a path for store offline reading later
         new OfflineDataLoader(getApplicationContext()).createExternalStoragePath();
 
-        Log.i(TAG, "onCreate: " + new Utils(getApplicationContext()).isConnectedToInternet());
-
         if (new Utils(getApplicationContext()).isConnectedToInternet()) {
-            new networking().getMainJson(new networking.MainJsonResponseListener() {
+            new networking(getApplicationContext()).getMainJson(new networking.MainJsonResponseListener() {
                 @Override
                 public void requestStarted() {
 
@@ -173,9 +175,8 @@ public class HomeScreen extends AppCompatActivity {
                     //hidepDialog();
                     //swipeRefreshLayout.setRefreshing(false);
                 }
-            }, getApplicationContext());
+            });
         } else {
-
             addComponents(new OfflineDataLoader(getApplicationContext()).ReadOfflineMainJson());
         }
 
@@ -202,8 +203,8 @@ public class HomeScreen extends AppCompatActivity {
         });
 
 
-        firstLevelListView = (ListView) findViewById(R.id.first_level_menu);
-        secondLevelListView = (ListView) findViewById(R.id.second_level_menu);
+        firstLevelListView = findViewById(R.id.first_level_menu);
+        secondLevelListView = findViewById(R.id.second_level_menu);
 
         LayoutInflater inflater = getLayoutInflater();
         ViewGroup secondLevelListViewHeader = (ViewGroup) inflater.inflate(R.layout.menulistheader, secondLevelListView, false);
@@ -242,7 +243,7 @@ public class HomeScreen extends AppCompatActivity {
             }
         });
 
-        new networking().getMainSideMenu(new networking.SideMenuResponseListener() {
+        new networking(getApplicationContext()).getMainSideMenu(new networking.SideMenuResponseListener() {
             @Override
             public void requestStarted() {
 
@@ -292,21 +293,6 @@ public class HomeScreen extends AppCompatActivity {
             }
         });
 
-        DbHandler db = new DbHandler(this);
-
-
-        /**
-         * CRUD Operations
-         * */
-
-
-        //List<ModelComponent> allNews = db.getAllNews(0);
-
-        /*for (ModelComponent.Item cn : allNews) {
-            String log = "Id: " + cn.getID() + " ,Name: " + cn.getText() + " ,Likes: " + cn.getLikes() + " ,Path: " + cn.getImage();
-            // Writing Contacts to log
-            Log.d("Name: ", log);
-        }*/
     }
 
     public ArrayList<sidemenu> getChildListMenuName(ArrayList<sidemenu> list, int ID, boolean isRoot) {

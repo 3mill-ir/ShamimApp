@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import ir.hezareh.park.NewsDetailActivity;
 import ir.hezareh.park.R;
-import ir.hezareh.park.Utils;
+import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.ModelComponent;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
@@ -93,7 +93,7 @@ public class NewsCategoryAdapter extends RecyclerView.Adapter<NewsCategoryAdapte
                 //.resize(5*height/10,5*height/10)
                 //.transform(new CropCircleTransformation())
                 .transform(new RoundedCornersTransformation(20, 0))
-                .placeholder(R.drawable.placeholder)
+                .placeholder(R.drawable.corrupted)
                 //.into(target)
                 .into(holder.thumbnail, new Callback() {
                     @Override

@@ -1,8 +1,6 @@
 package ir.hezareh.park;
 
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +8,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -23,7 +20,11 @@ import java.util.List;
 
 import ir.hezareh.park.Adapters.CompaniesRecycler;
 import ir.hezareh.park.Adapters.CompanyCategoryMenuAdapter;
+import ir.hezareh.park.DataLoading.networking;
+import ir.hezareh.park.Util.GridSpacingItemDecoration;
+import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.CompanyList;
+
 
 public class Companies extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = Companies.class
@@ -39,11 +40,7 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView companyRecyclerView;
 
-    public static int calculateNoOfColumns(Context context) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        return (int) (dpWidth / 180);
-    }
+
 
 
     @Override
@@ -70,15 +67,14 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         companyHeaderCardView = (CardView) findViewById(R.id.card_view);
 
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), calculateNoOfColumns(getApplicationContext()));
-        companyRecyclerView.addItemDecoration(new GridSpacingItemDecoration(calculateNoOfColumns(getApplicationContext()), new Utils(getApplicationContext()).dpToPx(5), true));
-        companyRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), GridSpacingItemDecoration.calculateNoOfColumns(getApplicationContext()));
+        companyRecyclerView.addItemDecoration(new GridSpacingItemDecoration(GridSpacingItemDecoration.calculateNoOfColumns(getApplicationContext()), new Utils(getApplicationContext()).dpToPx(5), true));
         companyRecyclerView.setLayoutManager(mLayoutManager);
         companyRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
 
         companyCategory.setTypeface(new Utils(getApplicationContext()).font_set("BHoma"));
-
 
 
         findViewById(R.id.drawer_icon).setOnClickListener(new View.OnClickListener() {
@@ -103,7 +99,7 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Clicked = position;
-                new networking().getCompanyList(new networking.CompanyListResponseListener() {
+                new networking(getApplicationContext()).getCompanyList(new networking.CompanyListResponseListener() {
                     @Override
                     public void requestStarted() {
 
@@ -136,7 +132,7 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
                                     @Override
                                     public void run() {
                                         swipeRefreshLayout.setRefreshing(true);
-                                        new networking().getCompanyList(new networking.CompanyListResponseListener() {
+                                        new networking(getApplicationContext()).getCompanyList(new networking.CompanyListResponseListener() {
                                             @Override
                                             public void requestStarted() {
 
@@ -171,7 +167,7 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
 
     @Override
     public void onRefresh() {
-        new networking().getCompanyList(new networking.CompanyListResponseListener() {
+        new networking(getApplicationContext()).getCompanyList(new networking.CompanyListResponseListener() {
             @Override
             public void requestStarted() {
 
@@ -201,39 +197,5 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
         });
     }
 
-    private class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
 
-        private int spanCount;
-        private int spacing;
-        private boolean includeEdge;
-
-        GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
-            this.spanCount = spanCount;
-            this.spacing = spacing;
-            this.includeEdge = includeEdge;
-        }
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            int position = parent.getChildAdapterPosition(view); // item position
-            int column = position % spanCount; // item column
-
-            if (includeEdge) {
-                outRect.left = spacing - column * spacing / spanCount; // spacing - column * ((1f / spanCount) * spacing)
-                outRect.right = (column + 1) * spacing / spanCount; // (column + 1) * ((1f / spanCount) * spacing)
-
-                if (position < spanCount) { // top edge
-                    outRect.top = spacing;
-                }
-                outRect.bottom = spacing; // item bottom
-            } else {
-                outRect.left = column * spacing / spanCount; // column * ((1f / spanCount) * spacing)
-                outRect.right = spacing - (column + 1) * spacing / spanCount; // spacing - (column + 1) * ((1f /    spanCount) * spacing)
-                if (position >= spanCount) {
-                    outRect.top = spacing; // item top
-                }
-            }
-        }
-
-    }
 }

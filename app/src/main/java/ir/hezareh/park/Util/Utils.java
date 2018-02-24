@@ -1,4 +1,4 @@
-package ir.hezareh.park;
+package ir.hezareh.park.Util;
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
@@ -25,9 +25,8 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 
-/**
- * Created by rf on 10/11/2017.
- */
+import ir.hezareh.park.R;
+
 
 public class Utils {
     private Context context;
@@ -221,4 +220,6 @@ public class Utils {
         anim.setDuration(500);
         v.startAnimation(anim);
     }
+
+
 }

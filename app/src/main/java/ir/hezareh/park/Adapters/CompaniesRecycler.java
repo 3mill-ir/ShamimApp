@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import ir.hezareh.park.FanBazar;
 import ir.hezareh.park.R;
-import ir.hezareh.park.Utils;
+import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.CompanyList;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 

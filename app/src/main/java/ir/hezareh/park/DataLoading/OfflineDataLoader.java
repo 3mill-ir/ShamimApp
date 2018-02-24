@@ -1,4 +1,4 @@
-package ir.hezareh.park;
+package ir.hezareh.park.DataLoading;
 
 import android.content.Context;
 import android.util.Log;
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import ir.hezareh.park.HomeScreen;
 import ir.hezareh.park.models.GalleryModel;
 import ir.hezareh.park.models.ModelComponent;
 import ir.hezareh.park.models.NewsDetails;
@@ -132,10 +133,9 @@ public class OfflineDataLoader {
         return Gallery;
     }
 
-    public void saveImageGalleryToStorage(JSONArray response, String Image) {
+    public void saveImageGalleryToStorage(JSONArray response, String folderName) {
         try {
-
-            File dirToFile = new File(mContext.getExternalFilesDir(null) + "/Park/" + Image + ".json");
+            File dirToFile = new File(mContext.getExternalFilesDir(null) + "/Park/imagesInFolderGallery" + folderName + ".json");
 
             Writer output = new BufferedWriter(new FileWriter(dirToFile));
             output.write(response.toString());
@@ -147,11 +147,11 @@ public class OfflineDataLoader {
         }
     }
 
-    public List<GalleryModel> ReadOfflineImageGalleryToStorage() {
+    public List<GalleryModel> ReadOfflineImageGalleryToStorage(String folderName) {
         List<GalleryModel> Gallery = null;
         JsonParser parser = new JsonParser();
         try {
-            JsonArray jsonArray = (JsonArray) parser.parse(new FileReader(mContext.getExternalFilesDir(null) + "/Park/GalleryFolder.json"));
+            JsonArray jsonArray = (JsonArray) parser.parse(new FileReader(mContext.getExternalFilesDir(null) + "/Park/imagesInFolderGallery" + folderName + ".json"));
 
             Log.d(TAG, jsonArray.toString());
 
