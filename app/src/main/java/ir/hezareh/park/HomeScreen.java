@@ -245,30 +245,31 @@ public class HomeScreen extends AppCompatActivity {
 
             }
         });
+        if (new Utils(getApplicationContext()).isConnectedToInternet()) {
+            new networking(getApplicationContext()).getMainSideMenu(new networking.SideMenuResponseListener() {
+                @Override
+                public void requestStarted() {
 
-        new networking(getApplicationContext()).getMainSideMenu(new networking.SideMenuResponseListener() {
-            @Override
-            public void requestStarted() {
-
-            }
-
-            @Override
-            public void requestCompleted(ArrayList<sidemenu> sidemenus) {
-
-                for (sidemenu _menu : sidemenus) {
-                    list.add(_menu);
-                    //Log.d("sidemenu1", _menu.getName());
                 }
 
-                HomeSideMenuListAdapter sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), getChildListMenuName(sidemenus, 0, true));
-                firstLevelListView.setAdapter(sideMenuListAdapter);
-            }
+                @Override
+                public void requestCompleted(ArrayList<sidemenu> sidemenus) {
 
-            @Override
-            public void requestEndedWithError(VolleyError error) {
-                new Utils(getApplicationContext()).showToast("server_error", HomeScreen.this);
-            }
-        });
+                    for (sidemenu _menu : sidemenus) {
+                        list.add(_menu);
+                        //Log.d("sidemenu1", _menu.getName());
+                    }
+
+                    HomeSideMenuListAdapter sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), getChildListMenuName(sidemenus, 0, true));
+                    firstLevelListView.setAdapter(sideMenuListAdapter);
+                }
+
+                @Override
+                public void requestEndedWithError(VolleyError error) {
+                    new Utils(getApplicationContext()).showToast("server_error", HomeScreen.this);
+                }
+            });
+        }
 
 
         firstLevelListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -32,10 +32,12 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
 
     private ModelComponent newsModelComponent;
     private Context context;
+    private Boolean haveMoreItem;
 
-    public NewsComponentRecycler(Context _context, ModelComponent _newsModelComponent) {
+    public NewsComponentRecycler(Context _context, ModelComponent _newsModelComponent, Boolean _haveMoreItem) {
         this.context = _context;
         this.newsModelComponent = _newsModelComponent;
+        this.haveMoreItem = _haveMoreItem;
     }
 
     @Override
@@ -116,7 +118,6 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
                     newsModelComponent.getItem().get(position).getUrl(), newsModelComponent.getItem().get(position).getID());
 
 
-
         }
     }
 
@@ -124,7 +125,7 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
     public int getItemViewType(int position) {
         if (position == 0) {
             return TYPE_ITEM;/*return TYPE_HEADER;*/
-        } else if (position == newsModelComponent.getItem().size()) {
+        } else if (position == newsModelComponent.getItem().size() && haveMoreItem) {
             return TYPE_FOOTER;
         }
         return TYPE_ITEM;
@@ -134,8 +135,10 @@ public class NewsComponentRecycler extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public int getItemCount() {
         // return stringArrayList.size() + 2;
-        if (!(newsModelComponent.getItem().isEmpty())) {
+        if (!(newsModelComponent.getItem().isEmpty()) && haveMoreItem) {
             return newsModelComponent.getItem().size() + 1;
+        } else if (!(newsModelComponent.getItem().isEmpty()) && !haveMoreItem) {
+            return newsModelComponent.getItem().size();
         } else {
             return 0;
         }

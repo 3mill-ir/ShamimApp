@@ -26,7 +26,6 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -59,7 +58,6 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
     int ID;
     DbHandler dbHandler = new DbHandler(this);
     private WebView webView;
-    private ProgressBar progressBar;
     private float m_downX;
 
     @Override
@@ -81,7 +79,6 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         show_more = (Button) findViewById(R.id.show_more);
         like_btn = (Button) findViewById(R.id.like_btn);
         dislike_btn = (Button) findViewById(R.id.dislike_btn);
-
 
 
         setSupportActionBar(toolbar);
@@ -134,13 +131,13 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                swipeRefreshLayout.setRefreshing(true);
+
                 if (getIntent().getExtras() != null) {
                     if (new Utils(getApplicationContext()).isConnectedToInternet()) {
                         new networking(getApplicationContext()).getNewsDetails(new networking.NewsDetailsResponseListener() {
                             @Override
                             public void requestStarted() {
-
+                                swipeRefreshLayout.setRefreshing(true);
                             }
 
                             @Override
@@ -151,7 +148,6 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                                 fab.setVisibility(View.VISIBLE);
                                 like_btn.setVisibility(View.VISIBLE);
                                 dislike_btn.setVisibility(View.VISIBLE);
-
                             }
 
                             @Override
@@ -177,32 +173,39 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
 
     @Override
     public void onRefresh() {
-        swipeRefreshLayout.setRefreshing(true);
+
 
         renderPost();
         if (getIntent().getExtras() != null) {
-            new networking(getApplicationContext()).getNewsDetails(new networking.NewsDetailsResponseListener() {
-                @Override
-                public void requestStarted() {
+            if (new Utils(getApplicationContext()).isConnectedToInternet()) {
+                new networking(getApplicationContext()).getNewsDetails(new networking.NewsDetailsResponseListener() {
+                    @Override
+                    public void requestStarted() {
+                        swipeRefreshLayout.setRefreshing(true);
+                    }
 
-                }
+                    @Override
+                    public void requestCompleted(NewsDetails newsDetails) {
+                        addNews(newsDetails);
+                        swipeRefreshLayout.setRefreshing(false);
+                        ID = newsDetails.getID();
+                        findViewById(R.id.fab).setVisibility(View.VISIBLE);
 
-                @Override
-                public void requestCompleted(NewsDetails newsDetails) {
-                    addNews(newsDetails);
-                    swipeRefreshLayout.setRefreshing(false);
-                    ID = newsDetails.getID();
-                    findViewById(R.id.fab).setVisibility(View.VISIBLE);
+                        //Log.e("can",webView.canScrollVertically(0)+"");
+                    }
 
-                    //Log.e("can",webView.canScrollVertically(0)+"");
-                }
-
-                @Override
-                public void requestEndedWithError(VolleyError error) {
-                    new Utils(getApplicationContext()).showToast("server_error", NewsDetailActivity.this);
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-            }, getIntent().getExtras().getString("URL"));
+                    @Override
+                    public void requestEndedWithError(VolleyError error) {
+                        new Utils(getApplicationContext()).showToast("server_error", NewsDetailActivity.this);
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, getIntent().getExtras().getString("URL"));
+            } else {
+                swipeRefreshLayout.setRefreshing(true);
+                addNews(new OfflineDataLoader(getApplicationContext()).ReadOfflineNewsDetails(getIntent().getExtras().getInt("NewsID")));
+                swipeRefreshLayout.setRefreshing(false);
+                ID = getIntent().getExtras().getInt("NewsID");
+            }
         }
 
     }
@@ -214,7 +217,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
             commentRecycler = new CommentRecycler(getApplicationContext(), newsDetails.getComments());
             commentRecyclerView.setAdapter(commentRecycler);
 
-            relatedNewsComponentRecycler = new NewsComponentRecycler(getApplicationContext(), newsDetails.getRelatedTopics());
+            relatedNewsComponentRecycler = new NewsComponentRecycler(getApplicationContext(), newsDetails.getRelatedTopics(), false);
             newsRecyclerView.setAdapter(relatedNewsComponentRecycler);
 
             String text = "<html> <head>\n" +
@@ -376,59 +379,67 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
 
             case R.id.like_btn:
                 new Utils(getApplicationContext()).scaleView(like_btn, 0.3f, 1f);
-                if (dbHandler.addVote(ID, 1)) {
-                    new networking(getApplicationContext()).postLike(ID, new networking.PostLikeResponseListener() {
-                        @Override
-                        public void requestStarted() {
+                if (new Utils(getApplicationContext()).isConnectedToInternet()) {
+                    if (dbHandler.addVote(ID, 1)) {
+                        new networking(getApplicationContext()).postLike(ID, new networking.PostLikeResponseListener() {
+                            @Override
+                            public void requestStarted() {
 
-                        }
+                            }
 
-                        @Override
-                        public void requestCompleted(String response) {
-                            Drawable mDrawable = getResources().getDrawable(R.drawable.ic_thumb_up_green_24dp);
-                            mDrawable.setColorFilter(new
-                                    PorterDuffColorFilter(Color.parseColor("#FF24DC00"), PorterDuff.Mode.MULTIPLY));
-                            new Utils(getApplicationContext()).showToast("confirmation", NewsDetailActivity.this);
-                        }
+                            @Override
+                            public void requestCompleted(String response) {
+                                Drawable mDrawable = getResources().getDrawable(R.drawable.ic_thumb_up_green_24dp);
+                                mDrawable.setColorFilter(new
+                                        PorterDuffColorFilter(Color.parseColor("#FF24DC00"), PorterDuff.Mode.MULTIPLY));
+                                new Utils(getApplicationContext()).showToast("confirmation", NewsDetailActivity.this);
+                            }
 
-                        @Override
-                        public void requestEndedWithError(VolleyError error) {
-                            new Utils(getApplicationContext()).showToast("server_error", NewsDetailActivity.this);
-                        }
-                    });
+                            @Override
+                            public void requestEndedWithError(VolleyError error) {
+                                new Utils(getApplicationContext()).showToast("server_error", NewsDetailActivity.this);
+                            }
+                        });
 
+                    } else {
+                        new Utils(getApplicationContext()).showToast("duplicate_entry", NewsDetailActivity.this);
+                    }
                 } else {
-                    new Utils(getApplicationContext()).showToast("duplicate_entry", NewsDetailActivity.this);
+                    new Utils(getApplicationContext()).showToast("network_error", NewsDetailActivity.this);
                 }
 
                 break;
 
             case R.id.dislike_btn:
                 new Utils(getApplicationContext()).scaleView(dislike_btn, 0.3f, 1f);
-                if (dbHandler.addVote(ID, 1)) {
-                    new networking(getApplicationContext()).postDislike(ID, new networking.PostDislikeResponseListener() {
-                        @Override
-                        public void requestStarted() {
+                if (new Utils(getApplicationContext()).isConnectedToInternet()) {
+                    if (dbHandler.addVote(ID, 1)) {
+                        new networking(getApplicationContext()).postDislike(ID, new networking.PostDislikeResponseListener() {
+                            @Override
+                            public void requestStarted() {
 
-                        }
+                            }
 
-                        @Override
-                        public void requestCompleted(String response) {
-                            dbHandler.addVote(ID, 1);
-                            Drawable mDrawable = getResources().getDrawable(R.drawable.ic_thumb_down_red_24dp);
-                            mDrawable.setColorFilter(new
-                                    PorterDuffColorFilter(Color.parseColor("#FFDE0000"), PorterDuff.Mode.MULTIPLY));
-                            new Utils(getApplicationContext()).showToast("confirmation", NewsDetailActivity.this);
-                        }
+                            @Override
+                            public void requestCompleted(String response) {
+                                dbHandler.addVote(ID, 1);
+                                Drawable mDrawable = getResources().getDrawable(R.drawable.ic_thumb_down_red_24dp);
+                                mDrawable.setColorFilter(new
+                                        PorterDuffColorFilter(Color.parseColor("#FFDE0000"), PorterDuff.Mode.MULTIPLY));
+                                new Utils(getApplicationContext()).showToast("confirmation", NewsDetailActivity.this);
+                            }
 
-                        @Override
-                        public void requestEndedWithError(VolleyError error) {
-                            new Utils(getApplicationContext()).showToast("server_error", NewsDetailActivity.this);
+                            @Override
+                            public void requestEndedWithError(VolleyError error) {
+                                new Utils(getApplicationContext()).showToast("server_error", NewsDetailActivity.this);
 
-                        }
-                    });
+                            }
+                        });
+                    } else {
+                        new Utils(getApplicationContext()).showToast("duplicate_entry", NewsDetailActivity.this);
+                    }
                 } else {
-                    new Utils(getApplicationContext()).showToast("duplicate_entry", NewsDetailActivity.this);
+                    new Utils(getApplicationContext()).showToast("network_error", NewsDetailActivity.this);
                 }
                 break;
 

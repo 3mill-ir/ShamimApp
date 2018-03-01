@@ -89,7 +89,7 @@ public class Component {
     public RecyclerView News(int width, int height, ModelComponent modelComponent) {
         RecyclerView NewsRecycler = new RecyclerView(context);
 
-        NewsComponentRecycler newsComponentRecycler = new NewsComponentRecycler(context, modelComponent);
+        NewsComponentRecycler newsComponentRecycler = new NewsComponentRecycler(context, modelComponent, true);
 
         LinearLayout.LayoutParams NewsRecyclerLayoutParams = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT);
         NewsRecyclerLayoutParams.gravity = Gravity.CENTER_VERTICAL;

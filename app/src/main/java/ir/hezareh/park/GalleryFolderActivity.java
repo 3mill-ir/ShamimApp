@@ -66,7 +66,6 @@ public class GalleryFolderActivity extends AppCompatActivity implements SwipeRef
                             galleryFolderAdapter = new GalleryFolderAdapter(getApplicationContext(), Gallery);
                             GalleryRecycler.setAdapter(galleryFolderAdapter);
                             swipeRefreshLayout.setRefreshing(false);
-
                         }
 
                         @Override
@@ -82,7 +81,6 @@ public class GalleryFolderActivity extends AppCompatActivity implements SwipeRef
                         GalleryRecycler.setAdapter(galleryFolderAdapter);
                         swipeRefreshLayout.setRefreshing(false);
                     }
-
                 }
 
             }

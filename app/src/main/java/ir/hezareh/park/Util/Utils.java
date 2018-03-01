@@ -200,7 +200,6 @@ public class Utils {
             TextView text = layout.findViewById(R.id.text);
             Drawable d;
             switch (message_type) {
-
                 case "network_error":
                     d = activity.getResources().getDrawable(R.drawable.ic_signal_wifi_off_black_24dp);
                     text.setText("تنظیمات اینترنت را بررسی نمائید");
@@ -227,7 +226,6 @@ public class Utils {
                     break;
                 default:
                     d = activity.getResources().getDrawable(R.drawable.ic_signal_wifi_off_black_24dp);
-
             }
 
             text.setCompoundDrawablePadding(dpToPx(5));
