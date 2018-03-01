@@ -142,6 +142,7 @@ public class HomeScreen extends AppCompatActivity {
 
         new Utils(getApplicationContext()).overrideFonts(Root_Layout, "BYekan");
 
+
     }
 
 
@@ -193,8 +194,9 @@ public class HomeScreen extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
+        ((TextView) findViewById(R.id.side_menu_header_text)).setTypeface(new Utils(getApplicationContext()).font_set("BYekan"));
         ((TextView) findViewById(R.id.header_text)).setTypeface(new Utils(getApplicationContext()).font_set("BYekan"));
+
 
         findViewById(R.id.drawer_icon).setOnClickListener(new View.OnClickListener() {
             @Override
