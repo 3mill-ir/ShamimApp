@@ -70,7 +70,7 @@ public class GalleryImagesActivity extends AppCompatActivity {
 
                     @Override
                     public void requestEndedWithError(VolleyError error) {
-
+                        new Utils(getApplicationContext()).showToast("server_error", GalleryImagesActivity.this);
                     }
                 }, getIntent().getExtras().getString(GalleryFolderAdapter.FOLDER_KEY));
             } else {

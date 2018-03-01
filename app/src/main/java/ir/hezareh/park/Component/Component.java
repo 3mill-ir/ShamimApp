@@ -19,7 +19,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
@@ -44,7 +43,6 @@ import ir.hezareh.park.R;
 import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.WebviewActivity;
 import ir.hezareh.park.models.ModelComponent;
-import ir.hezareh.park.splash_screen;
 
 
 public class Component {
@@ -67,38 +65,13 @@ public class Component {
         for (ModelComponent.Item item : Items) {
             DefaultSliderView demoSlider = new DefaultSliderView(context);
             demoSlider//.description()
-                    .image(item.getImage().toString())
+                    .image(Utils.URL_encode(item.getImage().toString()))
                     .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                         @Override
                         public void onSliderClick(BaseSliderView slider) {
-                            Intent k = new Intent(context, splash_screen.class);
-                            context.startActivity(k);
-
-                            //AlertDialog dialog = new AlertDialog.Builder(context).setMessage("دیالوگ در ارتباط").show();
-                            //TextView textView = (TextView) dialog.findViewById(android.R.id.message);
-
-                            //textView.setTypeface(new Utils(context).font_set("BYekan"));
-
-                            /*SweetAlertDialog dialog=new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE);
-
-                            TextView textView = dialog.findViewById(android.R.id.message);
-                            new Utils(context).overrideFonts(textView,"BHoma");
-                            dialog
-                                    .setTitleText("آیا مطمعنید؟")
-                                    .setContentText("Won't be able to recover this file!")
-                                    .setConfirmText("Yes,delete it!")
-                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                        @Override
-                                        public void onClick(SweetAlertDialog sDialog) {
-                                            sDialog
-                                                    .setTitleText("Deleted!")
-                                                    .setContentText("Your imaginary file has been deleted!")
-                                                    .setConfirmText("OK")
-                                                    .setConfirmClickListener(null)
-                                                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                                        }
-                                    })
-                                    .show();*/
+                            //progressLoading loading=new progressLoading(context);
+                            //loading.show();
+                            new Utils(context).showToast("server_error", (Activity) context);
                         }
                     });
             ImageSlider.addSlider(demoSlider);
@@ -226,18 +199,17 @@ public class Component {
                                 public void requestCompleted(String response) {
 
                                     preferencesManager.set_ParticipatedInPoll(true);
-
-                                    Toast.makeText(context, "نظر شما ثبت گردید!", Toast.LENGTH_SHORT).show();
+                                    new Utils(context).showToast("confirmation", (Activity) context);
                                 }
 
                                 @Override
                                 public void requestEndedWithError(VolleyError error) {
-                                    Toast.makeText(context, "نظر شما ثبت نگردید!", Toast.LENGTH_SHORT).show();
+                                    new Utils(context).showToast("server_error", (Activity) context);
 
                                 }
                             });
                         } else {
-                            Toast.makeText(context, "شما قبلا در نظرسنجی شرکت کرده اید!", Toast.LENGTH_SHORT).show();
+                            new Utils(context).showToast("duplicate_entry", (Activity) context);
                         }
                     }
 
@@ -327,14 +299,14 @@ public class Component {
         for (ModelComponent.GalleryItem item : modelComponent.getGalleryItem()) {
             DefaultSliderView demoSlider = new DefaultSliderView(context);
             demoSlider//.description()
-                    .image(item.getImage().toString())
-                    .setScaleType(BaseSliderView.ScaleType.Fit);
-                    /*.setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
+                    .image(Utils.URL_encode(item.getImage().toString()))
+                    .setScaleType(BaseSliderView.ScaleType.Fit)
+                    .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                         @Override
                         public void onSliderClick(BaseSliderView slider) {
-                            setClickListener(s,modelComponent.getGalleryItem().get(0).getFunctionality());
+
                         }
-                    });*/
+                    });
             setOnSliderClickListener(demoSlider, modelComponent.getGalleryItem().get(0).getFunctionality());
 
             GalleryLayout.addSlider(demoSlider);

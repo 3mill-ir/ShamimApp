@@ -1,8 +1,6 @@
 package ir.hezareh.park;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -95,7 +93,7 @@ public class NewsCategory extends AppCompatActivity {
                 @Override
                 public void requestEndedWithError(VolleyError error) {
                     VolleyLog.d(TAG, "Error: " + error.getMessage());
-                    //hideDialog();
+                    new Utils(getApplicationContext()).showToast("server_error", NewsCategory.this);
                 }
             });
         } else {
@@ -110,14 +108,14 @@ public class NewsCategory extends AppCompatActivity {
         }
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
 
         new Utils(getApplicationContext()).overrideFonts(findViewById(R.id.header_text), "BYekan");
         ((TextView) findViewById(R.id.header_text)).setText("لیست اخبار");
@@ -227,6 +225,7 @@ public class NewsCategory extends AppCompatActivity {
                             @Override
                             public void requestEndedWithError(VolleyError error) {
                                 swipeRefreshLayout.setRefreshing(false);
+                                new Utils(getActivity()).showToast("server_error", getActivity());
                             }
                         });
                     }
@@ -263,6 +262,8 @@ public class NewsCategory extends AppCompatActivity {
                 @Override
                 public void requestEndedWithError(VolleyError error) {
                     swipeRefreshLayout.setRefreshing(false);
+                    new Utils(getActivity()).showToast("server_error", getActivity());
+
                 }
             });
         }

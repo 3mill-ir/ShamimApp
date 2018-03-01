@@ -120,8 +120,7 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
                     public void requestEndedWithError(VolleyError error) {
                         //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
                         swipeRefreshLayout.setRefreshing(false);
-                        // hide the progress dialog
-                        //hidepDialog();
+                        new Utils(getApplicationContext()).showToast("server_error", Companies.this);
                         //swipeRefreshLayout.setRefreshing(false);
                     }
                 });

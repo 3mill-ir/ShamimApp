@@ -15,6 +15,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.List;
 
 import ir.hezareh.park.R;
+import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.GalleryModel;
 
 public class GalleryImagesAdapter extends RecyclerView.Adapter<GalleryImagesAdapter.MyViewHolder> {
@@ -38,7 +39,7 @@ public class GalleryImagesAdapter extends RecyclerView.Adapter<GalleryImagesAdap
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
-        Glide.with(mContext).load(_galleryModels.get(position).getImage())
+        Glide.with(mContext).load(Utils.URL_encode(_galleryModels.get(position).getImage()))
                 .thumbnail(0.5f)
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

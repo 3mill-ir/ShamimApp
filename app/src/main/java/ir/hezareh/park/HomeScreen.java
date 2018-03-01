@@ -16,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 
@@ -33,6 +32,7 @@ import ir.hezareh.park.DataLoading.AppUpdate;
 import ir.hezareh.park.DataLoading.OfflineDataLoader;
 import ir.hezareh.park.DataLoading.networking;
 import ir.hezareh.park.Util.Utils;
+import ir.hezareh.park.Util.progressLoading;
 import ir.hezareh.park.models.ModelComponent;
 import ir.hezareh.park.models.sidemenu;
 
@@ -47,7 +47,7 @@ public class HomeScreen extends AppCompatActivity {
 
     ArrayList<sidemenu> list = new ArrayList<>();
     ArrayList<Integer> global = new ArrayList<>();
-
+    progressLoading loading;
     int pos = 0;
 
 
@@ -66,7 +66,7 @@ public class HomeScreen extends AppCompatActivity {
         } else {
             if (back_pressed + 2000 > System.currentTimeMillis()) super.onBackPressed();
             else
-                Toast.makeText(getBaseContext(), "برای خروج از برنامه دوباره فشار دهید", Toast.LENGTH_SHORT).show();
+                new Utils(getApplicationContext()).showToast("exit", HomeScreen.this);
             back_pressed = System.currentTimeMillis();
         }
     }
@@ -151,7 +151,7 @@ public class HomeScreen extends AppCompatActivity {
         setContentView(R.layout.activity_home_screen);
 
         width = new Utils(getApplicationContext()).getDisplayMetrics().widthPixels;
-
+        loading = new progressLoading(HomeScreen.this);
         //create a path for store offline reading later
         new OfflineDataLoader(getApplicationContext()).createExternalStoragePath();
 
@@ -159,20 +159,21 @@ public class HomeScreen extends AppCompatActivity {
             new networking(getApplicationContext()).getMainJson(new networking.MainJsonResponseListener() {
                 @Override
                 public void requestStarted() {
-
+                    loading.show();
                 }
 
                 @Override
                 public void requestCompleted(List<ModelComponent> modelComponents) {
 
                     addComponents(modelComponents);
+                    loading.dismiss();
                 }
 
                 @Override
                 public void requestEndedWithError(VolleyError error) {
-                    //Toast.makeText(getApplicationContext(),error.getMessage(), Toast.LENGTH_SHORT).show();
                     // hide the progress dialog
-                    //hidepDialog();
+                    loading.dismiss();
+                    new Utils(getApplicationContext()).showToast("server_error", HomeScreen.this);
                     //swipeRefreshLayout.setRefreshing(false);
                 }
             });
@@ -263,8 +264,7 @@ public class HomeScreen extends AppCompatActivity {
 
             @Override
             public void requestEndedWithError(VolleyError error) {
-                //Toast.makeText(getApplicationContext(),error.getMessage(), Toast.LENGTH_SHORT).show();
-                //hidepDialog();
+                new Utils(getApplicationContext()).showToast("server_error", HomeScreen.this);
             }
         });
 

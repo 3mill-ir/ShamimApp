@@ -69,9 +69,7 @@ public class FanBazar extends AppCompatActivity {
 
             @Override
             public void requestEndedWithError(VolleyError error) {
-                //Toast.makeText(getApplicationContext(),error.getMessage(), Toast.LENGTH_SHORT).show();
-                // hide the progress dialog
-                //hideDialog();
+                new Utils(getApplicationContext()).showToast("server_error", FanBazar.this);
                 //swipeRefreshLayout.setRefreshing(false);
             }
         });

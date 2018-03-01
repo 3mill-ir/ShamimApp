@@ -1,4 +1,4 @@
-package ir.hezareh.park;
+package ir.hezareh.park.Util;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -10,24 +10,20 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 
 import ir.hezareh.park.DataLoading.networking;
-import ir.hezareh.park.Util.Utils;
+import ir.hezareh.park.R;
 
 
 public class CommentDialog extends Dialog implements android.view.View.OnClickListener {
 
-    Activity _activity;
+    private Activity _activity;
     //public Dialog d;
-    Button yes, no;
-    EditText comment;
-    EditText name;
-    int _postID;
-    ImageView imageView;
+    private EditText comment;
+    private EditText name;
+    private int _postID;
 
     public CommentDialog(Activity activity, int postID) {
         super(activity);
@@ -50,13 +46,13 @@ public class CommentDialog extends Dialog implements android.view.View.OnClickLi
 
         comment = findViewById(R.id.comment_text);
         name = findViewById(R.id.name);
-        yes = findViewById(R.id.confirm);
-        no = findViewById(R.id.cancel);
+        Button confirm = findViewById(R.id.confirm);
+        Button cancel = findViewById(R.id.cancel);
 
         new Utils(_activity).overrideFonts(findViewById(R.id.comments_layout), "BHoma");
 
-        yes.setOnClickListener(this);
-        no.setOnClickListener(this);
+        confirm.setOnClickListener(this);
+        cancel.setOnClickListener(this);
     }
 
     @Override
@@ -64,6 +60,7 @@ public class CommentDialog extends Dialog implements android.view.View.OnClickLi
         switch (v.getId()) {
             case R.id.confirm:
                 if (input_validation()) {
+                    dismiss();
                     new networking(getContext()).postComment(_postID, comment.getText().toString(), new networking.PostCommentResponseListener() {
                         @Override
                         public void requestStarted() {
@@ -73,11 +70,12 @@ public class CommentDialog extends Dialog implements android.view.View.OnClickLi
                         @Override
                         public void requestCompleted(String response) {
                             Log.d("response", response + "");
-                            Toast.makeText(_activity, "نظر شما ثبت گردید!", Toast.LENGTH_SHORT).show();
+                            new Utils(_activity).showToast("confirmation", _activity);
                         }
 
                         @Override
                         public void requestEndedWithError(VolleyError error) {
+                            new Utils(_activity).showToast("server_error", _activity);
 
                         }
                     });
@@ -96,11 +94,11 @@ public class CommentDialog extends Dialog implements android.view.View.OnClickLi
         String _comment = comment.getText().toString();
         String _name = name.getText().toString();
 
-        if (_name.length() < 3) {
+        if (_name.length() < 1) {
             name.requestFocus();
             valid = false;
         }
-        if (_comment.length() < 8) {
+        if (_comment.length() < 1) {
             comment.requestFocus();
             valid = false;
         }

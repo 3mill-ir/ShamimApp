@@ -2,6 +2,7 @@ package ir.hezareh.park.Util;
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,12 +10,14 @@ import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +27,7 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import ir.hezareh.park.R;
 
@@ -183,6 +187,59 @@ public class Utils {
             slide.setRepeatMode(Animation.RESTART);
             slide.setInterpolator(new LinearInterpolator());
             textView.startAnimation(slide);
+        }
+    }
+
+    public void showToast(String message_type, Activity activity) {
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        if (inflater != null) {
+            View layout = inflater.inflate(R.layout.custom_toast_layout,
+                    (ViewGroup) activity.findViewById(R.id.toast_layout_root));
+
+            TextView text = layout.findViewById(R.id.text);
+            Drawable d;
+            switch (message_type) {
+
+                case "network_error":
+                    d = activity.getResources().getDrawable(R.drawable.ic_signal_wifi_off_black_24dp);
+                    text.setText("تنظیمات اینترنت را بررسی نمائید");
+                    break;
+
+                case "server_error":
+                    d = activity.getResources().getDrawable(R.drawable.ic_error_outline_black_24dp);
+                    text.setText("سرور در دسترس نیست، بعداً تلاش کنید");
+                    break;
+
+                case "confirmation":
+                    d = activity.getResources().getDrawable(R.drawable.ic_done_black_24dp);
+                    text.setText("نظر شما ثبت گردید");
+                    break;
+
+                case "duplicate_entry":
+                    d = activity.getResources().getDrawable(R.drawable.ic_error_outline_black_24dp);
+                    text.setText("شما قبلا در نظرسنجی شرکت کرده اید");
+                    break;
+
+                case "exit":
+                    d = activity.getResources().getDrawable(R.drawable.ic_exit_to_app_black_24dp);
+                    text.setText("برای خروج از برنامه دوباره فشار دهید");
+                    break;
+                default:
+                    d = activity.getResources().getDrawable(R.drawable.ic_signal_wifi_off_black_24dp);
+
+            }
+
+            text.setCompoundDrawablePadding(dpToPx(5));
+            text.setCompoundDrawablesWithIntrinsicBounds(null, null, d, null);
+
+
+            text.setTypeface(font_set("BYekan"));
+
+            Toast toast = new Toast(context);
+            toast.setDuration(Toast.LENGTH_LONG);
+            toast.setView(layout);
+            toast.show();
         }
     }
 

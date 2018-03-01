@@ -71,6 +71,7 @@ public class GalleryFolderActivity extends AppCompatActivity implements SwipeRef
 
                         @Override
                         public void requestEndedWithError(VolleyError error) {
+                            new Utils(getApplicationContext()).showToast("server_error", GalleryFolderActivity.this);
                             swipeRefreshLayout.setRefreshing(false);
                         }
                     });
@@ -121,6 +122,8 @@ public class GalleryFolderActivity extends AppCompatActivity implements SwipeRef
             @Override
             public void requestEndedWithError(VolleyError error) {
                 swipeRefreshLayout.setRefreshing(false);
+                new Utils(getApplicationContext()).showToast("server_error", GalleryFolderActivity.this);
+
             }
         });
     }

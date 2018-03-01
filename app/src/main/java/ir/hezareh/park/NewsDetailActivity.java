@@ -28,7 +28,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.squareup.picasso.Picasso;
@@ -39,6 +38,7 @@ import ir.hezareh.park.Adapters.NewsComponentRecycler;
 import ir.hezareh.park.DataLoading.DbHandler;
 import ir.hezareh.park.DataLoading.OfflineDataLoader;
 import ir.hezareh.park.DataLoading.networking;
+import ir.hezareh.park.Util.CommentDialog;
 import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.NewsDetails;
 
@@ -156,6 +156,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
 
                             @Override
                             public void requestEndedWithError(VolleyError error) {
+                                new Utils(getApplicationContext()).showToast("server_error", NewsDetailActivity.this);
                                 swipeRefreshLayout.setRefreshing(false);
                             }
                         }, getIntent().getExtras().getString("URL"));
@@ -198,6 +199,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
 
                 @Override
                 public void requestEndedWithError(VolleyError error) {
+                    new Utils(getApplicationContext()).showToast("server_error", NewsDetailActivity.this);
                     swipeRefreshLayout.setRefreshing(false);
                 }
             }, getIntent().getExtras().getString("URL"));
@@ -311,10 +313,10 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
         });
         //webView.clearCache(true);
         //webView.clearHistory();
-        webView.getSettings().setJavaScriptEnabled(true);
         webView.setHorizontalScrollBarEnabled(false);
-        webView.getSettings().setDefaultTextEncodingName("utf-8");
 
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDefaultTextEncodingName("utf-8");
         webView.getSettings().setAppCacheMaxSize(5 * 1024 * 1024); // 5MB
         webView.getSettings().setAppCachePath(getApplicationContext().getCacheDir().getAbsolutePath());
         webView.getSettings().setAllowFileAccess(true);
@@ -383,22 +385,20 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
 
                         @Override
                         public void requestCompleted(String response) {
-
-
                             Drawable mDrawable = getResources().getDrawable(R.drawable.ic_thumb_up_green_24dp);
                             mDrawable.setColorFilter(new
                                     PorterDuffColorFilter(Color.parseColor("#FF24DC00"), PorterDuff.Mode.MULTIPLY));
-                            Toast.makeText(getApplicationContext(), "نظر شما ثبت گردید!", Toast.LENGTH_SHORT).show();
+                            new Utils(getApplicationContext()).showToast("confirmation", NewsDetailActivity.this);
                         }
 
                         @Override
                         public void requestEndedWithError(VolleyError error) {
-
+                            new Utils(getApplicationContext()).showToast("server_error", NewsDetailActivity.this);
                         }
                     });
 
                 } else {
-                    Toast.makeText(getApplicationContext(), "نظر شما قبلا ثبت شده!", Toast.LENGTH_SHORT).show();
+                    new Utils(getApplicationContext()).showToast("duplicate_entry", NewsDetailActivity.this);
                 }
 
                 break;
@@ -418,16 +418,17 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                             Drawable mDrawable = getResources().getDrawable(R.drawable.ic_thumb_down_red_24dp);
                             mDrawable.setColorFilter(new
                                     PorterDuffColorFilter(Color.parseColor("#FFDE0000"), PorterDuff.Mode.MULTIPLY));
-                            Toast.makeText(getApplicationContext(), "نظر شما ثبت گردید!", Toast.LENGTH_SHORT).show();
+                            new Utils(getApplicationContext()).showToast("confirmation", NewsDetailActivity.this);
                         }
 
                         @Override
                         public void requestEndedWithError(VolleyError error) {
+                            new Utils(getApplicationContext()).showToast("server_error", NewsDetailActivity.this);
 
                         }
                     });
                 } else {
-                    Toast.makeText(getApplicationContext(), "نظر شما قبلا ثبت شده!", Toast.LENGTH_SHORT).show();
+                    new Utils(getApplicationContext()).showToast("duplicate_entry", NewsDetailActivity.this);
                 }
                 break;
 

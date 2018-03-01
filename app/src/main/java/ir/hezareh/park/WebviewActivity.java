@@ -76,7 +76,8 @@ public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLa
     @Override
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
-        webView.loadUrl(getIntent().getExtras().getString("URL"));
+        if (getIntent().getExtras() != null)
+            webView.loadUrl(getIntent().getExtras().getString("URL"));
         //((ImageView) findViewById(R.id.news_detail_header)).setBackgroundResource(R.drawable.shadow_top);
         //renderPost();
         swipeRefreshLayout.setRefreshing(false);
