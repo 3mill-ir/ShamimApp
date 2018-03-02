@@ -28,6 +28,7 @@ import ir.hezareh.park.HomeScreen;
 import ir.hezareh.park.models.GalleryModel;
 import ir.hezareh.park.models.ModelComponent;
 import ir.hezareh.park.models.NewsDetails;
+import ir.hezareh.park.models.sidemenu;
 
 
 public class OfflineDataLoader {
@@ -114,7 +115,41 @@ public class OfflineDataLoader {
         }
     }
 
-    public List<GalleryModel> ReadOfflineFolderGalleryToStorage() {
+    public void saveMainMenuToStorage(JSONArray response) {
+        try {
+
+            File dirToFile = new File(mContext.getExternalFilesDir(null) + "/Park/MainMenu.json");
+
+            Writer output = new BufferedWriter(new FileWriter(dirToFile));
+            output.write(response.toString());
+
+            output.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<sidemenu> ReadOfflineMainMenu() {
+        List<sidemenu> sidemenus = null;
+        JsonParser parser = new JsonParser();
+        try {
+            JsonArray jsonArray = (JsonArray) parser.parse(new FileReader(mContext.getExternalFilesDir(null) + "/Park/MainMenu.json"));
+
+            Log.d(TAG, jsonArray.toString());
+
+            Gson gson = new Gson();
+            Type collectionType = new TypeToken<Collection<sidemenu>>() {
+            }.getType();
+
+            sidemenus = gson.fromJson(jsonArray.toString(), collectionType);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return sidemenus;
+    }
+
+    public List<GalleryModel> ReadOfflineFolderGallery() {
         List<GalleryModel> Gallery = null;
         JsonParser parser = new JsonParser();
         try {
@@ -147,7 +182,7 @@ public class OfflineDataLoader {
         }
     }
 
-    public List<GalleryModel> ReadOfflineImageGalleryToStorage(String folderName) {
+    public List<GalleryModel> ReadOfflineImageGallery(String folderName) {
         List<GalleryModel> Gallery = null;
         JsonParser parser = new JsonParser();
         try {

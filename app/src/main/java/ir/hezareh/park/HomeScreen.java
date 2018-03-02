@@ -41,11 +41,12 @@ public class HomeScreen extends AppCompatActivity {
     ListView firstLevelListView;
     ListView secondLevelListView;
 
-    ArrayList<sidemenu> list = new ArrayList<>();
+    ArrayList<sidemenu> list;
     ArrayList<Integer> global = new ArrayList<>();
     progressLoading loading;
     int pos = 0;
     DrawerLayout drawer;
+    HomeSideMenuListAdapter sideMenuListAdapter;
 
 
     @Override
@@ -219,12 +220,8 @@ public class HomeScreen extends AppCompatActivity {
                 @Override
                 public void requestCompleted(ArrayList<sidemenu> sidemenus) {
 
-                    for (sidemenu _menu : sidemenus) {
-                        list.add(_menu);
-                        //Log.d("sidemenu1", _menu.getFunctionality().toString());
-
-                    }
-                    HomeSideMenuListAdapter sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), getChildListMenuName(sidemenus, 0, true));
+                    list = new ArrayList<>(sidemenus);
+                    sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), getChildListMenuName(list, 0, true));
                     firstLevelListView.setAdapter(sideMenuListAdapter);
                 }
 
@@ -233,6 +230,13 @@ public class HomeScreen extends AppCompatActivity {
                     new Utils(getApplicationContext()).showToast("server_error", HomeScreen.this);
                 }
             });
+        } else {
+            if (new OfflineDataLoader(getApplicationContext()).ReadOfflineMainMenu() != null) {
+                list = new ArrayList<>(new OfflineDataLoader(getApplicationContext()).ReadOfflineMainMenu());
+                sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), getChildListMenuName(list, 0, true));
+                firstLevelListView.setAdapter(sideMenuListAdapter);
+            }
+
         }
 
 
@@ -244,7 +248,7 @@ public class HomeScreen extends AppCompatActivity {
                     secondLevelListView.setVisibility(View.VISIBLE);
                     //Log.e("ID", "" + (int) id);
                     global.add((int) id);
-                    HomeSideMenuListAdapter sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), new HomeScreen().getChildListMenuName(list, (int) id, false));
+                    sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), new HomeScreen().getChildListMenuName(list, (int) id, false));
                     secondLevelListView.setAdapter(sideMenuListAdapter);
 
                     //new Component(getApplicationContext()).setClickListener(view,list.get(position).getFunctionality().toString(),list.get(position).getUrl().toString(),0);
@@ -274,8 +278,8 @@ public class HomeScreen extends AppCompatActivity {
                     //pos is for storing last item ID clicked by user
                     ++pos;
                     global.add((int) id);
-                    HomeSideMenuListAdapter menuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), getChildListMenuName(list, (int) id, false));
-                    secondLevelListView.setAdapter(menuListAdapter);
+                    sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), getChildListMenuName(list, (int) id, false));
+                    secondLevelListView.setAdapter(sideMenuListAdapter);
                 } else {
                     for (sidemenu sidemenu : list) {
                         if (sidemenu.getID() == (int) id) {
@@ -326,7 +330,6 @@ public class HomeScreen extends AppCompatActivity {
                 intent = new Intent(this, NewsCategory.class);
                 intent.putExtra("URL", URL);
                 intent.putExtra("ItemPos", currentItemPos);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 overridePendingTransition(0, 0);
                 //finish();
@@ -335,7 +338,6 @@ public class HomeScreen extends AppCompatActivity {
                 intent = new Intent(this, NewsDetailActivity.class);
                 intent.putExtra("URL", URL);
                 intent.putExtra("NewsID", ID);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 //((Activity) context).overridePendingTransition(0, 0);
                 //finish();

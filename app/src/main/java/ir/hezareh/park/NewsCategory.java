@@ -79,18 +79,18 @@ public class NewsCategory extends AppCompatActivity {
 
                 @Override
                 public void requestCompleted(ArrayList<ModelComponent> response) {
-                    //hideDialog();
 
-                    //checkPermissions();
                     mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), response);
                     // Set up the ViewPager with the sections adapter.
+
                     mViewPager.setAdapter(mSectionsPagerAdapter);
                     if (getIntent().getExtras() != null) {
+                        Log.d("item pos", getIntent().getExtras().getInt("ItemPos") + "");
                         mViewPager.setCurrentItem(getIntent().getExtras().getInt("ItemPos"));
                     }
                     tabLayout.setupWithViewPager(mViewPager);
-                    new Utils(getApplicationContext()).overrideFonts(tabLayout, "BHoma");
 
+                    new Utils(getApplicationContext()).overrideFonts(tabLayout, "BHoma");
 
                 }
 
@@ -101,13 +101,15 @@ public class NewsCategory extends AppCompatActivity {
                 }
             });
         } else {
-            //DbHandler db = new DbHandler(getContext());
 
-            //List<ModelComponent> allNews = db.getAllNews(getArguments().getInt(ARG_SECTION_NUMBER) - 1);
             mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), new OfflineDataLoader(getApplicationContext()).ReadOfflineNewsCategory());
             // Set up the ViewPager with the sections adapter.
             mViewPager.setAdapter(mSectionsPagerAdapter);
+            if (getIntent().getExtras() != null) {
+                mViewPager.setCurrentItem(getIntent().getExtras().getInt("ItemPos"));
+            }
             tabLayout.setupWithViewPager(mViewPager);
+
             new Utils(getApplicationContext()).overrideFonts(tabLayout, "BHoma");
         }
 
@@ -204,19 +206,17 @@ public class NewsCategory extends AppCompatActivity {
             swipeRefreshLayout.setOnRefreshListener(this);
 
             if (new Utils(getActivity()).isConnectedToInternet()) {
-
                 //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
                 //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-
 
                 swipeRefreshLayout.post(new Runnable() {
                     @Override
                     public void run() {
-                        swipeRefreshLayout.setRefreshing(true);
+
                         new networking(getContext()).getNewsCategory(new networking.NewsCategoryResponseListener() {
                             @Override
                             public void requestStarted() {
-
+                                swipeRefreshLayout.setRefreshing(true);
                             }
 
                             @Override
@@ -229,7 +229,7 @@ public class NewsCategory extends AppCompatActivity {
                             @Override
                             public void requestEndedWithError(VolleyError error) {
                                 swipeRefreshLayout.setRefreshing(false);
-                                new Utils(getActivity()).showToast("server_error", getActivity());
+                                //new Utils(getActivity()).showToast("server_error", getActivity());
                             }
                         });
                     }

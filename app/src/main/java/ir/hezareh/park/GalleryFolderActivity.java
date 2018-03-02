@@ -76,8 +76,8 @@ public class GalleryFolderActivity extends AppCompatActivity implements SwipeRef
                     });
                 } else {
                     OfflineDataLoader offlineDataLoader = new OfflineDataLoader(getApplicationContext());
-                    if (offlineDataLoader.ReadOfflineFolderGalleryToStorage() != null) {
-                        galleryFolderAdapter = new GalleryFolderAdapter(getApplicationContext(), new OfflineDataLoader(getApplicationContext()).ReadOfflineFolderGalleryToStorage());
+                    if (offlineDataLoader.ReadOfflineFolderGallery() != null) {
+                        galleryFolderAdapter = new GalleryFolderAdapter(getApplicationContext(), new OfflineDataLoader(getApplicationContext()).ReadOfflineFolderGallery());
                         GalleryRecycler.setAdapter(galleryFolderAdapter);
                         swipeRefreshLayout.setRefreshing(false);
                     }

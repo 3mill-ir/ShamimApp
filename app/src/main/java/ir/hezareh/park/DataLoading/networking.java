@@ -313,6 +313,7 @@ public class networking {
                             }.getType();
                             ArrayList<sidemenu> sidemenuList = gson.fromJson(response.toString(), collectionType);
                             sideMenuResponseListener.requestCompleted(sidemenuList);
+                            new OfflineDataLoader(mContext).saveMainMenuToStorage(response);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

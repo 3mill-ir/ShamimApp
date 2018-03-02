@@ -75,12 +75,12 @@ public class GalleryImagesActivity extends AppCompatActivity {
                 }, getIntent().getExtras().getString(GalleryFolderAdapter.FOLDER_KEY));
             } else {
 
-                if (offlineDataLoader.ReadOfflineImageGalleryToStorage(String.valueOf(getIntent().getExtras().getString(GalleryFolderAdapter.FOLDER_KEY))) != null) {
+                if (offlineDataLoader.ReadOfflineImageGallery(String.valueOf(getIntent().getExtras().getString(GalleryFolderAdapter.FOLDER_KEY))) != null) {
 
                     Log.d("Position", String.valueOf(_position));
-                    mAdapter = new GalleryImagesAdapter(getApplicationContext(), offlineDataLoader.ReadOfflineImageGalleryToStorage(String.valueOf(getIntent().getExtras().getString(GalleryFolderAdapter.FOLDER_KEY))));
+                    mAdapter = new GalleryImagesAdapter(getApplicationContext(), offlineDataLoader.ReadOfflineImageGallery(String.valueOf(getIntent().getExtras().getString(GalleryFolderAdapter.FOLDER_KEY))));
                     recyclerView.setAdapter(mAdapter);
-                    galleryModels = new ArrayList<>(offlineDataLoader.ReadOfflineImageGalleryToStorage(String.valueOf(getIntent().getExtras().getString(GalleryFolderAdapter.FOLDER_KEY))));
+                    galleryModels = new ArrayList<>(offlineDataLoader.ReadOfflineImageGallery(String.valueOf(getIntent().getExtras().getString(GalleryFolderAdapter.FOLDER_KEY))));
 
                 }
             }
