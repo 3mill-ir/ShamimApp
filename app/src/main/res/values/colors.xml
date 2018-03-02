@@ -8,8 +8,10 @@
     <color name="SecondaryText">#757575</color>
     <color name="icons">#FFFFFF</color>
     <color name="divider">#BDBDBD</color>
+    <color name="MenuList">#f6f7ff</color>
     <color name="trans">#00000000</color>
     <color name="like">#77e262</color>
+    <color name="white">#ffffffff</color>
     <color name="dislike">#e26262</color>
 </resources>
 

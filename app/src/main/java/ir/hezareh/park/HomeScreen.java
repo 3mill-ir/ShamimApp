@@ -1,9 +1,8 @@
 package ir.hezareh.park;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -19,9 +18,6 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +45,7 @@ public class HomeScreen extends AppCompatActivity {
     ArrayList<Integer> global = new ArrayList<>();
     progressLoading loading;
     int pos = 0;
+    DrawerLayout drawer;
 
 
     @Override
@@ -60,7 +57,6 @@ public class HomeScreen extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.END)) {
             drawer.closeDrawer(GravityCompat.END);
         } else {
@@ -71,40 +67,8 @@ public class HomeScreen extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1001:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    File dir = new File(Environment.getExternalStorageDirectory(), "Telegram Desktop");
-                    if (!dir.exists()) {
-                        boolean iscreated = dir.mkdir();
-                        Log.d("Created1", iscreated + "");
-                    }
 
 
-                    File myExternalCacheFilepub = new File(dir, "myFile.txt");
-
-                    FileOutputStream fileOutputStreampub = null;
-
-                    try {
-
-                        fileOutputStreampub = new FileOutputStream(myExternalCacheFilepub);
-                        fileOutputStreampub.write("Hello external Cache Memory".getBytes());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        if (fileOutputStreampub != null) {
-                            try {
-                                fileOutputStreampub.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-        }
-    }
 
 
     public void addComponents(List<ModelComponent> modelComponents) {
@@ -150,6 +114,7 @@ public class HomeScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
+        drawer = findViewById(R.id.drawer_layout);
 
         width = new Utils(getApplicationContext()).getDisplayMetrics().widthPixels;
         loading = new progressLoading(HomeScreen.this);
@@ -187,7 +152,6 @@ public class HomeScreen extends AppCompatActivity {
         //setSupportActionBar(toolbar);
 
 
-
         try {
             new AppUpdate(getApplicationContext()).check_Version();
         } catch (PackageManager.NameNotFoundException e) {
@@ -201,7 +165,7 @@ public class HomeScreen extends AppCompatActivity {
         findViewById(R.id.drawer_icon).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((DrawerLayout) findViewById(R.id.drawer_layout)).openDrawer(GravityCompat.END);
+                drawer.openDrawer(GravityCompat.END);
             }
         });
 
@@ -257,9 +221,9 @@ public class HomeScreen extends AppCompatActivity {
 
                     for (sidemenu _menu : sidemenus) {
                         list.add(_menu);
-                        //Log.d("sidemenu1", _menu.getName());
-                    }
+                        //Log.d("sidemenu1", _menu.getFunctionality().toString());
 
+                    }
                     HomeSideMenuListAdapter sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), getChildListMenuName(sidemenus, 0, true));
                     firstLevelListView.setAdapter(sideMenuListAdapter);
                 }
@@ -274,29 +238,122 @@ public class HomeScreen extends AppCompatActivity {
 
         firstLevelListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                firstLevelListView.setVisibility(View.GONE);
-                secondLevelListView.setVisibility(View.VISIBLE);
-                //Log.e("ID", "" + (int) id);
-                global.add((int) id);
-                HomeSideMenuListAdapter sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), new HomeScreen().getChildListMenuName(list, (int) id, false));
-                secondLevelListView.setAdapter(sideMenuListAdapter);
-                //Log.d("position", pos + "");
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (!getChildListMenuName(list, (int) id, false).isEmpty()) {
+                    firstLevelListView.setVisibility(View.GONE);
+                    secondLevelListView.setVisibility(View.VISIBLE);
+                    //Log.e("ID", "" + (int) id);
+                    global.add((int) id);
+                    HomeSideMenuListAdapter sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), new HomeScreen().getChildListMenuName(list, (int) id, false));
+                    secondLevelListView.setAdapter(sideMenuListAdapter);
+
+                    //new Component(getApplicationContext()).setClickListener(view,list.get(position).getFunctionality().toString(),list.get(position).getUrl().toString(),0);
+                } else {
+
+                    for (sidemenu sidemenu : list) {
+                        if (sidemenu.getID() == (int) id) {
+                            Log.d("Func", sidemenu.getFunctionality() + "");
+                            Log.d("Url", sidemenu.getUrl() + "");
+                            if (sidemenu.getFunctionality() != null) {
+                                if (drawer.isDrawerOpen(GravityCompat.END)) {
+                                    drawer.closeDrawer(GravityCompat.END);
+                                }
+                                setClickListener(sidemenu.getFunctionality().toString(), sidemenu.getUrl().toString(), 0, position - 1);
+                            }
+                        }
+                    }
+                }
             }
         });
 
         secondLevelListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //pos is for storing last item ID clicked by user
-                ++pos;
-                global.add((int) id);
-                HomeSideMenuListAdapter menuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), getChildListMenuName(list, (int) id, false));
-                secondLevelListView.setAdapter(menuListAdapter);
+
+                if (!getChildListMenuName(list, (int) id, false).isEmpty()) {
+                    //pos is for storing last item ID clicked by user
+                    ++pos;
+                    global.add((int) id);
+                    HomeSideMenuListAdapter menuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), getChildListMenuName(list, (int) id, false));
+                    secondLevelListView.setAdapter(menuListAdapter);
+                } else {
+                    for (sidemenu sidemenu : list) {
+                        if (sidemenu.getID() == (int) id) {
+                            Log.d("Func", sidemenu.getFunctionality() + "");
+                            Log.d("Url", sidemenu.getUrl() + "");
+                            if (sidemenu.getFunctionality() != null) {
+                                if (drawer.isDrawerOpen(GravityCompat.END)) {
+                                    drawer.closeDrawer(GravityCompat.END);
+                                }
+                                setClickListener(sidemenu.getFunctionality().toString(), sidemenu.getUrl().toString(), 0, position - 1);
+                            }
+                        }
+                    }
+                }
+
             }
         });
 
     }
+
+    public void setClickListener(final String functionality, final String URL, final int ID, int currentItemPos) {
+
+
+        Intent intent;
+        switch (functionality) {
+            case "Gallery":
+                intent = new Intent(this, GalleryFolderActivity.class);
+                intent.putExtra("URL", URL);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                //((Activity)context).finish();
+                break;
+            case "Fanbazar":
+                intent = new Intent(this, FanBazar.class);
+                intent.putExtra("URL", URL);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                //finish();
+                break;
+            case "CompanyList":
+                intent = new Intent(this, Companies.class);
+                intent.putExtra("URL", URL);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                //finish();
+                break;
+            case "NewsList":
+                intent = new Intent(this, NewsCategory.class);
+                intent.putExtra("URL", URL);
+                intent.putExtra("ItemPos", currentItemPos);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                //finish();
+                break;
+            case "NewsDetails":
+                intent = new Intent(this, NewsDetailActivity.class);
+                intent.putExtra("URL", URL);
+                intent.putExtra("NewsID", ID);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                //((Activity) context).overridePendingTransition(0, 0);
+                //finish();
+                break;
+            case "WebView":
+                intent = new Intent(this, WebviewActivity.class);
+                intent.putExtra("URL", URL);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                //finish();
+                break;
+
+            default:
+                break;
+        }
+    }
+
 
     public ArrayList<sidemenu> getChildListMenuName(ArrayList<sidemenu> list, int ID, boolean isRoot) {
         ArrayList<sidemenu> result = new ArrayList<>();

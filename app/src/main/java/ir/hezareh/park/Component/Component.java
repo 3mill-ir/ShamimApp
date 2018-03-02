@@ -285,7 +285,7 @@ public class Component {
 
 
         com.daimajia.slider.library.SliderLayout GalleryLayout = new SliderLayout(context);
-        RelativeLayout.LayoutParams GalleryLayoutParams = new RelativeLayout.LayoutParams(2 * width / 3, 2 * width / 3 - width / 12);
+        RelativeLayout.LayoutParams GalleryLayoutParams = new RelativeLayout.LayoutParams(2 * width / 3, 2 * width / 3);
         if (Order.equals("ButtonsGallery")) {
             GalleryLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
         } else if (Order.equals("GalleryButtons")) {
@@ -310,7 +310,7 @@ public class Component {
             setOnSliderClickListener(demoSlider, modelComponent.getGalleryItem().get(0).getFunctionality());
 
             GalleryLayout.addSlider(demoSlider);
-            GalleryLayout.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
+            GalleryLayout.setPresetIndicator(SliderLayout.PresetIndicators.Center_Top);
             GalleryLayout.setPresetTransformer(SliderLayout.Transformer.Background2Foreground);
             GalleryLayout.setCustomAnimation(new DescriptionAnimation());
 
@@ -319,16 +319,19 @@ public class Component {
         GalleryLayout.setBackgroundResource(R.drawable.back);
 
         TextView GalleryLayoutText = new TextView(context);
-        RelativeLayout.LayoutParams GalleryLayoutTextParams = new RelativeLayout.LayoutParams(2 * width / 3, width / 12);
-        GalleryLayoutTextParams.addRule(RelativeLayout.BELOW, GalleryLayout.getId());
+        RelativeLayout.LayoutParams GalleryLayoutTextParams = new RelativeLayout.LayoutParams(2 * width / 3, RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+        GalleryLayoutTextParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, GalleryLayout.getId());
         if (Order.equals("ButtonsGallery")) {
             GalleryLayoutTextParams.addRule(RelativeLayout.ALIGN_PARENT_END);
         } else if (Order.equals("GalleryButtons")) {
             GalleryLayoutTextParams.addRule(RelativeLayout.ALIGN_PARENT_START);
         }
         GalleryLayoutText.setLayoutParams(GalleryLayoutTextParams);
-        GalleryLayoutText.setBackgroundResource(R.drawable.back);
+        GalleryLayoutText.setPadding(new Utils(context).dpToPx(3), new Utils(context).dpToPx(7), new Utils(context).dpToPx(3), new Utils(context).dpToPx(7));
+        GalleryLayoutText.setBackgroundResource(R.drawable.shadow_bottom);
         GalleryLayoutText.setGravity(Gravity.CENTER);
+        GalleryLayoutText.setTextColor(Color.WHITE);
         GalleryLayoutText.setText("گالری تصاویر");
 
 
@@ -348,25 +351,13 @@ public class Component {
         //ButtonsRow.setBackgroundColor(Color.DKGRAY);
         ButtonsRow.setOrientation(LinearLayout.HORIZONTAL);
 
-        /*Button LeftButton=new Button(this);
-        LinearLayout.LayoutParams LeftButtonParams = new LinearLayout.LayoutParams(width/3-20, width/3-20);
-        LeftButtonLayoutParams.setMargins(10,10,10,10);
-        LeftButton.setLayoutParams(LeftButtonParams);
-        LeftButton.setGravity(Gravity.CENTER);
-
-        LeftButton.setBackgroundResource(R.drawable.customborder1);
-        LeftButton.setPadding(0,20,0,0);
-        //resizing image
-        Bitmap InitialBitmap = ((BitmapDrawable)getResources().getDrawable(R.drawable.microphone)).getBitmap();
-        Bitmap bitmapResized = Bitmap.createScaledBitmap(InitialBitmap, 100, 100, false);
-        LeftButton.setCompoundDrawablesWithIntrinsicBounds(null,new BitmapDrawable(getResources(), bitmapResized),null,null);
-        LeftButton.setText("عضویت در پارک");
-        LeftButton.setTextSize(14);*/
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View leftChild = inflater.inflate(R.layout.item_button_row, null);
         LinearLayout.LayoutParams ButtonParams = new LinearLayout.LayoutParams(width / 3, width / 3);
         leftChild.setLayoutParams(ButtonParams);
+
+
         ((TextView) leftChild.findViewById(R.id.TextButton)).setText(modelComponent.getItem().get(0).getText());
         Picasso.with(context)
                 .load(modelComponent.getItem().get(0).getImage().toString())
@@ -381,7 +372,10 @@ public class Component {
 
         View middleChild = inflater.inflate(R.layout.item_button_row, null);
         middleChild.setLayoutParams(ButtonParams);
-        ((TextView) middleChild.findViewById(R.id.TextButton)).setText(modelComponent.getItem().get(1).getText());
+        TextView textButtonMiddle = middleChild.findViewById(R.id.TextButton);
+
+
+        textButtonMiddle.setText(modelComponent.getItem().get(1).getText());
         Picasso.with(context)
                 .load(modelComponent.getItem().get(1).getImage().toString())
                 .fit()
@@ -397,8 +391,6 @@ public class Component {
         rightChild.setLayoutParams(ButtonParams);
         rightChild.setId(View.generateViewId());
         ((TextView) rightChild.findViewById(R.id.TextButton)).setText(modelComponent.getItem().get(2).getText());
-        //((TextView) rightChild.findViewById(R.id.TextButton)).setTypeface(new Utils(context).font_set("BHoma"));
-        //rightChild.findViewById(R.id.TextButton).setBackgroundResource(R.drawable.back2);
 
 
         Picasso.with(context)
@@ -450,6 +442,7 @@ public class Component {
                     case "NewsList":
                         intent = new Intent(context, NewsCategory.class);
                         intent.putExtra("URL", URL);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
                         ((Activity) context).overridePendingTransition(0, 0);
                         //finish();
@@ -466,6 +459,7 @@ public class Component {
                     case "WebView":
                         intent = new Intent(context, WebviewActivity.class);
                         intent.putExtra("URL", URL);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         context.startActivity(intent);
                         ((Activity) context).overridePendingTransition(0, 0);
                         //finish();

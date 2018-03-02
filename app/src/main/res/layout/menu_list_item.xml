@@ -5,31 +5,30 @@
     android:layout_height="wrap_content"
     android:fitsSystemWindows="true"
     android:orientation="horizontal"
-    android:padding="10dp">
+    android:padding="7dp">
 
     <ImageView
-
-        android:id="@+id/search_icon"
+        android:id="@+id/chevron_left_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/ic_chevron_left_black_24dp" />
+        android:src="@drawable/ic_chevron_left_black_24dp"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/lblListItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/search_icon"
+        android:layout_toEndOf="@+id/chevron_left_icon"
         android:layout_toStartOf="@+id/drawer_icon"
         android:gravity="center_vertical"
         android:paddingEnd="5dp"
         android:text="لیست شرکت ها"
-        android:textSize="15dp" />
+        android:textSize="16sp" />
 
     <ImageView
-
         android:id="@+id/drawer_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

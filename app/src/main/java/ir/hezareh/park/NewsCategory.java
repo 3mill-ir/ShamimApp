@@ -85,8 +85,12 @@ public class NewsCategory extends AppCompatActivity {
                     mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), response);
                     // Set up the ViewPager with the sections adapter.
                     mViewPager.setAdapter(mSectionsPagerAdapter);
+                    if (getIntent().getExtras() != null) {
+                        mViewPager.setCurrentItem(getIntent().getExtras().getInt("ItemPos"));
+                    }
                     tabLayout.setupWithViewPager(mViewPager);
                     new Utils(getApplicationContext()).overrideFonts(tabLayout, "BHoma");
+
 
                 }
 

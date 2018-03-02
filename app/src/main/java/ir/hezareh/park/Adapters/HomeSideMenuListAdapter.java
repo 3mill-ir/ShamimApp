@@ -1,8 +1,6 @@
 package ir.hezareh.park.Adapters;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,12 +54,17 @@ public class HomeSideMenuListAdapter extends BaseAdapter {
             convertView = Inflater.inflate(R.layout.menu_list_item, null);
         }
 
-        TextView lblListHeader = convertView.findViewById(R.id.lblListItem);
-        lblListHeader.setTypeface(new Utils(_context).font_set("iransans"), Typeface.NORMAL);
+        TextView lblList = convertView.findViewById(R.id.lblListItem);
 
-        lblListHeader.setText(_listData.get(position).getName());
+        lblList.setText(_listData.get(position).getName());
 
-        lblListHeader.setTextColor(Color.BLACK);
+        lblList.setTextColor(_context.getResources().getColor(R.color.SecondaryText));
+
+        if (_listData.get(position).getFunctionality() == null) {
+            (convertView.findViewById(R.id.chevron_left_icon)).setVisibility(View.VISIBLE);
+        }
+
+        new Utils(_context).overrideFonts(convertView, "BYekan");
 
         return convertView;
     }

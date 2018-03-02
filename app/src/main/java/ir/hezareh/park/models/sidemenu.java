@@ -56,6 +56,28 @@ public class sidemenu {
     @SerializedName("DisplayInSidebar")
     @Expose
     private boolean displayInSidebar;
+    @SerializedName("Url")
+    @Expose
+    private Object url;
+    @SerializedName("Functionality")
+    @Expose
+    private Object functionality;
+
+    public Object getUrl() {
+        return url;
+    }
+
+    public void setUrl(Object url) {
+        this.url = url;
+    }
+
+    public Object getFunctionality() {
+        return functionality;
+    }
+
+    public void setFunctionality(Object functionality) {
+        this.functionality = functionality;
+    }
 
     public String get$id() {
         return $id;

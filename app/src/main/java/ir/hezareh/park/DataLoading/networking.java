@@ -300,7 +300,7 @@ public class networking {
     public void getMainSideMenu(final SideMenuResponseListener sideMenuResponseListener) {
 
         sideMenuResponseListener.requestStarted();
-        JsonArrayRequest req = new JsonArrayRequest("http://parkapi.3mill.ir/api/Menues/GetMenuAndroid?username=admin",
+        JsonArrayRequest req = new JsonArrayRequest("http://parkapi.3mill.ir/api/Android/GetMenuAndroid?username=admin",
                 new Response.Listener<JSONArray>() {
 
                     @Override
