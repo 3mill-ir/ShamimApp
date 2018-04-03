@@ -23,6 +23,7 @@ import java.util.List;
 
 import ir.hezareh.park.R;
 import ir.hezareh.park.Util.Utils;
+import ir.hezareh.park.models.Item;
 import ir.hezareh.park.models.ModelComponent;
 
 public class MyPieChart {
@@ -84,7 +85,7 @@ public class MyPieChart {
         ArrayList<Float> Votes = new ArrayList<>();
         ArrayList<String> Answers = new ArrayList<>();
 
-        for (ModelComponent.Item item : modelComponent.getItem()) {
+        for (Item item : modelComponent.getItem()) {
             Votes.add((float) item.getVote());
             Answers.add(item.getText());
         }

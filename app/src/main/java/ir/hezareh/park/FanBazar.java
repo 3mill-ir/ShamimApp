@@ -15,6 +15,8 @@ import ir.hezareh.park.DataLoading.networking;
 import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.ModelComponent;
 
+import static ir.hezareh.park.Util.Utils.MessageType.server_error;
+
 public class FanBazar extends AppCompatActivity {
     public static final String TAG = HomeScreen.class
             .getSimpleName();
@@ -69,7 +71,7 @@ public class FanBazar extends AppCompatActivity {
 
             @Override
             public void requestEndedWithError(VolleyError error) {
-                new Utils(getApplicationContext()).showToast("server_error", FanBazar.this);
+                new Utils(getApplicationContext()).showToast(server_error, FanBazar.this);
                 //swipeRefreshLayout.setRefreshing(false);
             }
         });

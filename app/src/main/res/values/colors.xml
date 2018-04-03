@@ -6,10 +6,11 @@
     <color name="ColorAccent">#448AFF</color>
     <color name="PrimaryText">#212121</color>
     <color name="SecondaryText">#757575</color>
-    <color name="icons">#FFFFFF</color>
+    <color name="icons">#26A69A</color>
     <color name="divider">#BDBDBD</color>
     <color name="MenuList">#f6f7ff</color>
-    <color name="trans">#00000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="semiTransparent">#AA000000</color>
     <color name="like">#77e262</color>
     <color name="white">#ffffffff</color>
     <color name="dislike">#e26262</color>

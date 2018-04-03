@@ -1,4 +1,4 @@
-package ir.hezareh.park.Util;
+package ir.hezareh.park.Component;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -15,6 +15,10 @@ import com.android.volley.VolleyError;
 
 import ir.hezareh.park.DataLoading.networking;
 import ir.hezareh.park.R;
+import ir.hezareh.park.Util.Utils;
+
+import static ir.hezareh.park.Util.Utils.MessageType.confirmation;
+import static ir.hezareh.park.Util.Utils.MessageType.server_error;
 
 
 public class CommentDialog extends Dialog implements android.view.View.OnClickListener {
@@ -70,12 +74,12 @@ public class CommentDialog extends Dialog implements android.view.View.OnClickLi
                         @Override
                         public void requestCompleted(String response) {
                             Log.d("response", response + "");
-                            new Utils(_activity).showToast("confirmation", _activity);
+                            new Utils(_activity).showToast(confirmation, _activity);
                         }
 
                         @Override
                         public void requestEndedWithError(VolleyError error) {
-                            new Utils(_activity).showToast("server_error", _activity);
+                            new Utils(_activity).showToast(server_error, _activity);
 
                         }
                     });

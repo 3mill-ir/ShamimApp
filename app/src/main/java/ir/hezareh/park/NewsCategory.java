@@ -31,6 +31,8 @@ import ir.hezareh.park.DataLoading.networking;
 import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.ModelComponent;
 
+import static ir.hezareh.park.Util.Utils.MessageType.server_error;
+
 
 public class NewsCategory extends AppCompatActivity {
 
@@ -55,6 +57,7 @@ public class NewsCategory extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_category);
+
 
         mViewPager = (ViewPager) findViewById(R.id.container);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -97,7 +100,7 @@ public class NewsCategory extends AppCompatActivity {
                 @Override
                 public void requestEndedWithError(VolleyError error) {
                     VolleyLog.d(TAG, "Error: " + error.getMessage());
-                    new Utils(getApplicationContext()).showToast("server_error", NewsCategory.this);
+                    new Utils(getApplicationContext()).showToast(server_error, NewsCategory.this);
                 }
             });
         } else {
@@ -229,7 +232,7 @@ public class NewsCategory extends AppCompatActivity {
                             @Override
                             public void requestEndedWithError(VolleyError error) {
                                 swipeRefreshLayout.setRefreshing(false);
-                                //new Utils(getActivity()).showToast("server_error", getActivity());
+                                //new Utils(getActivity()).showToast(server_error, getActivity());
                             }
                         });
                     }
@@ -266,7 +269,7 @@ public class NewsCategory extends AppCompatActivity {
                 @Override
                 public void requestEndedWithError(VolleyError error) {
                     swipeRefreshLayout.setRefreshing(false);
-                    new Utils(getActivity()).showToast("server_error", getActivity());
+                    new Utils(getActivity()).showToast(server_error, getActivity());
 
                 }
             });

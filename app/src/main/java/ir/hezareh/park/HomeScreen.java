@@ -16,21 +16,25 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import ir.hezareh.park.Adapters.HomeSideMenuListAdapter;
 import ir.hezareh.park.Component.Component;
 import ir.hezareh.park.Component.MyPieChart;
+import ir.hezareh.park.Component.customAlertDialog;
+import ir.hezareh.park.Component.progressLoading;
 import ir.hezareh.park.DataLoading.AppUpdate;
 import ir.hezareh.park.DataLoading.OfflineDataLoader;
-import ir.hezareh.park.DataLoading.networking;
+import ir.hezareh.park.DataLoading.SharedPreferencesManager;
 import ir.hezareh.park.Util.Utils;
-import ir.hezareh.park.Util.progressLoading;
 import ir.hezareh.park.models.ModelComponent;
 import ir.hezareh.park.models.sidemenu;
+
+import static ir.hezareh.park.Util.Utils.MessageType.exit;
+import static ir.hezareh.park.Util.Utils.MessageType.network_error;
+import static ir.hezareh.park.Util.Utils.MessageType.server_error;
+import static ir.hezareh.park.Util.Utils.MessageType.server_ok;
 
 public class HomeScreen extends AppCompatActivity {
 
@@ -47,6 +51,7 @@ public class HomeScreen extends AppCompatActivity {
     int pos = 0;
     DrawerLayout drawer;
     HomeSideMenuListAdapter sideMenuListAdapter;
+    SharedPreferencesManager preferencesManager;
 
 
     @Override
@@ -61,20 +66,17 @@ public class HomeScreen extends AppCompatActivity {
         if (drawer.isDrawerOpen(GravityCompat.END)) {
             drawer.closeDrawer(GravityCompat.END);
         } else {
-            if (back_pressed + 2000 > System.currentTimeMillis()) super.onBackPressed();
+            if (back_pressed + 2000 > System.currentTimeMillis())
+                System.exit(0);//super.onBackPressed();
             else
-                new Utils(getApplicationContext()).showToast("exit", HomeScreen.this);
+                new Utils(getApplicationContext()).showToast(exit, HomeScreen.this);
             back_pressed = System.currentTimeMillis();
         }
     }
 
 
-
-
-
     public void addComponents(List<ModelComponent> modelComponents) {
         LinearLayout Root_Layout = findViewById(R.id.main_layout);
-
 
         if (modelComponents != null) {
             for (ModelComponent component : modelComponents) {
@@ -107,9 +109,7 @@ public class HomeScreen extends AppCompatActivity {
 
         new Utils(getApplicationContext()).overrideFonts(Root_Layout, "BYekan");
 
-
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,47 +117,6 @@ public class HomeScreen extends AppCompatActivity {
         setContentView(R.layout.activity_home_screen);
         drawer = findViewById(R.id.drawer_layout);
 
-        width = new Utils(getApplicationContext()).getDisplayMetrics().widthPixels;
-        loading = new progressLoading(HomeScreen.this);
-        //create a path for store offline reading later
-        new OfflineDataLoader(getApplicationContext()).createExternalStoragePath();
-
-        if (new Utils(getApplicationContext()).isConnectedToInternet()) {
-            new networking(getApplicationContext()).getMainJson(new networking.MainJsonResponseListener() {
-                @Override
-                public void requestStarted() {
-                    loading.show();
-                }
-
-                @Override
-                public void requestCompleted(List<ModelComponent> modelComponents) {
-
-                    addComponents(modelComponents);
-                    loading.dismiss();
-                }
-
-                @Override
-                public void requestEndedWithError(VolleyError error) {
-                    // hide the progress dialog
-                    loading.dismiss();
-                    new Utils(getApplicationContext()).showToast("server_error", HomeScreen.this);
-                    //swipeRefreshLayout.setRefreshing(false);
-                }
-            });
-        } else {
-            addComponents(new OfflineDataLoader(getApplicationContext()).ReadOfflineMainJson());
-        }
-
-        // Sets the Toolbar to act as the ActionBar for this Activity window.
-        // Make sure the toolbar exists in the activity and is not null
-        //setSupportActionBar(toolbar);
-
-
-        try {
-            new AppUpdate(getApplicationContext()).check_Version();
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
 
         ((TextView) findViewById(R.id.side_menu_header_text)).setTypeface(new Utils(getApplicationContext()).font_set("BYekan"));
         ((TextView) findViewById(R.id.header_text)).setTypeface(new Utils(getApplicationContext()).font_set("BYekan"));
@@ -174,9 +133,78 @@ public class HomeScreen extends AppCompatActivity {
         firstLevelListView = findViewById(R.id.first_level_menu);
         secondLevelListView = findViewById(R.id.second_level_menu);
 
+        Log.d(TAG, "onCreate: ");
+
+
+        width = new Utils(getApplicationContext()).getDisplayMetrics().widthPixels;
+        loading = new progressLoading(HomeScreen.this);
+        //create a path for store offline reading later
+        preferencesManager = new SharedPreferencesManager(getApplicationContext());
+
+        new OfflineDataLoader(getApplicationContext()).createExternalStoragePath();
+
+
+        if (preferencesManager.showDialogForOnce()) {
+            try {
+                new AppUpdate(HomeScreen.this).check_Version();
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+
         LayoutInflater inflater = getLayoutInflater();
         ViewGroup secondLevelListViewHeader = (ViewGroup) inflater.inflate(R.layout.menulistheader, secondLevelListView, false);
         secondLevelListView.addHeaderView(secondLevelListViewHeader, null, false);
+
+        if (getIntent().getExtras() != null) {
+            Bundle bundle = getIntent().getExtras();
+            if (bundle.getSerializable(splash_screen.MESSAGE_KEY) == server_ok) {
+
+                @SuppressWarnings("unchecked")
+                ArrayList<ModelComponent> modelComponents =
+                        (ArrayList<ModelComponent>) bundle.getSerializable(splash_screen.MODEL_COMPONENT_KEY);
+
+                addComponents(modelComponents);
+
+
+                @SuppressWarnings("unchecked")
+                ArrayList<sidemenu> sidemenus =
+                        (ArrayList<sidemenu>) bundle.getSerializable(splash_screen.MODEL_SIDEMENU_KEY);
+                if (sidemenus != null) {
+                    list = new ArrayList<>(sidemenus);
+
+                    sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), getChildListMenuName(list, 0, true));
+                    firstLevelListView.setAdapter(sideMenuListAdapter);
+                }
+            } else if (bundle.getSerializable(splash_screen.MESSAGE_KEY) == network_error ||
+                    bundle.getSerializable(splash_screen.MESSAGE_KEY) == server_error) {
+
+                if (new Utils(getApplicationContext()).checkCache()) {
+                    list = new ArrayList<>(new OfflineDataLoader(getApplicationContext()).ReadOfflineMainMenu());
+                    sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), getChildListMenuName(list, 0, true));
+                    firstLevelListView.setAdapter(sideMenuListAdapter);
+
+                    addComponents(new OfflineDataLoader(getApplicationContext()).ReadOfflineMainJson());
+                } else {
+                    customAlertDialog alertDialog = new customAlertDialog(HomeScreen.this, "حالت آفلاین", getString(R.string.cache_error_message), "خروج", null, new customAlertDialog.yesOrNoClicked() {
+                        @Override
+                        public void positiveClicked() {
+                            System.exit(0);
+                        }
+
+                        @Override
+                        public void negativeClicked() {
+                            //null
+                        }
+                    });
+                    alertDialog.setCancelable(false);
+                    alertDialog.show();
+
+                }
+            }
+
+        }
 
 
         secondLevelListViewHeader.setOnClickListener(new View.OnClickListener() {
@@ -210,7 +238,7 @@ public class HomeScreen extends AppCompatActivity {
 
             }
         });
-        if (new Utils(getApplicationContext()).isConnectedToInternet()) {
+        /*if (new Utils(getApplicationContext()).isConnectedToInternet()) {
             new networking(getApplicationContext()).getMainSideMenu(new networking.SideMenuResponseListener() {
                 @Override
                 public void requestStarted() {
@@ -227,7 +255,7 @@ public class HomeScreen extends AppCompatActivity {
 
                 @Override
                 public void requestEndedWithError(VolleyError error) {
-                    new Utils(getApplicationContext()).showToast("server_error", HomeScreen.this);
+                    new Utils(getApplicationContext()).showToast(server_error, HomeScreen.this);
                 }
             });
         } else {
@@ -237,7 +265,7 @@ public class HomeScreen extends AppCompatActivity {
                 firstLevelListView.setAdapter(sideMenuListAdapter);
             }
 
-        }
+        }*/
 
 
         firstLevelListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -298,7 +326,12 @@ public class HomeScreen extends AppCompatActivity {
             }
         });
 
+        // Sets the Toolbar to act as the ActionBar for this Activity window.
+        // Make sure the toolbar exists in the activity and is not null
+        //setSupportActionBar(toolbar);
+
     }
+
 
     public void setClickListener(final String functionality, final String URL, final int ID, int currentItemPos) {
 

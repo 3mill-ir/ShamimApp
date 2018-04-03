@@ -12,8 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +25,6 @@ public class SlideshowDialogFragment extends DialogFragment {
     private String TAG = SlideshowDialogFragment.class.getSimpleName();
     private List<GalleryModel> galleryModels;
     private ViewPager viewPager;
-    private MyViewPagerAdapter myViewPagerAdapter;
     private TextView lblCount, lblTitle, lblDate;
     //  page change listener
     ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
@@ -62,17 +60,15 @@ public class SlideshowDialogFragment extends DialogFragment {
         lblTitle = v.findViewById(R.id.title);
         lblDate = v.findViewById(R.id.date);
 
-
         new Utils(getContext()).overrideFonts(v, "BYekan");
 
         galleryModels = (ArrayList<GalleryModel>) getArguments().getSerializable(GalleryImagesActivity.GALLERY_KEY);
         selectedPosition = getArguments().getInt(GalleryImagesActivity.POSITION_KEY);
 
-
         Log.e(TAG, "position: " + galleryModels.get(selectedPosition).getImage());
         //Log.e(TAG, "images size: " + images.size());
 
-        myViewPagerAdapter = new MyViewPagerAdapter();
+        MyViewPagerAdapter myViewPagerAdapter = new MyViewPagerAdapter();
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
 
@@ -105,29 +101,28 @@ public class SlideshowDialogFragment extends DialogFragment {
 
         private LayoutInflater layoutInflater;
 
-        public MyViewPagerAdapter() {
+        private MyViewPagerAdapter() {
         }
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
 
             layoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = layoutInflater.inflate(R.layout.image_fullscreen_preview, container, false);
+            if (layoutInflater != null) {
+                View view = layoutInflater.inflate(R.layout.image_fullscreen_preview, container, false);
 
-            ImageView imageViewPreview = view.findViewById(R.id.image_preview);
+                ImageView imageViewPreview = view.findViewById(R.id.image_preview);
 
-            GalleryModel image = galleryModels.get(position);
+                GalleryModel image = galleryModels.get(position);
 
+                Picasso.with(getActivity()).load(image.getImage())
+                        .into(imageViewPreview);
 
-            Glide.with(getActivity()).load(image.getImage())
-                    .thumbnail(0.5f)
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(imageViewPreview);
+                container.addView(view);
 
-            container.addView(view);
-
-            return view;
+                return view;
+            }
+            return null;
         }
 
         @Override

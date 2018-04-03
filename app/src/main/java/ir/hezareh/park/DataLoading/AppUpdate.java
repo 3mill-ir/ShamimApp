@@ -1,7 +1,6 @@
 package ir.hezareh.park.DataLoading;
 
-import android.content.Context;
-import android.content.DialogInterface;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -10,30 +9,32 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.android.volley.VolleyError;
 
 import java.io.File;
 
+import ir.hezareh.park.Component.customAlertDialog;
+import ir.hezareh.park.R;
+
 
 public class AppUpdate {
-    private Context _context;
+    private Activity activity;
 
-    public AppUpdate(Context context) {
-        this._context = context;
+    public AppUpdate(Activity activity) {
+        this.activity = activity;
     }
 
     public void check_Version() throws PackageManager.NameNotFoundException {
-        PackageManager manager = _context.getPackageManager();
-        PackageInfo info = manager.getPackageInfo(_context.getPackageName(), 0);
+        PackageManager manager = activity.getPackageManager();
+        PackageInfo info = manager.getPackageInfo(activity.getPackageName(), 0);
         final String version = info.versionName;
 
-        final SharedPreferencesManager preferencesManager = new SharedPreferencesManager(_context);
+        final SharedPreferencesManager preferencesManager = new SharedPreferencesManager(activity);
 
 
-        new networking(_context).updateCheck(new networking.UpdateCheckResponseListener() {
+        new networking(activity).updateCheck(new networking.UpdateCheckResponseListener() {
             @Override
             public void requestStarted() {
 
@@ -45,29 +46,24 @@ public class AppUpdate {
                 Log.i("compare result", String.valueOf(compareVersionNames(version, availableVersion)));
                 if (compareVersionNames(version, availableVersion) == -1) {
 
-                    Log.i("Version of Available", String.valueOf(availableVersion));
-                    Log.i("Version of current App ", String.valueOf(version));
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(_context);
-                    builder.setMessage("نسخه جدید اپلیکیشن موجود است \n تمایل به بروزرسانی دارید؟")
-                            .setCancelable(false);
-                    builder.setPositiveButton("آره", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            Intent intent = new Intent(_context, DownloadService.class);
+                    customAlertDialog alertDialog = new customAlertDialog(activity, "بروزرسانی", activity.getString(R.string.update_message), "آره", "نه", new customAlertDialog.yesOrNoClicked() {
+                        @Override
+                        public void positiveClicked() {
+                            Intent intent = new Intent(activity, DownloadService.class);
                             intent.putExtra("url", "http://3mill.ir/download/AppSend?path=mobile/android/park&secretkey=3mill186");
                             intent.putExtra("receiver", new DownloadReceiver(new Handler()));
-                            _context.startService(intent);
-                            preferencesManager.set_showUpdateDialog(false);
+                            activity.startService(intent);
+                            preferencesManager.setShowDialogForOnce(false);
+                        }
+
+                        @Override
+                        public void negativeClicked() {
+                            preferencesManager.setShowDialogForOnce(false);
                         }
                     });
-                    builder.setNegativeButton("نه", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                            preferencesManager.set_showUpdateDialog(false);
-                        }
-                    });
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
+                    alertDialog.show();
+                    Log.i("Version of Available", String.valueOf(availableVersion));
+                    Log.i("Version of current App ", String.valueOf(version));
                 }
             }
 
@@ -133,7 +129,7 @@ public class AppUpdate {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory().getPath() + "/park.apk")), "application/vnd.android.package-archive");
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    _context.startActivity(intent);
+                    activity.startActivity(intent);
 
                 }
             }

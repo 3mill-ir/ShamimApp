@@ -1,11 +1,13 @@
 package ir.hezareh.park;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -15,8 +17,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -34,16 +36,21 @@ import com.squareup.picasso.Picasso;
 import ir.hezareh.park.Adapters.CommentRecycler;
 import ir.hezareh.park.Adapters.EqualSpacingItemDecoration;
 import ir.hezareh.park.Adapters.NewsComponentRecycler;
+import ir.hezareh.park.Component.CommentDialog;
 import ir.hezareh.park.DataLoading.DbHandler;
 import ir.hezareh.park.DataLoading.OfflineDataLoader;
 import ir.hezareh.park.DataLoading.networking;
-import ir.hezareh.park.Util.CommentDialog;
 import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.NewsDetails;
 
+import static ir.hezareh.park.Util.Utils.MessageType.confirmation;
+import static ir.hezareh.park.Util.Utils.MessageType.duplicate_entry;
+import static ir.hezareh.park.Util.Utils.MessageType.network_error;
+import static ir.hezareh.park.Util.Utils.MessageType.server_error;
+
 
 public class NewsDetailActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
-    public static final String TAG = WebviewActivity.class
+    public static final String TAG = NewsDetailActivity.class
             .getSimpleName();
     SwipeRefreshLayout swipeRefreshLayout;
     RecyclerView commentRecyclerView;
@@ -152,7 +159,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
 
                             @Override
                             public void requestEndedWithError(VolleyError error) {
-                                new Utils(getApplicationContext()).showToast("server_error", NewsDetailActivity.this);
+                                new Utils(getApplicationContext()).showToast(server_error, NewsDetailActivity.this);
                                 swipeRefreshLayout.setRefreshing(false);
                             }
                         }, getIntent().getExtras().getString("URL"));
@@ -190,13 +197,11 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                         swipeRefreshLayout.setRefreshing(false);
                         ID = newsDetails.getID();
                         findViewById(R.id.fab).setVisibility(View.VISIBLE);
-
-                        //Log.e("can",webView.canScrollVertically(0)+"");
                     }
 
                     @Override
                     public void requestEndedWithError(VolleyError error) {
-                        new Utils(getApplicationContext()).showToast("server_error", NewsDetailActivity.this);
+                        new Utils(getApplicationContext()).showToast(server_error, NewsDetailActivity.this);
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 }, getIntent().getExtras().getString("URL"));
@@ -221,7 +226,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
             newsRecyclerView.setAdapter(relatedNewsComponentRecycler);
 
             String text = "<html> <head>\n" +
-                    "    <meta charset=\"UTF-8\">\n" +
+                    "    <meta  charset=\"UTF-8\">\n" +
                     " <style type=\"text/css\">\n" +
                     "                /** Specify a font named \"MyFont\",\n" +
                     "                and specify the URL where it can be found: */\n" +
@@ -245,13 +250,13 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                     " <body>"
                     + "<p class=\"text\" align=\"justify\"" +
                     "dir=\"rtl\">"
-                    + newsDetails.getDescription()
+                    + newsDetails.getDetail()
                     + "</p> "
                     + "</body></html>";
 
-            //webView.loadDataWithBaseURL(null, text, "text/html", "utf-8", null);
+            webView.loadDataWithBaseURL(null, text, "text/html", "utf-8", null);
 
-            webView.loadUrl(newsDetails.getDetail());
+            //webView.loadUrl(newsDetails.getDetail());
 
 
             date.setVisibility(View.VISIBLE);
@@ -284,8 +289,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                //progressBar.setVisibility(View.VISIBLE);
-                swipeRefreshLayout.setRefreshing(true);
+                //swipeRefreshLayout.setRefreshing(true);
                 invalidateOptionsMenu();
             }
 
@@ -299,38 +303,49 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                //progressBar.setVisibility(View.GONE);
-                //NewsRecycler.setAdapter(myRecyclerAdapter);
-                swipeRefreshLayout.setRefreshing(false);
-                //Log.e("can",webView.canScrollVertically(0)+"");
+                //swipeRefreshLayout.setRefreshing(false);
                 invalidateOptionsMenu();
             }
 
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
-                //progressBar.setVisibility(View.GONE);
-                swipeRefreshLayout.setRefreshing(false);
+                //swipeRefreshLayout.setRefreshing(false);
                 invalidateOptionsMenu();
             }
         });
         //webView.clearCache(true);
         //webView.clearHistory();
-        webView.setHorizontalScrollBarEnabled(false);
-
+        webView.setScrollContainer(true);
+        webView.setHorizontalScrollBarEnabled(true);
+        webView.setVerticalScrollBarEnabled(true);
+        webView.canGoBack();
+        webView.canGoForward();
+        webView.getSettings().setDefaultTextEncodingName("UTF-8");
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setDefaultTextEncodingName("utf-8");
+        webView.getSettings().setAllowFileAccess(true);
+        webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setSupportZoom(true);
+
         webView.getSettings().setAppCacheMaxSize(5 * 1024 * 1024); // 5MB
         webView.getSettings().setAppCachePath(getApplicationContext().getCacheDir().getAbsolutePath());
-        webView.getSettings().setAllowFileAccess(true);
         webView.getSettings().setAppCacheEnabled(true);
         webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT); // load online by default
 
         if (!new Utils(getApplicationContext()).isConnectedToInternet()) { // loading offline
             webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         }
+        webView.setDownloadListener(new DownloadListener() {
+            public void onDownloadStart(String url, String userAgent,
+                                        String contentDisposition, String mimetype,
+                                        long contentLength) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            }
+        });
 
-        webView.setOnTouchListener(new View.OnTouchListener() {
+        /*webView.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
 
 
@@ -358,7 +373,7 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                 return false;
             }
 
-        });
+        });*/
     }
 
     @Override
@@ -392,20 +407,20 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                                 Drawable mDrawable = getResources().getDrawable(R.drawable.ic_thumb_up_green_24dp);
                                 mDrawable.setColorFilter(new
                                         PorterDuffColorFilter(Color.parseColor("#FF24DC00"), PorterDuff.Mode.MULTIPLY));
-                                new Utils(getApplicationContext()).showToast("confirmation", NewsDetailActivity.this);
+                                new Utils(getApplicationContext()).showToast(confirmation, NewsDetailActivity.this);
                             }
 
                             @Override
                             public void requestEndedWithError(VolleyError error) {
-                                new Utils(getApplicationContext()).showToast("server_error", NewsDetailActivity.this);
+                                new Utils(getApplicationContext()).showToast(server_error, NewsDetailActivity.this);
                             }
                         });
 
                     } else {
-                        new Utils(getApplicationContext()).showToast("duplicate_entry", NewsDetailActivity.this);
+                        new Utils(getApplicationContext()).showToast(duplicate_entry, NewsDetailActivity.this);
                     }
                 } else {
-                    new Utils(getApplicationContext()).showToast("network_error", NewsDetailActivity.this);
+                    new Utils(getApplicationContext()).showToast(network_error, NewsDetailActivity.this);
                 }
 
                 break;
@@ -426,20 +441,20 @@ public class NewsDetailActivity extends AppCompatActivity implements SwipeRefres
                                 Drawable mDrawable = getResources().getDrawable(R.drawable.ic_thumb_down_red_24dp);
                                 mDrawable.setColorFilter(new
                                         PorterDuffColorFilter(Color.parseColor("#FFDE0000"), PorterDuff.Mode.MULTIPLY));
-                                new Utils(getApplicationContext()).showToast("confirmation", NewsDetailActivity.this);
+                                new Utils(getApplicationContext()).showToast(confirmation, NewsDetailActivity.this);
                             }
 
                             @Override
                             public void requestEndedWithError(VolleyError error) {
-                                new Utils(getApplicationContext()).showToast("server_error", NewsDetailActivity.this);
+                                new Utils(getApplicationContext()).showToast(server_error, NewsDetailActivity.this);
 
                             }
                         });
                     } else {
-                        new Utils(getApplicationContext()).showToast("duplicate_entry", NewsDetailActivity.this);
+                        new Utils(getApplicationContext()).showToast(duplicate_entry, NewsDetailActivity.this);
                     }
                 } else {
-                    new Utils(getApplicationContext()).showToast("network_error", NewsDetailActivity.this);
+                    new Utils(getApplicationContext()).showToast(network_error, NewsDetailActivity.this);
                 }
                 break;
 

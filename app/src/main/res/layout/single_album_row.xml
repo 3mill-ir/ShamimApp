@@ -32,7 +32,7 @@
                 android:id="@+id/galleryImage"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:background="@color/float_transparent"
+                android:background="@color/transparent"
                 android:scaleType="fitXY" />
 
         </RelativeLayout>

@@ -105,5 +105,8 @@
     <string name="splash_text">شمیم پارک علم و فناوری \n آذربایجان غربی</string>
     <string name="title_activity_gallery_scrolling">GalleryScrollingActivity</string>
     <string name="gallery_image_count">%d از %d</string>
-
+    <string name="update_message">"نسخه جدید اپلیکیشن موجود است \n تمایل به بروزرسانی دارید؟"</string>
+    <string name="network_error_message">"عدم اتصال دستگاه به شبکه اینترنت\n تمایل دارید در حالت آفلاین ادامه دهید؟"</string>
+    <string name="server_error_message">سرور در دسترس نیست\n تمایل دارید در حالت آفلاین ادامه دهید؟</string>
+    <string name="cache_error_message">"حافظه کش دستگاه شما خالی است \n برای ذخیره در حافظه دستگاه اینترنت دستگاه خود را متصل نمائید"</string>
 </resources>

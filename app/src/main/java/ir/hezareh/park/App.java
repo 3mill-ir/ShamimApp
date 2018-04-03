@@ -9,10 +9,6 @@ import com.android.volley.toolbox.Volley;
 
 import ir.hezareh.park.DataLoading.SharedPreferencesManager;
 
-/**
- * Created by rf on 07/12/2017.
- */
-
 public class App extends Application {
     public static final String TAG = App.class
             .getSimpleName();
@@ -28,7 +24,8 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         preferencesManager = new SharedPreferencesManager(getApplicationContext());
-        preferencesManager.set_showUpdateDialog(true);
+        preferencesManager.setShowSplashForOnce(true);
+        preferencesManager.setShowDialogForOnce(true);
         mInstance = this;
     }
 

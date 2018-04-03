@@ -42,17 +42,25 @@ import ir.hezareh.park.NewsDetailActivity;
 import ir.hezareh.park.R;
 import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.WebviewActivity;
+import ir.hezareh.park.models.Item;
 import ir.hezareh.park.models.ModelComponent;
+
+import static ir.hezareh.park.Util.Utils.MessageType.confirmation;
+import static ir.hezareh.park.Util.Utils.MessageType.duplicate_entry;
+import static ir.hezareh.park.Util.Utils.MessageType.server_error;
 
 
 public class Component {
-    Context context;
+    private Context context;
+    private SharedPreferencesManager preferencesManager;
 
     public Component(Context _context) {
         this.context = _context;
+        preferencesManager = new SharedPreferencesManager(context);
+
     }
 
-    public RelativeLayout Slider(int width, int height, List<ModelComponent.Item> Items) {
+    public RelativeLayout Slider(int width, int height, List<Item> Items) {
         RelativeLayout Slider = new RelativeLayout(context);
         RelativeLayout.LayoutParams Slider_Layout = new RelativeLayout.LayoutParams(width, width / 2);
         Slider.setLayoutParams(Slider_Layout);
@@ -62,16 +70,24 @@ public class Component {
 
 
         com.daimajia.slider.library.SliderLayout ImageSlider = child.findViewById(R.id.slider);
-        for (ModelComponent.Item item : Items) {
+        for (Item item : Items) {
             DefaultSliderView demoSlider = new DefaultSliderView(context);
             demoSlider//.description()
                     .image(Utils.URL_encode(item.getImage().toString()))
                     .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                         @Override
                         public void onSliderClick(BaseSliderView slider) {
-                            //progressLoading loading=new progressLoading(context);
-                            //loading.show();
-                            new Utils(context).showToast("server_error", (Activity) context);
+                            /*customAlertDialog alertDialog = new customAlertDialog((Activity) context, "بروزرسانی", context.getString(R.string.update_message), "آره", "نه", new customAlertDialog.yesOrNoClicked() {
+                                @Override
+                                public void positiveClicked() {
+
+                                }
+
+                                @Override
+                                public void negativeClicked() {
+                                }
+                            });
+                            alertDialog.show();*/
                         }
                     });
             ImageSlider.addSlider(demoSlider);
@@ -142,7 +158,7 @@ public class Component {
         //radioGroupAnswers.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
 
-        for (ModelComponent.Item item : modelComponent.getItem()) {
+        for (Item item : modelComponent.getItem()) {
             RadioButton Choice = new RadioButton(context);
             Choice.setText(item.getText());
             Choice.setTypeface(new Utils(context).font_set("BYekan"));
@@ -183,12 +199,12 @@ public class Component {
                 }
 
 
-                final SharedPreferencesManager preferencesManager = new SharedPreferencesManager(context);
+
                 pollButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
-                        if (preferencesManager.canParticipate()) {
+                        if (preferencesManager.ParticipatedInPoll(false)) {
                             new networking(context).postPoll(modelComponent.getItem().get(radioGroupAnswers.indexOfChild(Choice)).getID(), new networking.PostPollListener() {
                                 @Override
                                 public void requestStarted() {
@@ -198,18 +214,18 @@ public class Component {
                                 @Override
                                 public void requestCompleted(String response) {
 
-                                    preferencesManager.set_ParticipatedInPoll(true);
-                                    new Utils(context).showToast("confirmation", (Activity) context);
+                                    preferencesManager.ParticipatedInPoll(true);
+                                    new Utils(context).showToast(confirmation, (Activity) context);
                                 }
 
                                 @Override
                                 public void requestEndedWithError(VolleyError error) {
-                                    new Utils(context).showToast("server_error", (Activity) context);
+                                    new Utils(context).showToast(server_error, (Activity) context);
 
                                 }
                             });
                         } else {
-                            new Utils(context).showToast("duplicate_entry", (Activity) context);
+                            new Utils(context).showToast(duplicate_entry, (Activity) context);
                         }
                     }
 

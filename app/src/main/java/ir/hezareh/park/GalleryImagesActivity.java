@@ -1,6 +1,5 @@
 package ir.hezareh.park;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -22,12 +21,13 @@ import ir.hezareh.park.DataLoading.networking;
 import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.GalleryModel;
 
+import static ir.hezareh.park.Util.Utils.MessageType.server_error;
+
 public class GalleryImagesActivity extends AppCompatActivity {
     public static final String GALLERY_KEY = "Gallery";
     public static final String POSITION_KEY = "Position";
     private String TAG = MainActivity.class.getSimpleName();
     private ArrayList<GalleryModel> galleryModels;
-    private ProgressDialog pDialog;
     private GalleryImagesAdapter mAdapter;
     private RecyclerView recyclerView;
     private int _position;
@@ -41,7 +41,6 @@ public class GalleryImagesActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recycler_view);
 
-        pDialog = new ProgressDialog(this);
         galleryModels = new ArrayList<>();
 
 
@@ -70,7 +69,7 @@ public class GalleryImagesActivity extends AppCompatActivity {
 
                     @Override
                     public void requestEndedWithError(VolleyError error) {
-                        new Utils(getApplicationContext()).showToast("server_error", GalleryImagesActivity.this);
+                        new Utils(getApplicationContext()).showToast(server_error, GalleryImagesActivity.this);
                     }
                 }, getIntent().getExtras().getString(GalleryFolderAdapter.FOLDER_KEY));
             } else {

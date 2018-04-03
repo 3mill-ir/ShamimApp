@@ -19,6 +19,8 @@ import ir.hezareh.park.Util.GridSpacingItemDecoration;
 import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.GalleryModel;
 
+import static ir.hezareh.park.Util.Utils.MessageType.server_error;
+
 
 public class GalleryFolderActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -70,7 +72,7 @@ public class GalleryFolderActivity extends AppCompatActivity implements SwipeRef
 
                         @Override
                         public void requestEndedWithError(VolleyError error) {
-                            new Utils(getApplicationContext()).showToast("server_error", GalleryFolderActivity.this);
+                            new Utils(getApplicationContext()).showToast(server_error, GalleryFolderActivity.this);
                             swipeRefreshLayout.setRefreshing(false);
                         }
                     });
@@ -120,7 +122,7 @@ public class GalleryFolderActivity extends AppCompatActivity implements SwipeRef
             @Override
             public void requestEndedWithError(VolleyError error) {
                 swipeRefreshLayout.setRefreshing(false);
-                new Utils(getApplicationContext()).showToast("server_error", GalleryFolderActivity.this);
+                new Utils(getApplicationContext()).showToast(server_error, GalleryFolderActivity.this);
 
             }
         });

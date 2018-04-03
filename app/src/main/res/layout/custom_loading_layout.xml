@@ -6,15 +6,41 @@
     android:background="@drawable/back2"
     android:padding="10dp">
 
-    <ProgressBar
+    <ImageView
+        android:id="@+id/park_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/park_logo" />
 
+    <TextView
+        android:id="@+id/alertTitle"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/park_icon"
+        android:gravity="center_vertical"
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp"
+        android:textSize="18sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/alertTitle"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/list_divider_item" />
+
+    <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:layout_below="@+id/park_icon"
+        android:layout_marginTop="5dp" />
 
     <TextView
-
         android:id="@+id/loadingText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

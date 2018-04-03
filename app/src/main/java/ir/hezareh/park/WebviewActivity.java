@@ -1,12 +1,14 @@
 package ir.hezareh.park;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MotionEvent;
-import android.view.View;
+import android.util.Log;
+import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -15,6 +17,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
+
+import ir.hezareh.park.DataLoading.networking;
 import ir.hezareh.park.Util.Utils;
 
 public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
@@ -22,7 +27,6 @@ public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLa
             .getSimpleName();
     SwipeRefreshLayout swipeRefreshLayout;
     WebView webView;
-    private float m_downX;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,21 +34,16 @@ public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLa
         setContentView(R.layout.activity_webview);
 
 
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        swipeRefreshLayout = findViewById(R.id.swipeContainer);
 
-        webView = (WebView) findViewById(R.id.webView);
+        webView = findViewById(R.id.webView);
 
         ((TextView) findViewById(R.id.header_text)).setTypeface(new Utils(getApplicationContext()).font_set("BYekan"));
 
 
-        //progressBar = (ProgressBar) findViewById(R.id.progressBar);
-
-        //LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,screenHeight/3);
-        //webView.setLayoutParams(params);
         if (getIntent().getStringExtra("URL") != null) {
             initWebView();
         }
-
 
 
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -59,36 +58,42 @@ public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLa
             @Override
             public void run() {
 
-
-                swipeRefreshLayout.setRefreshing(true);
-
                 if (getIntent().getExtras() != null) {
-                    webView.loadUrl(getIntent().getExtras().getString("URL"));
-                }
+                    Log.d("webview", getIntent().getExtras() + "");
+                    //webView.loadUrl(getIntent().getExtras().getString("URL"));
+                    getWebView(getIntent().getExtras().getString("URL"));
 
-                //renderPost()
+                }
             }
         });
-
-
     }
 
     @Override
     public void onRefresh() {
-        swipeRefreshLayout.setRefreshing(true);
-        if (getIntent().getExtras() != null)
-            webView.loadUrl(getIntent().getExtras().getString("URL"));
-        //((ImageView) findViewById(R.id.news_detail_header)).setBackgroundResource(R.drawable.shadow_top);
-        //renderPost();
-        swipeRefreshLayout.setRefreshing(false);
-
+        if (getIntent().getExtras() != null) {
+            //webView.loadUrl(getIntent().getExtras().getString("URL"));
+            getWebView(getIntent().getExtras().getString("URL"));
+        }
     }
 
 
-    private void renderPost() {
-        //webView.loadUrl("https://www.google.com/");
-    }
+    private void getWebView(String URL) {
+        new networking(getApplicationContext()).getWebview(new networking.webViewResponseListener() {
+            @Override
+            public void requestStarted() {
+            }
 
+            @Override
+            public void requestCompleted(String response) {
+
+                webView.loadDataWithBaseURL(null, response, "text/html", "utf-8", null);
+            }
+
+            @Override
+            public void requestEndedWithError(VolleyError error) {
+            }
+        }, URL);
+    }
 
 
     private void initWebView() {
@@ -97,7 +102,6 @@ public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLa
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                //progressBar.setVisibility(View.VISIBLE);
                 swipeRefreshLayout.setRefreshing(true);
                 invalidateOptionsMenu();
             }
@@ -108,19 +112,18 @@ public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLa
                 return true;
             }
 
+
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                //progressBar.setVisibility(View.GONE);
-                //NewsRecycler.setAdapter(myRecyclerAdapter);
                 swipeRefreshLayout.setRefreshing(false);
+                //Log.e("can",webView.canScrollVertically(0)+"");
                 invalidateOptionsMenu();
             }
 
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
-                //progressBar.setVisibility(View.GONE);
                 swipeRefreshLayout.setRefreshing(false);
                 invalidateOptionsMenu();
             }
@@ -128,51 +131,38 @@ public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLa
         //webView.clearCache(true);
         //webView.clearHistory();
 
-        webView.setHorizontalScrollBarEnabled(false);
-
+        webView.setScrollContainer(true);
+        webView.setHorizontalScrollBarEnabled(true);
+        webView.setVerticalScrollBarEnabled(true);
+        webView.canGoBack();
+        webView.canGoForward();
+        webView.getSettings().setDefaultTextEncodingName("UTF-8");
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setDefaultTextEncodingName("utf-8");
+        webView.getSettings().setAllowFileAccess(true);
+        webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setSupportZoom(true);
+
         webView.getSettings().setAppCacheMaxSize(5 * 1024 * 1024); // 5MB
         webView.getSettings().setAppCachePath(getApplicationContext().getCacheDir().getAbsolutePath());
-        webView.getSettings().setAllowFileAccess(true);
         webView.getSettings().setAppCacheEnabled(true);
         webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT); // load online by default
+
+
+        webView.setDownloadListener(new DownloadListener() {
+            public void onDownloadStart(String url, String userAgent,
+                                        String contentDisposition, String mimetype,
+                                        long contentLength) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            }
+        });
 
         if (!new Utils(getApplicationContext()).isConnectedToInternet()) { // loading offline
             webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         }
 
-        webView.setOnTouchListener(new View.OnTouchListener() {
-
-
-            public boolean onTouch(View v, MotionEvent event) {
-
-                if (event.getPointerCount() > 1) {
-                    //Multi touch detected
-                    return true;
-                }
-
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN: {
-                        // save the x
-                        m_downX = event.getX();
-                    }
-                    break;
-
-                    case MotionEvent.ACTION_MOVE:
-                    case MotionEvent.ACTION_CANCEL:
-                    case MotionEvent.ACTION_UP: {
-                        // set x so that it doesn't move
-                        event.setLocation(m_downX, event.getY());
-                    }
-                    break;
-                }
-
-                return false;
-            }
-        });
     }
-
 
     private class MyWebChromeClient extends WebChromeClient {
         Context context;
@@ -181,9 +171,6 @@ public class WebviewActivity extends AppCompatActivity implements SwipeRefreshLa
             super();
             this.context = context;
         }
-
-
     }
-
 
 }

@@ -1,4 +1,4 @@
-package ir.hezareh.park.Util;
+package ir.hezareh.park.Component;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.view.Window;
 import android.widget.TextView;
 
 import ir.hezareh.park.R;
+import ir.hezareh.park.Util.Utils;
 
 
 public class progressLoading extends Dialog {
@@ -35,6 +36,9 @@ public class progressLoading extends Dialog {
 
         TextView message = findViewById(R.id.loadingText);
         message.setText("لطفا صبر کنید...");
+
+        TextView title = findViewById(R.id.alertTitle);
+        title.setText("دریافت اطلاعات");
 
         new Utils(_context).overrideFonts(findViewById(R.id.progress_layout), "BHoma");
 

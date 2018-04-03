@@ -15,7 +15,10 @@ public class SharedPreferencesManager {
     // Email address (make variable public to access from outside)
     public static final String KEY_EMAIL = "email";
     public static final boolean KEY_SHOW = false;
-    public static final String KEY_POLL = "pollParticipated";
+    private static final String KEY_SPLASH = "splash_show";
+
+    private static final String KEY_POLL = "pollParticipated";
+    private static final String KEY_DIALOG = "dialog_show";
     // Sharedpref file name
     private static final String PREF_NAME = "SharedPrefs";
     // All Shared Preferences Keys
@@ -36,19 +39,38 @@ public class SharedPreferencesManager {
         editor = pref.edit();
     }
 
-    public void set_showUpdateDialog(boolean show) {
-        editor.putBoolean("dialog_show", show);
-        editor.commit();
-
+    public boolean ParticipatedInPoll(boolean value) {
+        if (!pref.getBoolean(KEY_POLL, false)) {
+            editor.putBoolean(KEY_POLL, value);
+            editor.commit();
+            return true;
+        }
+        return false;
     }
 
-    public void set_ParticipatedInPoll(boolean value) {
-        editor.putBoolean(KEY_POLL, value);
+    //it sets the flag that is used for showing splash screen for once each time app starts from scratch
+    public void setShowSplashForOnce(boolean flag) {
+        // Storing phone in pref
+        editor.putBoolean(KEY_SPLASH, flag);
+        // commit changes
         editor.commit();
     }
 
-    public boolean canParticipate() {
-        return !pref.getBoolean(KEY_POLL, false);
+    //getting the value that is set
+    public boolean showSplashForOnce() {
+        return pref.getBoolean(KEY_SPLASH, true);
+    }
+
+    public void setShowDialogForOnce(boolean flag) {
+        // Storing phone in pref
+        editor.putBoolean(KEY_DIALOG, flag);
+        // commit changes
+        editor.commit();
+    }
+
+    //getting the value that is set
+    public boolean showDialogForOnce() {
+        return pref.getBoolean(KEY_DIALOG, true);
     }
 
 

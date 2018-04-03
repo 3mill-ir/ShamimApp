@@ -9,8 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -20,7 +19,7 @@ import ir.hezareh.park.models.GalleryModel;
 
 public class GalleryImagesAdapter extends RecyclerView.Adapter<GalleryImagesAdapter.MyViewHolder> {
 
-    List<GalleryModel> _galleryModels;
+    private List<GalleryModel> _galleryModels;
     private Context mContext;
 
     public GalleryImagesAdapter(Context context, List<GalleryModel> galleryModels) {
@@ -39,10 +38,8 @@ public class GalleryImagesAdapter extends RecyclerView.Adapter<GalleryImagesAdap
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
-        Glide.with(mContext).load(Utils.URL_encode(_galleryModels.get(position).getImage()))
-                .thumbnail(0.5f)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+
+        Picasso.with(mContext).load(Utils.URL_encode(_galleryModels.get(position).getImage()))
                 .into(holder.thumbnail);
     }
 

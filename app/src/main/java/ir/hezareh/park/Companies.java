@@ -25,6 +25,8 @@ import ir.hezareh.park.Util.GridSpacingItemDecoration;
 import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.CompanyList;
 
+import static ir.hezareh.park.Util.Utils.MessageType.server_error;
+
 
 public class Companies extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = Companies.class
@@ -120,7 +122,7 @@ public class Companies extends AppCompatActivity implements SwipeRefreshLayout.O
                     public void requestEndedWithError(VolleyError error) {
                         //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
                         swipeRefreshLayout.setRefreshing(false);
-                        new Utils(getApplicationContext()).showToast("server_error", Companies.this);
+                        new Utils(getApplicationContext()).showToast(server_error, Companies.this);
                         //swipeRefreshLayout.setRefreshing(false);
                     }
                 });

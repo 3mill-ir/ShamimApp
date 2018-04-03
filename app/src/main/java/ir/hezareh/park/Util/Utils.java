@@ -29,6 +29,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import ir.hezareh.park.DataLoading.OfflineDataLoader;
 import ir.hezareh.park.R;
 
 
@@ -190,7 +191,7 @@ public class Utils {
         }
     }
 
-    public void showToast(String message_type, Activity activity) {
+    public void showToast(MessageType messageType, Activity activity) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (inflater != null) {
@@ -199,28 +200,28 @@ public class Utils {
 
             TextView text = layout.findViewById(R.id.text);
             Drawable d;
-            switch (message_type) {
-                case "network_error":
+            switch (messageType) {
+                case network_error:
                     d = activity.getResources().getDrawable(R.drawable.ic_signal_wifi_off_black_24dp);
                     text.setText("تنظیمات اینترنت را بررسی نمائید");
                     break;
 
-                case "server_error":
+                case server_error:
                     d = activity.getResources().getDrawable(R.drawable.ic_error_outline_black_24dp);
                     text.setText("سرور در دسترس نیست، بعداً تلاش کنید");
                     break;
 
-                case "confirmation":
+                case confirmation:
                     d = activity.getResources().getDrawable(R.drawable.ic_done_black_24dp);
                     text.setText("نظر شما ثبت گردید");
                     break;
 
-                case "duplicate_entry":
+                case duplicate_entry:
                     d = activity.getResources().getDrawable(R.drawable.ic_error_outline_black_24dp);
                     text.setText("شما قبلا در نظرسنجی شرکت کرده اید");
                     break;
 
-                case "exit":
+                case exit:
                     d = activity.getResources().getDrawable(R.drawable.ic_exit_to_app_black_24dp);
                     text.setText("برای خروج از برنامه دوباره فشار دهید");
                     break;
@@ -233,6 +234,7 @@ public class Utils {
 
 
             text.setTypeface(font_set("BYekan"));
+            text.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 
             Toast toast = new Toast(context);
             toast.setDuration(Toast.LENGTH_LONG);
@@ -274,6 +276,20 @@ public class Utils {
         anim.setFillAfter(true); // Needed to keep the result of the animation
         anim.setDuration(500);
         v.startAnimation(anim);
+    }
+
+    public boolean checkCache() {
+        return new OfflineDataLoader(context).ReadOfflineMainMenu() != null &&
+                new OfflineDataLoader(context).ReadOfflineMainJson() != null;
+    }
+
+    public enum MessageType {
+        network_error,
+        server_error,
+        server_ok,
+        confirmation,
+        duplicate_entry,
+        exit
     }
 
 

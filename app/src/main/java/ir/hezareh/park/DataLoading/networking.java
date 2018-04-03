@@ -3,6 +3,7 @@ package ir.hezareh.park.DataLoading;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -38,6 +39,7 @@ public class networking {
 
     public static final String TAG = networking.class
             .getSimpleName();
+    private static final int MY_SOCKET_TIMEOUT_MS = 2000;
     private Context mContext;
 
     public networking(Context context) {
@@ -172,10 +174,16 @@ public class networking {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
                 newsCategoryResponseListener.requestEndedWithError(error);
             }
+
         });
 
         // Adding request to request queue
         req.setShouldCache(false);
+
+        req.setRetryPolicy(new DefaultRetryPolicy(
+                MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         // Adding request to request queue
         App.getInstance().addToRequestQueue(req);
@@ -270,15 +278,14 @@ public class networking {
 
                     //Log.d(TAG, components.get(5).getQuestion() + "");
                     mainJsonResponseListener.requestCompleted(components);
-
                     new OfflineDataLoader(mContext).saveMainJsonToStorage(response);
-
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
             }
+
 
         }, new Response.ErrorListener() {
 
@@ -291,6 +298,11 @@ public class networking {
         });
 
         jsonObjReq.setShouldCache(false);
+
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(
+                MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         // Adding request to request queue
         App.getInstance().addToRequestQueue(jsonObjReq);
@@ -461,6 +473,50 @@ public class networking {
         // Adding request to request queue
         App.getInstance().addToRequestQueue(req);
 
+    }
+
+    public void getWebview(final webViewResponseListener webViewResponeListener, String URl) {
+
+        webViewResponeListener.requestStarted();
+        final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                URl, null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+
+                try {
+                    String String = response.getString("HtmlString");
+
+                    Log.d(TAG, String + "");
+                    webViewResponeListener.requestCompleted(String);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                webViewResponeListener.requestEndedWithError(error);
+            }
+        });
+
+
+        jsonObjReq.setShouldCache(false);
+
+        // Adding request to request queue
+        App.getInstance().addToRequestQueue(jsonObjReq);
+    }
+
+    public interface webViewResponseListener {
+        void requestStarted();
+
+        void requestCompleted(String response);
+
+        void requestEndedWithError(VolleyError error);
     }
 
 

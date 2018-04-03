@@ -3,7 +3,9 @@ package ir.hezareh.park.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class sidemenu {
+import java.io.Serializable;
+
+public class sidemenu implements Serializable {
 
     @SerializedName("$id")
     @Expose
