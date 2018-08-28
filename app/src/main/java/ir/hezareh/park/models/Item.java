@@ -24,31 +24,27 @@ public class Item implements Serializable {
     @SerializedName("Type")
     @Expose
     protected Object type;
-
     @SerializedName("Content")
     @Expose
     protected Object content;
-
     @SerializedName("Functionality")
     @Expose
     protected String functionality;
-
     @SerializedName("Url")
     @Expose
     protected String url;
-
     @SerializedName("Likes")
     @Expose
     protected String likes;
-
     @SerializedName("Dislikes")
     @Expose
     protected String dislikes;
-
     @SerializedName("Comment")
     @Expose
     protected String comment;
-
+    @SerializedName("F_MenuID")
+    @Expose
+    private int f_MenuID;
 
     public String getLikes() {
         return likes;
@@ -144,6 +140,14 @@ public class Item implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public int getF_MenuID() {
+        return f_MenuID;
+    }
+
+    public void setF_MenuID(int f_MenuID) {
+        this.f_MenuID = f_MenuID;
     }
 
 }

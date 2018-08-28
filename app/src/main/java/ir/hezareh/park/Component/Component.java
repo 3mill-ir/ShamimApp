@@ -45,6 +45,7 @@ import ir.hezareh.park.WebviewActivity;
 import ir.hezareh.park.models.Item;
 import ir.hezareh.park.models.ModelComponent;
 
+import static ir.hezareh.park.HomeScreen.global;
 import static ir.hezareh.park.Util.Utils.MessageType.confirmation;
 import static ir.hezareh.park.Util.Utils.MessageType.duplicate_entry;
 import static ir.hezareh.park.Util.Utils.MessageType.server_error;
@@ -268,7 +269,7 @@ public class Component {
         UpperButtonLayout.setGravity(Gravity.CENTER);
         UpperButtonLayout.addView(upperChild);
 
-        setClickListener(upperChild, modelComponent.getButtonItem().get(0).getFunctionality(), modelComponent.getButtonItem().get(0).getUrl(), 0);
+        setClickListener(upperChild, modelComponent.getButtonItem().get(0).getFunctionality(), modelComponent.getButtonItem().get(0).getUrl(), modelComponent.getButtonItem().get(0).getF_MenuID());
 
 
         View lowerChild = inflater.inflate(R.layout.item_button_row, null);
@@ -297,7 +298,7 @@ public class Component {
         LowerButtonLayout.setGravity(Gravity.CENTER);
         LowerButtonLayout.addView(lowerChild);
 
-        setClickListener(lowerChild, modelComponent.getButtonItem().get(1).getFunctionality(), modelComponent.getButtonItem().get(1).getUrl(), 0);
+        setClickListener(lowerChild, modelComponent.getButtonItem().get(1).getFunctionality(), modelComponent.getButtonItem().get(1).getUrl(), modelComponent.getButtonItem().get(1).getF_MenuID());
 
 
         com.daimajia.slider.library.SliderLayout GalleryLayout = new SliderLayout(context);
@@ -383,7 +384,7 @@ public class Component {
         LeftButtonLayout.setLayoutParams(ButtonParams);
         LeftButtonLayout.setGravity(Gravity.CENTER);
         LeftButtonLayout.addView(leftChild);
-        setClickListener(LeftButtonLayout, modelComponent.getItem().get(0).getFunctionality(), modelComponent.getItem().get(0).getUrl(), 0);
+        setClickListener(LeftButtonLayout, modelComponent.getItem().get(0).getFunctionality(), modelComponent.getItem().get(0).getUrl(), modelComponent.getItem().get(0).getF_MenuID());
 
 
         View middleChild = inflater.inflate(R.layout.item_button_row, null);
@@ -400,7 +401,7 @@ public class Component {
         MiddleButtonLayout.setLayoutParams(ButtonParams);
         MiddleButtonLayout.setGravity(Gravity.CENTER);
         MiddleButtonLayout.addView(middleChild);
-        setClickListener(MiddleButtonLayout, modelComponent.getItem().get(1).getFunctionality(), modelComponent.getItem().get(1).getUrl(), 0);
+        setClickListener(MiddleButtonLayout, modelComponent.getItem().get(1).getFunctionality(), modelComponent.getItem().get(1).getUrl(), modelComponent.getItem().get(1).getF_MenuID());
 
 
         View rightChild = inflater.inflate(R.layout.item_button_row, null);
@@ -417,7 +418,7 @@ public class Component {
         RightButtonLayout.setLayoutParams(ButtonParams);
         RightButtonLayout.setGravity(Gravity.CENTER);
         RightButtonLayout.addView(rightChild);
-        setClickListener(RightButtonLayout, modelComponent.getItem().get(2).getFunctionality(), modelComponent.getItem().get(2).getUrl(), 0);
+        setClickListener(RightButtonLayout, modelComponent.getItem().get(2).getFunctionality(), modelComponent.getItem().get(2).getUrl(), modelComponent.getItem().get(2).getF_MenuID());
 
         ButtonsRow.addView(LeftButtonLayout);
         ButtonsRow.addView(MiddleButtonLayout);
@@ -475,6 +476,11 @@ public class Component {
                     case "WebView":
                         intent = new Intent(context, WebviewActivity.class);
                         intent.putExtra("URL", URL);
+                        intent.putExtra("Button", "1");
+                        if (ID != 0) {
+                            global.clear();
+                            global.add(ID);
+                        }
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         context.startActivity(intent);
                         ((Activity) context).overridePendingTransition(0, 0);

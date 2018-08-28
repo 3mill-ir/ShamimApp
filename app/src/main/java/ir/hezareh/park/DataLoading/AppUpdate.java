@@ -5,21 +5,25 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import com.android.volley.VolleyError;
 
 import java.io.File;
 
+import ir.hezareh.park.BuildConfig;
 import ir.hezareh.park.Component.customAlertDialog;
 import ir.hezareh.park.R;
 
 
 public class AppUpdate {
+    public static AppUpdateConfirmListener appUpdateConfirmListener;
     private Activity activity;
 
     public AppUpdate(Activity activity) {
@@ -49,16 +53,14 @@ public class AppUpdate {
                     customAlertDialog alertDialog = new customAlertDialog(activity, "بروزرسانی", activity.getString(R.string.update_message), "آره", "نه", new customAlertDialog.yesOrNoClicked() {
                         @Override
                         public void positiveClicked() {
-                            Intent intent = new Intent(activity, DownloadService.class);
-                            intent.putExtra("url", "http://3mill.ir/download/AppSend?path=mobile/android/park&secretkey=3mill186");
-                            intent.putExtra("receiver", new DownloadReceiver(new Handler()));
-                            activity.startService(intent);
-                            preferencesManager.setShowDialogForOnce(false);
+                            if (appUpdateConfirmListener != null)
+                                appUpdateConfirmListener.onAppUpdateConfirm(true);
                         }
 
                         @Override
                         public void negativeClicked() {
-                            preferencesManager.setShowDialogForOnce(false);
+                            if (appUpdateConfirmListener != null)
+                                appUpdateConfirmListener.onAppUpdateConfirm(false);
                         }
                     });
                     alertDialog.show();
@@ -110,8 +112,12 @@ public class AppUpdate {
         return res;
     }
 
+    public interface AppUpdateConfirmListener {
+        void onAppUpdateConfirm(boolean confirm);
+    }
+
     //receiver for downloading apk update
-    private class DownloadReceiver extends ResultReceiver {
+    public class DownloadReceiver extends ResultReceiver {
 
         public DownloadReceiver(Handler handler) {
             super(handler);
@@ -126,10 +132,27 @@ public class AppUpdate {
                 //mProgressDialog.setProgress(progress);
                 if (progress == 100) {
                     //mProgressDialog.dismiss();
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    /*Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory().getPath() + "/park.apk")), "application/vnd.android.package-archive");
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    activity.startActivity(intent);
+                    activity.startActivity(intent);*/
+
+
+                    File toInstall = new File(Environment.getExternalStorageDirectory().getPath(), "park" + ".apk");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        Uri apkUri = FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID + ".provider", toInstall);
+                        Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+                        intent.setData(apkUri);
+                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        activity.startActivity(intent);
+                    } else {
+                        Uri apkUri = Uri.fromFile(toInstall);
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        activity.startActivity(intent);
+                    }
+
 
                 }
             }

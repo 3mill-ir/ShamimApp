@@ -30,6 +30,16 @@
 
         <service android:name=".DataLoading.DownloadService" />
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_path" />
+        </provider>
+
         <activity
             android:name=".HomeScreen"
             android:theme="@style/AppTheme.NoActionBar">
@@ -63,7 +73,7 @@
             android:label="@string/title_activity_search_results"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".splash_screen"
+            android:name=".SplashScreen"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

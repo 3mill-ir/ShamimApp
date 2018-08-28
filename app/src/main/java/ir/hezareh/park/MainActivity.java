@@ -12,17 +12,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 
-import java.util.HashMap;
-import java.util.List;
+import ir.hezareh.park.DataLoading.SharedPreferencesManager;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String TAG = MainActivity.class
+            .getSimpleName();
     DrawerLayout drawer;
-    ListView expListView;
-    List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
+    SharedPreferencesManager preferencesManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        preferencesManager =
+                new SharedPreferencesManager(getApplicationContext());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
         //navigationView.setNavigationItemSelectedListener(this);
 
 
@@ -123,4 +125,6 @@ public class MainActivity extends AppCompatActivity {
         drawer.closeDrawer(GravityCompat.END);
         return true;
     }*/
+
+
 }

@@ -7,6 +7,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+import ir.hezareh.park.DataLoading.AppUpdate;
 import ir.hezareh.park.DataLoading.SharedPreferencesManager;
 
 public class App extends Application {
@@ -26,6 +27,8 @@ public class App extends Application {
         preferencesManager = new SharedPreferencesManager(getApplicationContext());
         preferencesManager.setShowSplashForOnce(true);
         preferencesManager.setShowDialogForOnce(true);
+
+
         mInstance = this;
     }
 
@@ -35,6 +38,10 @@ public class App extends Application {
         }
 
         return mRequestQueue;
+    }
+
+    public void setUpdateConfirmListener(AppUpdate.AppUpdateConfirmListener updateConfirmListener) {
+        AppUpdate.appUpdateConfirmListener = updateConfirmListener;
     }
 
     public <T> void addToRequestQueue(Request<T> req, String tag) {

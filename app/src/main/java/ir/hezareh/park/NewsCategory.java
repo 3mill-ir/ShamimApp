@@ -1,11 +1,14 @@
 package ir.hezareh.park;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -16,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -25,12 +30,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ir.hezareh.park.Adapters.EqualSpacingItemDecoration;
+import ir.hezareh.park.Adapters.HomeSideMenuListAdapter;
 import ir.hezareh.park.Adapters.NewsCategoryAdapter;
+import ir.hezareh.park.Component.progressLoading;
 import ir.hezareh.park.DataLoading.OfflineDataLoader;
 import ir.hezareh.park.DataLoading.networking;
 import ir.hezareh.park.Util.Utils;
 import ir.hezareh.park.models.ModelComponent;
+import ir.hezareh.park.models.sidemenu;
 
+import static ir.hezareh.park.HomeScreen.clickedID;
+import static ir.hezareh.park.HomeScreen.global;
+import static ir.hezareh.park.HomeScreen.pos;
 import static ir.hezareh.park.Util.Utils.MessageType.server_error;
 
 
@@ -38,6 +49,13 @@ public class NewsCategory extends AppCompatActivity {
 
     public static final String TAG = NewsCategory.class.getSimpleName();
     TabLayout tabLayout;
+    int width;
+    ListView firstLevelListView;
+    ListView secondLevelListView;
+    ArrayList<sidemenu> list;
+    progressLoading loading;
+    DrawerLayout drawer;
+    HomeSideMenuListAdapter sideMenuListAdapter;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -52,7 +70,6 @@ public class NewsCategory extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +80,7 @@ public class NewsCategory extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
-
+        setSideMenu();
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
@@ -131,9 +148,160 @@ public class NewsCategory extends AppCompatActivity {
 
     }
 
+    private void setSideMenu() {
+        drawer = findViewById(R.id.drawer_layout);
+
+        new Utils(getApplicationContext()).overrideFonts(drawer, "BYekan");
+
+        findViewById(R.id.drawer_icon).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.openDrawer(GravityCompat.END);
+            }
+        });
+
+        firstLevelListView = findViewById(R.id.first_level_menu);
+        secondLevelListView = findViewById(R.id.second_level_menu);
+
+        width = new Utils(getApplicationContext()).getDisplayMetrics().widthPixels;
+        loading = new progressLoading(NewsCategory.this);
+        //create a path for store offline reading later
+
+        LayoutInflater inflater = getLayoutInflater();
+        ViewGroup secondLevelListViewHeader = (ViewGroup) inflater.inflate(R.layout.menulistheader, secondLevelListView, false);
+        secondLevelListView.addHeaderView(secondLevelListViewHeader, null, false);
+
+
+        if (HomeScreen.getList() != null) {
+            list = new ArrayList<>(HomeScreen.getList());
+            Log.d(TAG, "setSideMenu: " + global.size());
+            if (global.size() > 0) {
+                Log.d(TAG, "setSideMenu: " + global.get(pos));
+
+                firstLevelListView.setVisibility(View.GONE);
+                secondLevelListView.setVisibility(View.VISIBLE);
+
+                HomeSideMenuListAdapter sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), new HomeScreen().getChildListMenuName(list, global.get(pos), false));
+                secondLevelListView.setAdapter(sideMenuListAdapter);
+            }
+        }
+
+        secondLevelListViewHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //saving the last position the user clicked for the time back is pressed
+                if (pos == 0) {
+                    firstLevelListView.setVisibility(View.VISIBLE);
+                    secondLevelListView.setVisibility(View.GONE);
+                    HomeSideMenuListAdapter sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), new HomeScreen().getChildListMenuName(list, 0, true));
+                    global.remove(pos);
+                    firstLevelListView.setAdapter(sideMenuListAdapter);
+
+                } else {
+                    --pos;
+                    HomeSideMenuListAdapter sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), new HomeScreen().getChildListMenuName(list, global.get(pos), false));
+                    secondLevelListView.setAdapter(sideMenuListAdapter);
+                    global.remove(pos + 1);
+                }
+
+            }
+        });
+
+
+        firstLevelListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (!new HomeScreen().getChildListMenuName(list, (int) id, false).isEmpty()) {
+                    firstLevelListView.setVisibility(View.GONE);
+                    secondLevelListView.setVisibility(View.VISIBLE);
+                    //Log.e("ID", "" + (int) id);
+                    global.add((int) id);
+                    sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(), new HomeScreen().getChildListMenuName(list, (int) id, false));
+                    secondLevelListView.setAdapter(sideMenuListAdapter);
+
+                    //new Component(getApplicationContext()).setClickListener(view,list.get(position).getFunctionality().toString(),list.get(position).getUrl().toString(),0);
+                } else {
+
+                    for (ir.hezareh.park.models.sidemenu sidemenu : list) {
+                        if (sidemenu.getID() == (int) id) {
+                            Log.d("Func", sidemenu.getFunctionality() + "");
+                            Log.d("Url", sidemenu.getUrl() + "");
+                            if (sidemenu.getFunctionality() != null) {
+                                if (drawer.isDrawerOpen(GravityCompat.END)) {
+                                    drawer.closeDrawer(GravityCompat.END);
+                                }
+                                if (sidemenu.getFunctionality().toString().equals("WebView")) {
+                                    Intent intent = new Intent(getApplicationContext(), WebviewActivity.class);
+                                    intent.putExtra("URL", sidemenu.getUrl().toString());
+                                    //0 is for detect if is from side menu
+                                    intent.putExtra("Button", "0");
+                                    startActivity(intent);
+                                    finish();
+                                } else if (sidemenu.getFunctionality().toString().equals("NewsList")) {
+                                    Log.d(TAG, "onItemClick: " + (int) id);
+                                    mViewPager.setCurrentItem(position - 1);
+                                }
+                            }
+                        }
+                    }
+                    clickedID = (int) id;
+                }
+            }
+        });
+
+        secondLevelListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                if (!new HomeScreen().getChildListMenuName(list, (int) id, false).isEmpty()) {
+                    //pos is for storing last item ID clicked by user
+                    ++pos;
+                    global.add((int) id);
+                    sideMenuListAdapter = new HomeSideMenuListAdapter(getApplicationContext(),
+                            new HomeScreen().getChildListMenuName(list, (int) id, false));
+                    secondLevelListView.setAdapter(sideMenuListAdapter);
+                } else {
+                    for (sidemenu sidemenu : list) {
+                        if (sidemenu.getID() == (int) id) {
+                            Log.d("Func", sidemenu.getFunctionality() + "");
+                            Log.d("Url", sidemenu.getUrl() + "");
+                            if (sidemenu.getFunctionality() != null) {
+                                if (drawer.isDrawerOpen(GravityCompat.END)) {
+                                    drawer.closeDrawer(GravityCompat.END);
+                                    secondLevelListView.setAdapter(sideMenuListAdapter);
+                                }
+                                //webView.loadUrl(sidemenu.getUrl().toString());
+                                //webView.loadUrl(sidemenu.getUrl().toString());
+                                if (sidemenu.getFunctionality().toString().equals("WebView")) {
+                                    Intent intent = new Intent(getApplicationContext(), WebviewActivity.class);
+                                    intent.putExtra("URL", sidemenu.getUrl().toString());
+                                    //0 is for detect if is from side menu
+                                    intent.putExtra("Button", "0");
+                                    startActivity(intent);
+                                    finish();
+                                } else if (sidemenu.getFunctionality().toString().equals("NewsList")) {
+                                    Log.d(TAG, "onItemClick: " + (int) id);
+                                    secondLevelListView.setAdapter(sideMenuListAdapter);
+                                    mViewPager.setCurrentItem(position - 1);
+                                }
+                            }
+                        }
+                    }
+                    clickedID = (int) id;
+                }
+
+            }
+        });
+    }
+
+
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if (drawer.isDrawerOpen(GravityCompat.END)) {
+            drawer.closeDrawer(GravityCompat.END);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -199,7 +367,6 @@ public class NewsCategory extends AppCompatActivity {
 
             View rootView = inflater.inflate(R.layout.fragment_news_category, container, false);
             //if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
-
             NewsRecycler = rootView.findViewById(R.id.news_recycler);
             swipeRefreshLayout = rootView.findViewById(R.id.refresh_layout);
             NewsRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -229,6 +396,7 @@ public class NewsCategory extends AppCompatActivity {
                                 swipeRefreshLayout.setRefreshing(false);
 
                             }
+
                             @Override
                             public void requestEndedWithError(VolleyError error) {
                                 swipeRefreshLayout.setRefreshing(false);

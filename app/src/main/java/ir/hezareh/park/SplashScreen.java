@@ -29,14 +29,13 @@ import static ir.hezareh.park.Util.Utils.MessageType.network_error;
 import static ir.hezareh.park.Util.Utils.MessageType.server_error;
 import static ir.hezareh.park.Util.Utils.MessageType.server_ok;
 
-public class splash_screen extends AppCompatActivity {
+public class SplashScreen extends AppCompatActivity {
 
     public static final String MODEL_COMPONENT_KEY = "component_key";
     public static final String MODEL_SIDEMENU_KEY = "sidemenu_key";
     public static final String MESSAGE_KEY = "message_key";
     public static final String OFFLINE_MODE_KEY = "offline_mode_key";
     ScaleAnimation scaleAnimation;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,12 +147,12 @@ public class splash_screen extends AppCompatActivity {
                 @Override
                 public void requestEndedWithError(VolleyError error) {
 
-                    new Utils(getApplicationContext()).showToast(server_error, splash_screen.this);
+                    new Utils(getApplicationContext()).showToast(server_error, SplashScreen.this);
 
                     // hide the progress dialog
                     progressBar.setVisibility(View.INVISIBLE);
                     //server error in getting first page
-                    customAlertDialog alertDialog = new customAlertDialog(splash_screen.this, "مشکل سرور", getString(R.string.server_error_message), "حالت آفلاین", "تلاش مجدد", new customAlertDialog.yesOrNoClicked() {
+                    customAlertDialog alertDialog = new customAlertDialog(SplashScreen.this, "مشکل سرور", getString(R.string.server_error_message), "حالت آفلاین", "تلاش مجدد", new customAlertDialog.yesOrNoClicked() {
                         @Override
                         public void positiveClicked() {
                             Intent intent = new Intent(getApplicationContext(), HomeScreen.class);
@@ -174,7 +173,7 @@ public class splash_screen extends AppCompatActivity {
                 }
             });
         } else {
-            customAlertDialog alertDialog = new customAlertDialog(splash_screen.this, "اتصال شبکه", getString(R.string.network_error_message), "حالت آفلاین", "تلاش مجدد", new customAlertDialog.yesOrNoClicked() {
+            customAlertDialog alertDialog = new customAlertDialog(SplashScreen.this, "اتصال شبکه", getString(R.string.network_error_message), "حالت آفلاین", "تلاش مجدد", new customAlertDialog.yesOrNoClicked() {
                 @Override
                 public void positiveClicked() {
                     if (new Utils(getApplicationContext()).checkCache()) {
@@ -185,7 +184,7 @@ public class splash_screen extends AppCompatActivity {
                         intent.putExtras(bundle);
                         startActivity(intent);
                     } else {
-                        customAlertDialog alertDialog = new customAlertDialog(splash_screen.this, "حالت آفلاین", getString(R.string.cache_error_message), "خروج", null, new customAlertDialog.yesOrNoClicked() {
+                        customAlertDialog alertDialog = new customAlertDialog(SplashScreen.this, "حالت آفلاین", getString(R.string.cache_error_message), "خروج", null, new customAlertDialog.yesOrNoClicked() {
                             @Override
                             public void positiveClicked() {
                                 System.exit(0);
@@ -210,7 +209,7 @@ public class splash_screen extends AppCompatActivity {
             alertDialog.setCancelable(false);
             alertDialog.show();
 
-            //new Utils(getApplicationContext()).showToast(network_error, splash_screen.this);
+            //new Utils(getApplicationContext()).showToast(network_error, SplashScreen.this);
         }
     }
 

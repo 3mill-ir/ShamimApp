@@ -99,7 +99,8 @@
     <string name="title_activity_news_category">NewsCategory</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
-
+    <string name="ok">قبول</string>
+    <string name="cancel">لغو</string>
     <string name="title_activity_sign_in__sign_up">SignIn/SignUp</string>
     <string name="title_activity_search_results">SearchResults</string>
     <string name="splash_text">شمیم پارک علم و فناوری \n آذربایجان غربی</string>
@@ -109,4 +110,6 @@
     <string name="network_error_message">"عدم اتصال دستگاه به شبکه اینترنت\n تمایل دارید در حالت آفلاین ادامه دهید؟"</string>
     <string name="server_error_message">سرور در دسترس نیست\n تمایل دارید در حالت آفلاین ادامه دهید؟</string>
     <string name="cache_error_message">"حافظه کش دستگاه شما خالی است \n برای ذخیره در حافظه دستگاه اینترنت دستگاه خود را متصل نمائید"</string>
+    <string name="write_storage_permission_title">مجوز دسترسی</string>
+    <string name="write_storage_permission_message">برای دانلود بروزرسانی به مجوز دسترسی به محل ذخیره دستگاه شما احتیاج داریم!</string>
 </resources>

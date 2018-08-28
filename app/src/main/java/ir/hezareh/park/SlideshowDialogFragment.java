@@ -115,7 +115,7 @@ public class SlideshowDialogFragment extends DialogFragment {
 
                 GalleryModel image = galleryModels.get(position);
 
-                Picasso.with(getActivity()).load(image.getImage())
+                Picasso.with(getActivity()).load(Utils.URL_encode(image.getImage()))
                         .into(imageViewPreview);
 
                 container.addView(view);
